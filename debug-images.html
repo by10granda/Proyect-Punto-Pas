@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Debug Test</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .test-image {
+            width: 200px;
+            height: 200px;
+            object-fit: cover;
+        }
+        .aspect-square {
+            aspect-ratio: 1/1;
+        }
+    </style>
+</head>
+<body class="p-8">
+    <h1 class="text-2xl font-bold mb-4">Image Loading Debug Test</h1>
+    
+    <h2 class="text-xl font-semibold mb-2">Direct Unsplash Image Test</h2>
+    <div class="grid grid-cols-3 gap-4 mb-8">
+        <div>
+            <p>Basic img tag:</p>
+            <img src="https://images.unsplash.com/photo-1532298229144-0ec0c57515c7?w=400&q=80" alt="Test 1" class="test-image border">
+        </div>
+        <div>
+            <p>With crossorigin:</p>
+            <img src="https://images.unsplash.com/photo-1532298229144-0ec0c57515c7?w=400&q=80" alt="Test 2" class="test-image border" crossorigin="anonymous">
+        </div>
+        <div>
+            <p>With loading lazy:</p>
+            <img src="https://images.unsplash.com/photo-1532298229144-0ec0c57515c7?w=400&q=80" alt="Test 3" class="test-image border" loading="lazy">
+        </div>
+    </div>
+
+    <h2 class="text-xl font-semibold mb-2">Product Card Structure Test</h2>
+    <div class="grid grid-cols-3 gap-4 mb-8">
+        <!-- Test Product Card 1: Basic structure -->
+        <div class="border rounded-lg overflow-hidden shadow-lg">
+            <div class="relative aspect-square bg-gray-200">
+                <img
+                    src="https://images.unsplash.com/photo-1532298229144-0ec0c57515c7?w=400&q=80"
+                    alt="Product"
+                    class="w-full h-full object-cover"
+                />
+            </div>
+            <div class="p-4">
+                <h3 class="font-semibold">Test Product 1</h3>
+                <p class="text-red-600 font-bold">$20.00</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        console.log("Page loaded");
+        
+        // Test image loading
+        const testImg = new Image();
+        testImg.onload = function() {
+            console.log("✅ Image loaded successfully via JS");
+        };
+        testImg.onerror = function() {
+            console.error("❌ Image failed to load via JS");
+        };
+        testImg.src = "https://images.unsplash.com/photo-1532298229144-0ec0c57515c7?w=400&q=80";
+    </script>
+</body>
+</html>
