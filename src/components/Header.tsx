@@ -1,4 +1,4 @@
-import { Search, ShoppingCart, Mic, MicOff, Plus, MapPin, X, Headphones, Radio, Play, Pause } from "lucide-react";
+import { Search, ShoppingCart, Mic, MicOff, Plus, MapPin, X, Headphones, Radio, Play, Pause, Shield } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useRadio } from "@/contexts/RadioContext";
@@ -114,6 +114,13 @@ export const Header = ({ cartCount, onSearch, onCartClick, onGoToHome }: HeaderP
   // Open Sucursales Page - Navega a la página completa
   const openSucursales = () => {
     navigate('/sucursales');
+    setIsMenuOpen(false);
+    scrollToTop();
+  };
+
+  // Open Privacy Policy Page - Navega a la página de privacidad
+  const openPrivacyPolicy = () => {
+    navigate('/privacidad');
     setIsMenuOpen(false);
     scrollToTop();
   };
@@ -270,7 +277,7 @@ export const Header = ({ cartCount, onSearch, onCartClick, onGoToHome }: HeaderP
                 </button>
                 
                 {/* Maps Option - Navega a la página completa */}
-                <button
+                 <button
                   onClick={openSucursales}
                   className="w-full flex items-center gap-4 p-5 rounded-xl bg-gradient-to-r from-cyan-50 to-teal-50 hover:from-cyan-100 hover:to-teal-100 border-2 border-cyan-100 hover:border-cyan-300 transition-all duration-300 group"
                 >
@@ -282,6 +289,21 @@ export const Header = ({ cartCount, onSearch, onCartClick, onGoToHome }: HeaderP
                     <p className="text-sm text-gray-500">Encuentra tu tienda más cercana</p>
                   </div>
                   <MapPin className="w-6 h-6 text-cyan-400 group-hover:text-cyan-600 transition-colors" />
+                </button>
+                
+                {/* Privacy Policy Option - Navega a la página de privacidad */}
+                <button
+                  onClick={openPrivacyPolicy}
+                  className="w-full flex items-center gap-4 p-5 rounded-xl bg-gradient-to-r from-slate-50 to-gray-50 hover:from-slate-100 hover:to-gray-100 border-2 border-slate-200 hover:border-slate-400 transition-all duration-300 group"
+                >
+                  <div className="w-14 h-14 bg-gradient-to-br from-slate-600 to-gray-600 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                    <Shield className="w-7 h-7 text-white" />
+                  </div>
+                  <div className="text-left flex-1">
+                    <h3 className="font-bold text-gray-900 text-lg group-hover:text-slate-700 transition-colors">Política de Privacidad</h3>
+                    <p className="text-sm text-gray-500">Conoce cómo protegemos tus datos</p>
+                  </div>
+                  <Shield className="w-6 h-6 text-slate-400 group-hover:text-slate-600 transition-colors" />
                 </button>
               </div>
             </div>
