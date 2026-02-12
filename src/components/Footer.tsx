@@ -1,4 +1,4 @@
-import { MapPin, Phone, Mail, Clock, Facebook, ExternalLink, Shield } from "lucide-react";
+import { MapPin, Phone, Mail, Clock, Facebook, ExternalLink, Shield, Home, Info, MapPin as MapPinIcon, ShoppingCart, FileText } from "lucide-react";
 import { Link } from "react-router-dom";
 import logoPuntoPas from "@/assets/logo-punto-pas.png";
 
@@ -7,9 +7,9 @@ export const Footer = () => {
     <footer id="contacto" className="bg-slate-900 text-white">
       {/* Main footer content */}
       <div className="max-w-7xl mx-auto px-4 py-16">
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-12">
+        <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-12">
           {/* Brand section */}
-          <div className="lg:col-span-1">
+          <div className="lg:col-span-2">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-16 h-16 shadow-lg">
                 <img 
@@ -27,6 +27,61 @@ export const Footer = () => {
               Tu ferretería de confianza. Ofrecemos productos de la más alta calidad 
               para construcción, hogar y proyectos profesionales.
             </p>
+          </div>
+
+          {/* Services / Links */}
+          <div>
+            <h4 className="text-lg font-bold mb-6 flex items-center gap-2">
+              <span className="w-8 h-1 bg-primary rounded-full"></span>
+              Servicios
+            </h4>
+            <div className="space-y-3">
+              <Link 
+                to="/" 
+                className="flex items-center gap-3 text-slate-300 hover:text-primary transition-colors group"
+              >
+                <div className="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                  <Home className="w-4 h-4" />
+                </div>
+                <span>Inicio</span>
+              </Link>
+              <Link 
+                to="/quienes-somos" 
+                className="flex items-center gap-3 text-slate-300 hover:text-primary transition-colors group"
+              >
+                <div className="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                  <Info className="w-4 h-4" />
+                </div>
+                <span>Quiénes Somos</span>
+              </Link>
+              <Link 
+                to="/sucursales" 
+                className="flex items-center gap-3 text-slate-300 hover:text-primary transition-colors group"
+              >
+                <div className="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                  <MapPinIcon className="w-4 h-4" />
+                </div>
+                <span>Sucursales</span>
+              </Link>
+              <Link 
+                to="/checkout" 
+                className="flex items-center gap-3 text-slate-300 hover:text-primary transition-colors group"
+              >
+                <div className="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                  <ShoppingCart className="w-4 h-4" />
+                </div>
+                <span>Checkout</span>
+              </Link>
+              <Link 
+                to="/privacidad" 
+                className="flex items-center gap-3 text-slate-300 hover:text-primary transition-colors group"
+              >
+                <div className="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                  <FileText className="w-4 h-4" />
+                </div>
+                <span>Política de Privacidad</span>
+              </Link>
+            </div>
           </div>
 
           {/* Contact Info */}
