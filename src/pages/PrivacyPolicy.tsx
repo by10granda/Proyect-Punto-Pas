@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Shield, Mail, Lock, Eye, Trash2, FileText } from "lucide-react";
+import { Shield, Mail, Lock, Eye, FileText } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 
@@ -111,34 +111,8 @@ export const PrivacyPolicy = () => {
           {/* Section 5 */}
           <section className="border-l-4 border-primary pl-6">
             <h2 className="text-2xl font-bold text-foreground mb-4 flex items-center gap-2">
-              <Trash2 className="w-6 h-6 text-primary" />
-              5. Derechos del usuario
-            </h2>
-            <p className="text-muted-foreground mb-3">
-              El usuario puede solicitar en cualquier momento:
-            </p>
-            <ul className="list-disc list-inside space-y-2 text-foreground">
-              <li>Acceder a la información que tenemos sobre él.</li>
-              <li>Modificar o actualizar sus datos personales.</li>
-              <li>Eliminar sus datos personales de nuestra base de datos.</li>
-              <li>Retirar su consentimiento para el tratamiento de datos.</li>
-            </ul>
-            <div className="mt-4 bg-primary/10 rounded-lg p-4">
-              <p className="text-foreground flex items-center gap-2">
-                <Mail className="w-5 h-5 text-primary" />
-                <strong>Para ejercer estos derechos, contactanos a:</strong>
-              </p>
-              <p className="text-primary font-semibold mt-1">
-                📩 contacto@puntopas.com
-              </p>
-            </div>
-          </section>
-
-          {/* Section 6 */}
-          <section className="border-l-4 border-primary pl-6">
-            <h2 className="text-2xl font-bold text-foreground mb-4 flex items-center gap-2">
               <FileText className="w-6 h-6 text-primary" />
-              6. Cambios en esta política
+              5. Cambios en esta política
             </h2>
             <p className="text-muted-foreground">
               Nos reservamos el derecho de actualizar esta política en cualquier momento. 
