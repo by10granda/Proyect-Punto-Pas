@@ -1,4 +1,5 @@
-import { MapPin, Phone, Mail, Clock, Facebook, ExternalLink } from "lucide-react";
+import { MapPin, Phone, Mail, Clock, Facebook, ExternalLink, Shield } from "lucide-react";
+import { Link } from "react-router-dom";
 import logoPuntoPas from "@/assets/logo-punto-pas.png";
 
 export const Footer = () => {
@@ -145,6 +146,10 @@ export const Footer = () => {
             © 2024 <span className="font-bold text-primary">Punto Pas</span>. Todos los derechos reservados.
           </p>
           <div className="flex items-center gap-6 text-xs text-slate-500">
+            <Link to="/privacidad" className="hover:text-primary transition-colors flex items-center gap-1">
+              <Shield className="w-3 h-3" />
+              Política de Privacidad
+            </Link>
             <span>Hecho con ❤️ en Ecuador</span>
           </div>
         </div>

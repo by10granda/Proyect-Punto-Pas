@@ -1,8 +1,11 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, CreditCard, Truck, MapPin, Phone, User, Mail, Check, ShoppingBag, Shield } from "lucide-react";
+import { Elements } from "@stripe/react-stripe-js";
 import { toast } from "sonner";
 import logoPuntoPas from "@/assets/logo-punto-pas.png";
+import { stripePromise } from "@/lib/stripe";
+import { StripePaymentForm } from "@/components/StripePaymentForm";
 
 interface CheckoutForm {
   nombre: string;
@@ -20,6 +23,7 @@ interface CheckoutForm {
 export const Checkout = () => {
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showStripeForm, setShowStripeForm] = useState(false);
   const [form, setForm] = useState<CheckoutForm>({
     nombre: "",
     apellido: "",
@@ -58,6 +62,12 @@ export const Checkout = () => {
       return;
     }
 
+    // Si el método de pago es tarjeta, mostrar formulario de Stripe
+    if (form.metodoPago === "tarjeta") {
+      setShowStripeForm(true);
+      return;
+    }
+
     setIsSubmitting(true);
     
     // Simular procesamiento
@@ -71,6 +81,13 @@ export const Checkout = () => {
     });
     
     setIsSubmitting(false);
+    navigate("/");
+  };
+
+  const handlePaymentSuccess = () => {
+    // Limpiar carrito después del pago exitoso
+    localStorage.removeItem("puntopas_cart");
+    toast.success("¡Pago completado con éxito!");
     navigate("/");
   };
 
@@ -305,6 +322,19 @@ export const Checkout = () => {
                         <option value="esmeraldas">Esmeraldas</option>
                         <option value="san_lorenzo">San Lorenzo</option>
                       </select>
+                    </div>
+                  )}
+
+                  {/* Stripe Payment Form */}
+                  {showStripeForm && form.metodoPago === "tarjeta" && (
+                    <div className="mt-6">
+                      <Elements stripe={stripePromise}>
+                        <StripePaymentForm
+                          amount={total}
+                          onSuccess={handlePaymentSuccess}
+                          onCancel={() => setShowStripeForm(false)}
+                        />
+                      </Elements>
                     </div>
                   )}
                 </div>

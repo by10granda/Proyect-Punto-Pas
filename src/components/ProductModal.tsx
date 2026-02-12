@@ -134,13 +134,15 @@ export const ProductModal = ({ product, isOpen, onClose, onAddToCart }: ProductM
 
             {/* Zoom preview window */}
             {showZoom && (
-              <div className="hidden md:block absolute top-4 left-[calc(50%+1rem)] w-72 h-72 border-2 border-primary rounded-xl overflow-hidden shadow-2xl bg-white z-40">
+              <div className="hidden md:block absolute top-4 left-[calc(50%+1rem)] w-80 h-80 border-2 border-primary rounded-xl overflow-hidden shadow-2xl bg-white z-40">
                 <img
                   src={productImages[currentImageIndex]}
                   alt="Zoom"
-                  className="w-[300%] h-[300%] object-contain"
+                  className="w-full h-full object-cover"
                   style={{
-                    transform: `translate(-${zoomPosition.x}%, -${zoomPosition.y}%)`,
+                    objectPosition: `${zoomPosition.x}% ${zoomPosition.y}%`,
+                    transform: 'scale(3)',
+                    transformOrigin: `${zoomPosition.x}% ${zoomPosition.y}%`,
                   }}
                 />
               </div>

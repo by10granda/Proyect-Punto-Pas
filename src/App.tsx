@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import QuienesSomos from "./pages/QuienesSomos";
 import Checkout from "./pages/Checkout";
 import Sucursales from "./pages/Sucursales";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -24,6 +25,7 @@ const App = () => (
             <Route path="/quienes-somos" element={<QuienesSomos />} />
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/sucursales" element={<Sucursales />} />
+            <Route path="/privacidad" element={<PrivacyPolicy />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
