@@ -240,70 +240,70 @@ export const Header = ({ cartCount, onSearch, onCartClick, onGoToHome }: HeaderP
             
             {/* Dropdown menu with two options */}
             <div 
-              className={`absolute right-0 top-full mt-3 w-80 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden z-50 transition-all duration-500 ease-out transform origin-top-right ${
+              className={`absolute right-0 top-full mt-3 w-64 bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden z-50 transition-all duration-500 ease-out transform origin-top-right ${
                 isMenuOpen 
                   ? "opacity-100 scale-100 translate-y-0" 
                   : "opacity-0 scale-95 -translate-y-4 pointer-events-none"
               }`}
             >
               {/* Header */}
-              <div className="bg-gradient-to-r from-primary to-primary/90 p-5">
+              <div className="bg-gradient-to-r from-primary to-primary/90 p-3">
                 <div className="flex items-center justify-between">
-                  <h2 className="text-xl font-bold text-white">Más Opciones</h2>
+                  <h2 className="text-lg font-bold text-white">Más Opciones</h2>
                   <button 
                     onClick={() => setIsMenuOpen(false)}
                     className="text-white/70 hover:text-white transition-colors"
                   >
-                    <X className="w-5 h-5" />
+                    <X className="w-4 h-4" />
                   </button>
                 </div>
               </div>
               
               {/* Menu Options */}
-              <div className="p-4 space-y-3">
+              <div className="p-3 space-y-2">
                 {/* Radio Option - Abre solo el widget */}
                 <button
                   onClick={openRadioWidget}
-                  className="w-full flex items-center gap-4 p-5 rounded-xl bg-gradient-to-r from-violet-50 to-fuchsia-50 hover:from-violet-100 hover:to-fuchsia-100 border-2 border-violet-100 hover:border-violet-300 transition-all duration-300 group"
+                  className="w-full flex items-center gap-3 p-3 rounded-lg bg-gradient-to-r from-violet-50 to-fuchsia-50 hover:from-violet-100 hover:to-fuchsia-100 border border-violet-100 hover:border-violet-300 transition-all duration-300 group"
                 >
-                  <div className="w-14 h-14 bg-gradient-to-br from-violet-500 to-fuchsia-500 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                    <Headphones className="w-7 h-7 text-white" />
+                  <div className="w-10 h-10 bg-gradient-to-br from-violet-500 to-fuchsia-500 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                    <Headphones className="w-5 h-5 text-white" />
                   </div>
                   <div className="text-left flex-1">
-                    <h3 className="font-bold text-gray-900 text-lg group-hover:text-violet-700 transition-colors">Radio Punto Pas</h3>
-                    <p className="text-sm text-gray-500">Escucha nuestra programación musical</p>
+                    <h3 className="font-bold text-gray-900 text-sm group-hover:text-violet-700 transition-colors">Radio Punto Pas</h3>
+                    <p className="text-xs text-gray-500">Escucha nuestra radio</p>
                   </div>
-                  <Radio className="w-6 h-6 text-violet-400 group-hover:text-violet-600 transition-colors" />
+                  <Radio className="w-4 h-4 text-violet-400 group-hover:text-violet-600 transition-colors" />
                 </button>
                 
                 {/* Maps Option - Navega a la página completa */}
                  <button
                   onClick={openSucursales}
-                  className="w-full flex items-center gap-4 p-5 rounded-xl bg-gradient-to-r from-cyan-50 to-teal-50 hover:from-cyan-100 hover:to-teal-100 border-2 border-cyan-100 hover:border-cyan-300 transition-all duration-300 group"
+                  className="w-full flex items-center gap-3 p-3 rounded-lg bg-gradient-to-r from-cyan-50 to-teal-50 hover:from-cyan-100 hover:to-teal-100 border border-cyan-100 hover:border-cyan-300 transition-all duration-300 group"
                 >
-                  <div className="w-14 h-14 bg-gradient-to-br from-cyan-500 to-teal-500 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                    <MapPin className="w-7 h-7 text-white" />
+                  <div className="w-10 h-10 bg-gradient-to-br from-cyan-500 to-teal-500 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                    <MapPin className="w-5 h-5 text-white" />
                   </div>
                   <div className="text-left flex-1">
-                    <h3 className="font-bold text-gray-900 text-lg group-hover:text-cyan-700 transition-colors">Nuestras Sucursales</h3>
-                    <p className="text-sm text-gray-500">Encuentra tu tienda más cercana</p>
+                    <h3 className="font-bold text-gray-900 text-sm group-hover:text-cyan-700 transition-colors">Nuestras Sucursales</h3>
+                    <p className="text-xs text-gray-500">Encuentra tu tienda</p>
                   </div>
-                  <MapPin className="w-6 h-6 text-cyan-400 group-hover:text-cyan-600 transition-colors" />
+                  <MapPin className="w-4 h-4 text-cyan-400 group-hover:text-cyan-600 transition-colors" />
                 </button>
                 
                 {/* Privacy Policy Option - Navega a la página de privacidad */}
                 <button
                   onClick={openPrivacyPolicy}
-                  className="w-full flex items-center gap-4 p-5 rounded-xl bg-gradient-to-r from-slate-50 to-gray-50 hover:from-slate-100 hover:to-gray-100 border-2 border-slate-200 hover:border-slate-400 transition-all duration-300 group"
+                  className="w-full flex items-center gap-3 p-3 rounded-lg bg-gradient-to-r from-slate-50 to-gray-50 hover:from-slate-100 hover:to-gray-100 border border-slate-200 hover:border-slate-400 transition-all duration-300 group"
                 >
-                  <div className="w-14 h-14 bg-gradient-to-br from-slate-600 to-gray-600 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                    <Shield className="w-7 h-7 text-white" />
+                  <div className="w-10 h-10 bg-gradient-to-br from-slate-600 to-gray-600 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                    <Shield className="w-5 h-5 text-white" />
                   </div>
                   <div className="text-left flex-1">
-                    <h3 className="font-bold text-gray-900 text-lg group-hover:text-slate-700 transition-colors">Política de Privacidad</h3>
-                    <p className="text-sm text-gray-500">Conoce cómo protegemos tus datos</p>
+                    <h3 className="font-bold text-gray-900 text-sm group-hover:text-slate-700 transition-colors">Política de Privacidad</h3>
+                    <p className="text-xs text-gray-500">Protección de datos</p>
                   </div>
-                  <Shield className="w-6 h-6 text-slate-400 group-hover:text-slate-600 transition-colors" />
+                  <Shield className="w-4 h-4 text-slate-400 group-hover:text-slate-600 transition-colors" />
                 </button>
               </div>
             </div>
