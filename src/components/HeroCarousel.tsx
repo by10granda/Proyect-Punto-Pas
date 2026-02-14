@@ -7,9 +7,9 @@ import hero3 from "@/assets/hero-3.jpg";
 const slides = [
   {
     id: 1,
-    // Use the provided remote image URL for the main cover
+    // Imagen de portada desde Cloudinary
     image:
-      "https://scontent.fuio26-1.fna.fbcdn.net/v/t39.30808-6/480222522_1157068763094998_7743035468682233457_n.jpg?_nc_cat=105&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeH7NbJD3THjWi_FVSzobWXlDc4Qdhq0uWMNzhB2GrS5Y-z_qjrM5fgsyWhAT4BQjiORTQSoJcuRm85C3MJNpyd3&_nc_ohc=BgP2bMef5xUQ7kNvwEA_A9e&_nc_oc=AdkAcjsory-ZK6JSeJrSdPRW2So9fNBUV66njirItFxW3uSpk3kOGMKQWYGWLhH1TlQ&_nc_zt=23&_nc_ht=scontent.fuio26-1.fna&_nc_gid=FuQ26Ke2vmwg29tKX8LbHg&oh=00_AfsFYWPjV11-6sQkEIgIwXxeNv-9_pnjdvdW82NhHKG__A&oe=698DAFE9",
+      "https://res.cloudinary.com/dbbkpdhze/image/upload/v1771030357/Gemini_Generated_Image_rkyu17rkyu17rkyu_onknty.png",
     title: "Herramientas Pro",
     subtitle: "Las mejores marcas",
     cta: "Ver productos",
