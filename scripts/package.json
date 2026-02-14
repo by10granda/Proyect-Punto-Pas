@@ -1,0 +1,12 @@
+{
+  "name": "cloudinary-upload",
+  "version": "1.0.0",
+  "description": "Script para subir imágenes a Cloudinary",
+  "scripts": {
+    "upload": "node upload-to-cloudinary.js"
+  },
+  "dependencies": {
+    "cloudinary": "^1.41.0",
+    "dotenv": "^16.3.1"
+  }
+}
