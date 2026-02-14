@@ -79,7 +79,7 @@ export const HeroCarousel = () => {
         {slides.map((slide, index) => (
           <div
             key={slide.id}
-            className="w-full flex-shrink-0 relative aspect-[16/7]"
+            className="w-full flex-shrink-0 relative aspect-[16/6]"
           >
             <img
               src={imageUrls[index]}
