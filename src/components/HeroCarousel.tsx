@@ -79,16 +79,17 @@ export const HeroCarousel = () => {
         {slides.map((slide, index) => (
           <div
             key={slide.id}
-            className="w-full flex-shrink-0 relative aspect-[16/6]"
+            className="w-full flex-shrink-0 relative bg-gray-50 flex items-center justify-center overflow-hidden"
+            style={{ aspectRatio: '16/6' }}
           >
             <img
               src={imageUrls[index]}
               alt={slide.title}
               onError={() => handleImageError(index)}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-contain"
             />
-            {/* Gradient overlay */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+            {/* Subtle gradient overlay - lighter */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
 
             {/* Content overlay */}
             <div className="absolute bottom-4 left-4 right-4 text-primary-foreground">
