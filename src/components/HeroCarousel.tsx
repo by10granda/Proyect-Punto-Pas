@@ -9,7 +9,7 @@ const slides = [
     id: 1,
     // Imagen de portada desde Cloudinary - dimensiones optimizadas 16:6
     image:
-      "https://res.cloudinary.com/dbbkpdhze/image/upload/v1771032289/Portada_P_a95g12.png",
+      "https://res.cloudinary.com/dbbkpdhze/image/upload/v1771032940/P1_rrc7hg.png",
     title: "Herramientas Pro",
     subtitle: "Las mejores marcas",
     cta: "Ver productos",
