@@ -28,6 +28,13 @@ const slides = [
     subtitle: "Calidad garantizada",
     cta: "Comprar ahora",
   },
+  {
+    id: 4,
+    image: "https://res.cloudinary.com/dbbkpdhze/image/upload/v1771031663/Portada_1_mtzpmq.png",
+    title: "Promociones Especiales",
+    subtitle: "Descuentos exclusivos",
+    cta: "Ver ofertas",
+  },
 ];
 
 export const HeroCarousel = () => {
@@ -35,7 +42,7 @@ export const HeroCarousel = () => {
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
 
   // manage image URLs so we can fallback if a public image is missing
-  const fallbackImages = [hero1, hero2, hero3];
+  const fallbackImages = [hero1, hero2, hero3, hero1];
   const [imageUrls, setImageUrls] = useState<string[]>(() => slides.map((s) => s.image));
 
   const handleImageError = (index: number) => {
