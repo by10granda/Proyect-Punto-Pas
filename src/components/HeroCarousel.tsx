@@ -79,20 +79,23 @@ export const HeroCarousel = () => {
         {slides.map((slide, index) => (
           <div
             key={slide.id}
-            className="w-full flex-shrink-0 relative bg-gray-100"
+            className="w-full flex-shrink-0 relative aspect-[16/6]"
           >
             <img
               src={imageUrls[index]}
               alt={slide.title}
               onError={() => handleImageError(index)}
-              className="w-full h-auto object-contain max-h-[70vh] mx-auto"
+              className="w-full h-full object-cover"
             />
-            {/* Content below image */}
-            <div className="bg-gradient-to-t from-primary/10 to-transparent py-6 px-4 text-center">
-              <h2 className="text-2xl md:text-3xl font-black mb-1 text-foreground">
+            {/* Gradient overlay */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+
+            {/* Content overlay */}
+            <div className="absolute bottom-4 left-4 right-4 text-primary-foreground">
+              <h2 className="text-2xl md:text-3xl font-black mb-1 drop-shadow-lg">
                 {slide.title}
               </h2>
-              <p className="text-lg font-semibold mb-3 text-muted-foreground">
+              <p className="text-lg font-semibold mb-3 drop-shadow-md opacity-90">
                 {slide.subtitle}
               </p>
               <button className="bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-2.5 rounded-full font-bold text-sm shadow-lg transition-all duration-200 active:scale-95">
@@ -118,7 +121,7 @@ export const HeroCarousel = () => {
       </button>
 
       {/* Dots indicator */}
-      <div className="absolute bottom-24 left-1/2 -translate-x-1/2 flex gap-2 bg-black/30 backdrop-blur-sm px-4 py-2 rounded-full">
+      <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-2">
         {slides.map((_, index) => (
           <button
             key={index}
