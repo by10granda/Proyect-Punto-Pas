@@ -113,7 +113,9 @@ export const ProductCard = ({ product, onAddToCart, onProductClick }: ProductCar
             muted
             loop
             playsInline
-            className="w-full h-full object-cover"
+            preload="auto"
+            className="absolute inset-0 w-full h-full object-cover z-10"
+            style={{ display: 'block' }}
           />
         )}
 

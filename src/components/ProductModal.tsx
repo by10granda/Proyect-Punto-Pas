@@ -24,13 +24,9 @@ export const ProductModal = ({ product, isOpen, onClose, onAddToCart }: ProductM
 
   if (!product) return null;
 
-  const productImages = [
-    product.image,
-    product.image.replace("w=400", "w=500"),
-    product.image.replace("w=400", "w=600"),
-    product.image.replace("w=400", "w=450"),
-  ];
-
+  // Carrusel con imagen principal y video (si existe)
+  const productImages = [product.image];
+  
   // Agregar video al final del array si existe
   if (product.video) {
     productImages.push(product.video);
