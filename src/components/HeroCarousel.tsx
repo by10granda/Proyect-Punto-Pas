@@ -11,13 +11,6 @@ const slides = [
   },
   {
     id: 2,
-    image: "https://res.cloudinary.com/dbbkpdhze/image/upload/v1771335276/Imajen_portada_2_vkfew1.jpg",
-    title: "Ofertas Especiales",
-    subtitle: "Los mejores precios del mercado",
-    cta: "Explorar",
-  },
-  {
-    id: 3,
     image: "https://res.cloudinary.com/dbbkpdhze/image/upload/v1771332997/Portada-1_fvdnon.jpg",
     title: "Calidad Garantizada",
     subtitle: "Los mejores productos para tu hogar y construcción",
