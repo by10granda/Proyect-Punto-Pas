@@ -237,37 +237,48 @@ export const QuienesSomos = () => {
         </div>
       </header>
 
-      {/* Mission Statement */}
+      {/* Quiénes Somos */}
       <section className="px-4 py-16 max-w-4xl mx-auto text-center">
         <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-semibold mb-6">
           <Sparkles className="w-4 h-4" />
-          Nuestra Misión
+          Quiénes Somos
         </div>
         <h2 className="text-3xl md:text-4xl font-black text-foreground mb-6">
-          Encuentra todo en un solo lugar
+          ¿Quiénes somos?
         </h2>
         <p className="text-lg text-muted-foreground leading-relaxed">
-          En <strong className="text-foreground">Punto Pas</strong> nos dedicamos a ofrecer los mejores productos 
-          de ferretería, construcción y hogar. Somos tu aliado de confianza para cada proyecto, 
-          desde pequeñas reparaciones hasta grandes construcciones. Contamos con las mejores 
-          marcas del mercado como <strong className="text-primary">Holcim, Adelca, Mabe e Indurama</strong>.
+          En <strong className="text-foreground">PuntoPas</strong> somos una empresa dedicada a la comercialización de una amplia variedad de productos para el hogar, la construcción y el uso diario. Ofrecemos desde artículos de ferretería y materiales de construcción hasta electrodomésticos y productos de consumo, brindando a nuestros clientes soluciones completas en un solo lugar.
+        </p>
+        <p className="text-lg text-muted-foreground leading-relaxed mt-4">
+          Nos caracterizamos por la <strong className="text-primary">calidad de nuestros productos</strong>, la atención personalizada y el compromiso con la satisfacción de quienes confían en nosotros.
+        </p>
+      </section>
+
+      {/* Mission Statement */}
+      <section className="px-4 py-16 max-w-4xl mx-auto text-center bg-muted/30">
+        <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-semibold mb-6">
+          <Target className="w-4 h-4" />
+          Misión
+        </div>
+        <h2 className="text-3xl md:text-4xl font-black text-foreground mb-6">
+          Nuestra Misión
+        </h2>
+        <p className="text-lg text-muted-foreground leading-relaxed">
+          Satisfacer las necesidades de nuestros clientes ofreciendo productos variados, confiables y a precios competitivos, acompañados de un servicio responsable y cercano, que garantice una experiencia de compra segura y eficiente.
         </p>
       </section>
 
       {/* Vision Statement */}
-      <section className="px-4 py-16 max-w-4xl mx-auto text-center bg-muted/30">
+      <section className="px-4 py-16 max-w-4xl mx-auto text-center">
         <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-semibold mb-6">
-          <Target className="w-4 h-4" />
-          Nuestra Visión
+          <Sparkles className="w-4 h-4" />
+          Visión
         </div>
         <h2 className="text-3xl md:text-4xl font-black text-foreground mb-6">
-          Ser líderes en el mercado
+          Nuestra Visión
         </h2>
         <p className="text-lg text-muted-foreground leading-relaxed">
-          Aspiramos a consolidarnos como la ferretería líder y de mayor confianza en Ecuador, 
-          reconociendo por nuestra excelencia en servicio, calidad de productos y compromiso 
-          con el desarrollo de nuestra comunidad. Buscamos innovar constantemente para 
-          transformar la experiencia de compra y ser el primer destino para cada proyecto.
+          Ser una empresa referente en la comercialización de productos para el hogar, la construcción y el comercio en general, reconocida por su variedad, calidad y excelencia en el servicio, consolidándonos como una opción confiable y preferida por nuestros clientes.
         </p>
       </section>
 
