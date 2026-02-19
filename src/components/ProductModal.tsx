@@ -20,7 +20,6 @@ export const ProductModal = ({ product, isOpen, onClose, onAddToCart }: ProductM
   const [quantity, setQuantity] = useState(1);
   const [showZoom, setShowZoom] = useState(false);
   const [zoomPosition, setZoomPosition] = useState({ x: 0, y: 0 });
-  const [showVideo, setShowVideo] = useState(false);
   const imageRef = useRef<HTMLDivElement>(null);
 
   if (!product) return null;
@@ -31,6 +30,13 @@ export const ProductModal = ({ product, isOpen, onClose, onAddToCart }: ProductM
     product.image.replace("w=400", "w=600"),
     product.image.replace("w=400", "w=450"),
   ];
+
+  // Agregar video al final del array si existe
+  if (product.video) {
+    productImages.push(product.video);
+  }
+
+  const isVideo = (index: number) => product.video && index === productImages.length - 1;
 
   const formatPrice = (price: number) => {
     return price.toLocaleString("es-EC", {
@@ -94,48 +100,44 @@ export const ProductModal = ({ product, isOpen, onClose, onAddToCart }: ProductM
              {/* Main Image with Zoom */}
              <div 
                ref={imageRef}
-               className="relative aspect-square bg-card rounded-xl overflow-hidden cursor-zoom-in mb-4"
-               onMouseEnter={() => !product.video && setShowZoom(true)}
+               className="relative aspect-square bg-card rounded-xl overflow-hidden mb-4"
+               onMouseEnter={() => !isVideo(currentImageIndex) && setShowZoom(true)}
                onMouseLeave={() => setShowZoom(false)}
                onMouseMove={handleMouseMove}
              >
-               {/* Video - Si existe, mostrarlo */}
-               {product.video && showVideo && (
+               {/* Video - Si el índice actual es el video */}
+               {isVideo(currentImageIndex) ? (
                  <video
-                   src={product.video}
+                   src={productImages[currentImageIndex]}
                    muted
                    controls
                    autoPlay
-                   className="w-full h-full object-contain"
+                   playsInline
+                   className="w-full h-full object-contain bg-black"
                  />
-               )}
-
-               {/* Image - Si no está en video o no hay video */}
-               {!showVideo && (
+               ) : (
+                 /* Image - Vista normal */
                  <img
                    src={productImages[currentImageIndex]}
                    alt={product.name}
-                   className="w-full h-full object-contain"
+                   className="w-full h-full object-contain cursor-zoom-in"
                  />
                )}
                
-               {/* Zoom indicator - Solo mostrar si no hay video */}
-               {!product.video && (
+               {/* Zoom indicator - Solo mostrar si NO es video */}
+               {!isVideo(currentImageIndex) && (
                  <div className="absolute bottom-3 right-3 bg-card/90 backdrop-blur-sm rounded-full px-3 py-1.5 flex items-center gap-1.5 text-xs font-medium shadow-md">
                    <ZoomIn className="w-4 h-4" />
                    Zoom
                  </div>
                )}
 
-               {/* Video toggle button - Si hay video */}
-               {product.video && (
-                 <button
-                   onClick={() => setShowVideo(!showVideo)}
-                   className="absolute bottom-3 right-3 bg-black/70 hover:bg-black/90 text-white px-3 py-1.5 rounded-full flex items-center gap-1.5 text-xs font-medium transition-colors z-20"
-                 >
-                   <span>{showVideo ? '🖼️' : '▶'}</span>
-                   {showVideo ? 'Ver Imagen' : 'Ver Video'}
-                 </button>
+               {/* Indicador de Video - Solo mostrar si ES video */}
+               {isVideo(currentImageIndex) && (
+                 <div className="absolute top-3 right-3 bg-red-600 text-white px-3 py-1.5 rounded-full flex items-center gap-1.5 text-xs font-bold shadow-md z-20">
+                   <span>▶</span>
+                   VIDEO
+                 </div>
                )}
 
                {/* Navigation arrows */}
@@ -160,8 +162,8 @@ export const ProductModal = ({ product, isOpen, onClose, onAddToCart }: ProductM
               )}
             </div>
 
-            {/* Zoom preview window */}
-            {showZoom && (
+            {/* Zoom preview window - Solo mostrar si NO es video */}
+            {showZoom && !isVideo(currentImageIndex) && (
               <div className="hidden md:block absolute top-4 left-[calc(50%+1rem)] w-80 h-80 border-2 border-primary rounded-xl overflow-hidden shadow-2xl bg-white z-40">
                 <img
                   src={productImages[currentImageIndex]}
@@ -184,9 +186,18 @@ export const ProductModal = ({ product, isOpen, onClose, onAddToCart }: ProductM
                   onClick={() => setCurrentImageIndex(index)}
                   className={`w-16 h-16 rounded-lg overflow-hidden flex-shrink-0 border-2 transition-all ${
                     index === currentImageIndex ? "border-primary ring-2 ring-primary/30" : "border-border hover:border-primary/50"
-                  }`}
+                  } ${isVideo(index) ? 'bg-gray-900' : ''}`}
                 >
-                  <img src={img} alt={`Vista ${index + 1}`} className="w-full h-full object-cover" />
+                  {isVideo(index) ? (
+                    /* Miniatura de video */
+                    <div className="w-full h-full flex flex-col items-center justify-center bg-gray-800 text-white">
+                      <span className="text-2xl mb-1">▶</span>
+                      <span className="text-[8px] font-bold">VIDEO</span>
+                    </div>
+                  ) : (
+                    /* Miniatura de imagen normal */
+                    <img src={img} alt={`Vista ${index + 1}`} className="w-full h-full object-cover" />
+                  )}
                 </button>
               ))}
             </div>
