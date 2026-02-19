@@ -12,6 +12,7 @@ export interface Product {
   category: string;
   type: string;
   image: string;
+  video?: string;
   isActive: boolean;
   sold?: number;
 }
@@ -137,7 +138,8 @@ export const products: Product[] = [
     price: 129.57,
     category: "FERRETERIA EN GENERAL",
     type: "CABOS Y PIOLAS",
-    image: "https://images.unsplash.com/photo-1530124566582-a618bc2615dc?w=400&q=80",
+    image: "https://res.cloudinary.com/dbbkpdhze/image/upload/v1771511151/Pulidora_STY_7_1300W_zwek8t.png",
+    video: "https://res.cloudinary.com/dbbkpdhze/video/upload/v1771512711/0219_ynvamz.mp4",
     isActive: true,
     sold: 67
   },

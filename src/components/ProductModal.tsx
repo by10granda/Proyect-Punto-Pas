@@ -20,6 +20,7 @@ export const ProductModal = ({ product, isOpen, onClose, onAddToCart }: ProductM
   const [quantity, setQuantity] = useState(1);
   const [showZoom, setShowZoom] = useState(false);
   const [zoomPosition, setZoomPosition] = useState({ x: 0, y: 0 });
+  const [showVideo, setShowVideo] = useState(false);
   const imageRef = useRef<HTMLDivElement>(null);
 
   if (!product) return null;
@@ -90,39 +91,66 @@ export const ProductModal = ({ product, isOpen, onClose, onAddToCart }: ProductM
         <div className="grid md:grid-cols-2 gap-0">
           {/* Image Gallery Section */}
           <div className="bg-muted p-4">
-            {/* Main Image with Zoom */}
-            <div 
-              ref={imageRef}
-              className="relative aspect-square bg-card rounded-xl overflow-hidden cursor-zoom-in mb-4"
-              onMouseEnter={() => setShowZoom(true)}
-              onMouseLeave={() => setShowZoom(false)}
-              onMouseMove={handleMouseMove}
-            >
-              <img
-                src={productImages[currentImageIndex]}
-                alt={product.name}
-                className="w-full h-full object-contain"
-              />
-              
-              {/* Zoom indicator */}
-              <div className="absolute bottom-3 right-3 bg-card/90 backdrop-blur-sm rounded-full px-3 py-1.5 flex items-center gap-1.5 text-xs font-medium shadow-md">
-                <ZoomIn className="w-4 h-4" />
-                Zoom
-              </div>
+             {/* Main Image with Zoom */}
+             <div 
+               ref={imageRef}
+               className="relative aspect-square bg-card rounded-xl overflow-hidden cursor-zoom-in mb-4"
+               onMouseEnter={() => !product.video && setShowZoom(true)}
+               onMouseLeave={() => setShowZoom(false)}
+               onMouseMove={handleMouseMove}
+             >
+               {/* Video - Si existe, mostrarlo */}
+               {product.video && showVideo && (
+                 <video
+                   src={product.video}
+                   muted
+                   controls
+                   autoPlay
+                   className="w-full h-full object-contain"
+                 />
+               )}
 
-              {/* Navigation arrows */}
-              <button
-                onClick={prevImage}
-                className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-card/90 backdrop-blur-sm flex items-center justify-center shadow-md hover:bg-card transition-colors"
-              >
-                <ChevronLeft className="w-5 h-5" />
-              </button>
-              <button
-                onClick={nextImage}
-                className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-card/90 backdrop-blur-sm flex items-center justify-center shadow-md hover:bg-card transition-colors"
-              >
-                <ChevronRight className="w-5 h-5" />
-              </button>
+               {/* Image - Si no está en video o no hay video */}
+               {!showVideo && (
+                 <img
+                   src={productImages[currentImageIndex]}
+                   alt={product.name}
+                   className="w-full h-full object-contain"
+                 />
+               )}
+               
+               {/* Zoom indicator - Solo mostrar si no hay video */}
+               {!product.video && (
+                 <div className="absolute bottom-3 right-3 bg-card/90 backdrop-blur-sm rounded-full px-3 py-1.5 flex items-center gap-1.5 text-xs font-medium shadow-md">
+                   <ZoomIn className="w-4 h-4" />
+                   Zoom
+                 </div>
+               )}
+
+               {/* Video toggle button - Si hay video */}
+               {product.video && (
+                 <button
+                   onClick={() => setShowVideo(!showVideo)}
+                   className="absolute bottom-3 right-3 bg-black/70 hover:bg-black/90 text-white px-3 py-1.5 rounded-full flex items-center gap-1.5 text-xs font-medium transition-colors z-20"
+                 >
+                   <span>{showVideo ? '🖼️' : '▶'}</span>
+                   {showVideo ? 'Ver Imagen' : 'Ver Video'}
+                 </button>
+               )}
+
+               {/* Navigation arrows */}
+               <button
+                 onClick={prevImage}
+                 className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-card/90 backdrop-blur-sm flex items-center justify-center shadow-md hover:bg-card transition-colors"
+               >
+                 <ChevronLeft className="w-5 h-5" />
+               </button>
+               <button
+                 onClick={nextImage}
+                 className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-card/90 backdrop-blur-sm flex items-center justify-center shadow-md hover:bg-card transition-colors"
+               >
+                 <ChevronRight className="w-5 h-5" />
+               </button>
 
               {/* Discount badge */}
               {product.discount && (

@@ -1,6 +1,6 @@
 import { ShoppingCart, Heart, Star } from "lucide-react";
 import { Product } from "@/data/products";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 interface ProductCardProps {
   product: Product;
@@ -13,6 +13,8 @@ export const ProductCard = ({ product, onAddToCart, onProductClick }: ProductCar
   const [imageError, setImageError] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
   const [loadingTimeout, setLoadingTimeout] = useState(false);
+  const [showVideo, setShowVideo] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   // Add a timeout to handle cases where onLoad doesn't fire
   useEffect(() => {
@@ -52,6 +54,21 @@ export const ProductCard = ({ product, onAddToCart, onProductClick }: ProductCar
     setImageLoaded(true);
   };
 
+  const handleMouseEnter = () => {
+    if (product.video && videoRef.current) {
+      setShowVideo(true);
+      videoRef.current.play();
+    }
+  };
+
+  const handleMouseLeave = () => {
+    if (videoRef.current) {
+      videoRef.current.pause();
+      videoRef.current.currentTime = 0;
+    }
+    setShowVideo(false);
+  };
+
   const getFallbackImage = () => {
     const fallbacks = [
       `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400' viewBox='0 0 400 400'%3E%3Crect fill='%23f3f4f6' width='400' height='400'/%3E%3Ctext x='50%25' y='50%25' font-size='16' fill='%236b7280' text-anchor='middle' dy='.3em'%3E${encodeURIComponent(product.name)}%3C/text%3E%3C/svg%3E`,
@@ -66,6 +83,8 @@ export const ProductCard = ({ product, onAddToCart, onProductClick }: ProductCar
     <div 
       className="product-card bg-card rounded-xl overflow-hidden shadow-card cursor-pointer animate-fade-in border border-border"
       onClick={() => onProductClick(product)}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
     >
       {/* Image container */}
       <div className="relative aspect-square bg-muted">
@@ -86,19 +105,34 @@ export const ProductCard = ({ product, onAddToCart, onProductClick }: ProductCar
           </div>
         )}
         
-        <img
-          src={imageSrc}
-          alt={product.name}
-          className={`w-full h-full object-cover transition-opacity duration-300 ${
-            imageLoaded || loadingTimeout ? 'opacity-100' : 'opacity-0'
-          }`}
-          onLoad={handleImageLoad}
-          onError={handleImageError}
-          loading="lazy"
-          style={{
-            display: 'block', // Ensure image takes up space
-          }}
-        />
+        {/* Video - Mostrar cuando hay hover y video disponible */}
+        {product.video && showVideo && (
+          <video
+            ref={videoRef}
+            src={product.video}
+            muted
+            loop
+            playsInline
+            className="w-full h-full object-cover"
+          />
+        )}
+
+        {/* Image - Mostrar cuando no hay video o no hay hover */}
+        {!showVideo && (
+          <img
+            src={imageSrc}
+            alt={product.name}
+            className={`w-full h-full object-cover transition-opacity duration-300 ${
+              imageLoaded || loadingTimeout ? 'opacity-100' : 'opacity-0'
+            }`}
+            onLoad={handleImageLoad}
+            onError={handleImageError}
+            loading="lazy"
+            style={{
+              display: 'block', // Ensure image takes up space
+            }}
+          />
+        )}
         
         {/* Discount badge */}
         {product.discount && (
@@ -123,6 +157,14 @@ export const ProductCard = ({ product, onAddToCart, onProductClick }: ProductCar
         {product.stock <= 3 && product.stock > 0 && (
           <div className="absolute bottom-1 left-1 bg-primary/90 text-primary-foreground text-[10px] px-1 py-0.5 rounded-full font-medium z-20">
             ¡{product.stock}!
+          </div>
+        )}
+
+        {/* Video indicator badge */}
+        {product.video && (
+          <div className="absolute bottom-1 right-1 bg-black/70 text-white text-[9px] px-1.5 py-0.5 rounded-full font-medium z-20 flex items-center gap-1">
+            <span>▶</span>
+            Video
           </div>
         )}
       </div>
