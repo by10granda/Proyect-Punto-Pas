@@ -49,28 +49,10 @@ export const QuienesSomos = () => {
 
   const heroSlides = [
     {
-      image: "https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?w=1920&q=80",
-      title: "Nuestra Historia",
-      subtitle: "Más de una década construyendo sueños junto a nuestra comunidad",
-      overlay: "from-primary via-primary/90 to-transparent"
-    },
-    {
-      image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1920&q=80",
-      title: "Calidad y Confianza",
-      subtitle: "Los mejores productos para cada proyecto importante",
-      overlay: "from-blue-600 via-blue-600/90 to-transparent"
-    },
-    {
-      image: "https://images.unsplash.com/photo-1574269909862-7e1d70bb8078?w=1920&q=80",
-      title: "Innovación Constante",
-      subtitle: "Siempre evolucionando para servirte mejor",
-      overlay: "from-purple-600 via-purple-600/90 to-transparent"
-    },
-    {
-      image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1920&q=80",
-      title: "Compromiso con Ti",
-      subtitle: "Tu éxito es nuestra mayor satisfacción",
-      overlay: "from-orange-600 via-orange-600/90 to-transparent"
+      image: "https://res.cloudinary.com/dbbkpdhze/image/upload/v1771529556/Portada_QuienesSomos_qfcxdy.jpg",
+      title: "Quiénes Somos",
+      subtitle: "25 años de historia, compromiso y servicio",
+      overlay: "from-primary via-primary/80 to-transparent"
     }
   ];
 
@@ -185,32 +167,34 @@ export const QuienesSomos = () => {
             </p>
           </div>
 
-          {/* Navegación del carrusel */}
-          <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex gap-4">
-            <button
-              onClick={prevSlide}
-              className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/30 transition-colors"
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </button>
-            <div className="flex gap-2 items-center">
-              {heroSlides.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentSlide(index)}
-                  className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                    index === currentSlide ? 'w-8 bg-white' : 'w-2 bg-white/50'
-                  }`}
-                />
-              ))}
+          {/* Navegación del carrusel - Solo mostrar si hay más de un slide */}
+          {heroSlides.length > 1 && (
+            <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex gap-4">
+              <button
+                onClick={prevSlide}
+                className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/30 transition-colors"
+              >
+                <ArrowLeft className="w-5 h-5" />
+              </button>
+              <div className="flex gap-2 items-center">
+                {heroSlides.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentSlide(index)}
+                    className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                      index === currentSlide ? 'w-8 bg-white' : 'w-2 bg-white/50'
+                    }`}
+                  />
+                ))}
+              </div>
+              <button
+                onClick={nextSlide}
+                className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/30 transition-colors"
+              >
+                <ArrowLeft className="w-5 h-5 rotate-180" />
+              </button>
             </div>
-            <button
-              onClick={nextSlide}
-              className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/30 transition-colors"
-            >
-              <ArrowLeft className="w-5 h-5 rotate-180" />
-            </button>
-          </div>
+          )}
         </div>
       </header>
 
