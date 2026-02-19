@@ -198,49 +198,60 @@ export const QuienesSomos = () => {
         </div>
       </header>
 
-      {/* Quiénes Somos */}
-      <section className="px-4 py-16 max-w-4xl mx-auto text-center">
-        <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-semibold mb-6">
-          <Sparkles className="w-4 h-4" />
-          Quiénes Somos
-        </div>
-        <h2 className="text-3xl md:text-4xl font-black text-foreground mb-6">
-          ¿Quiénes somos?
-        </h2>
-        <p className="text-lg text-muted-foreground leading-relaxed">
-          En <strong className="text-foreground">PuntoPas</strong> somos una empresa dedicada a la comercialización de una amplia variedad de productos para el hogar, la construcción y el uso diario. Ofrecemos desde artículos de ferretería y materiales de construcción hasta electrodomésticos y productos de consumo, brindando a nuestros clientes soluciones completas en un solo lugar.
-        </p>
-        <p className="text-lg text-muted-foreground leading-relaxed mt-4">
-          Nos caracterizamos por la <strong className="text-primary">calidad de nuestros productos</strong>, la atención personalizada y el compromiso con la satisfacción de quienes confían en nosotros.
-        </p>
-      </section>
+      {/* Quiénes Somos, Misión y Visión - Cards */}
+      <section className="px-4 py-16 max-w-6xl mx-auto">
+        <div className="grid gap-6">
+          {/* Quiénes Somos */}
+          <div className="bg-card border-2 border-border rounded-xl p-8 shadow-lg hover:shadow-xl transition-shadow">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                <Sparkles className="w-6 h-6 text-primary" />
+              </div>
+              <h2 className="text-2xl md:text-3xl font-black text-foreground">
+                ¿Quiénes somos?
+              </h2>
+            </div>
+            <p className="text-muted-foreground leading-relaxed text-justify">
+              En <strong className="text-foreground">PuntoPas</strong> somos una empresa dedicada a la comercialización de una amplia variedad de productos para el hogar, la construcción y el uso diario. Ofrecemos desde artículos de ferretería y materiales de construcción hasta electrodomésticos y productos de consumo, brindando a nuestros clientes soluciones completas en un solo lugar.
+            </p>
+            <p className="text-muted-foreground leading-relaxed mt-4 text-justify">
+              Nos caracterizamos por la <strong className="text-primary">calidad de nuestros productos</strong>, la atención personalizada y el compromiso con la satisfacción de quienes confían en nosotros.
+            </p>
+          </div>
 
-      {/* Mission Statement */}
-      <section className="px-4 py-16 max-w-4xl mx-auto text-center bg-muted/30">
-        <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-semibold mb-6">
-          <Target className="w-4 h-4" />
-          Misión
-        </div>
-        <h2 className="text-3xl md:text-4xl font-black text-foreground mb-6">
-          Nuestra Misión
-        </h2>
-        <p className="text-lg text-muted-foreground leading-relaxed">
-          Satisfacer las necesidades de nuestros clientes ofreciendo productos variados, confiables y a precios competitivos, acompañados de un servicio responsable y cercano, que garantice una experiencia de compra segura y eficiente.
-        </p>
-      </section>
+          {/* Misión y Visión en grid */}
+          <div className="grid md:grid-cols-2 gap-6">
+            {/* Misión */}
+            <div className="bg-gradient-to-br from-primary/5 to-primary/10 border-2 border-primary/20 rounded-xl p-8 shadow-lg hover:shadow-xl transition-shadow">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 bg-primary rounded-lg flex items-center justify-center">
+                  <Target className="w-6 h-6 text-primary-foreground" />
+                </div>
+                <h2 className="text-xl md:text-2xl font-black text-foreground">
+                  Misión
+                </h2>
+              </div>
+              <p className="text-muted-foreground leading-relaxed text-justify">
+                Satisfacer las necesidades de nuestros clientes ofreciendo productos variados, confiables y a precios competitivos, acompañados de un servicio responsable y cercano, que garantice una experiencia de compra segura y eficiente.
+              </p>
+            </div>
 
-      {/* Vision Statement */}
-      <section className="px-4 py-16 max-w-4xl mx-auto text-center">
-        <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-semibold mb-6">
-          <Sparkles className="w-4 h-4" />
-          Visión
+            {/* Visión */}
+            <div className="bg-gradient-to-br from-primary/5 to-primary/10 border-2 border-primary/20 rounded-xl p-8 shadow-lg hover:shadow-xl transition-shadow">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 bg-primary rounded-lg flex items-center justify-center">
+                  <Sparkles className="w-6 h-6 text-primary-foreground" />
+                </div>
+                <h2 className="text-xl md:text-2xl font-black text-foreground">
+                  Visión
+                </h2>
+              </div>
+              <p className="text-muted-foreground leading-relaxed text-justify">
+                Ser una empresa referente en la comercialización de productos para el hogar, la construcción y el comercio en general, reconocida por su variedad, calidad y excelencia en el servicio, consolidándonos como una opción confiable y preferida por nuestros clientes.
+              </p>
+            </div>
+          </div>
         </div>
-        <h2 className="text-3xl md:text-4xl font-black text-foreground mb-6">
-          Nuestra Visión
-        </h2>
-        <p className="text-lg text-muted-foreground leading-relaxed">
-          Ser una empresa referente en la comercialización de productos para el hogar, la construcción y el comercio en general, reconocida por su variedad, calidad y excelencia en el servicio, consolidándonos como una opción confiable y preferida por nuestros clientes.
-        </p>
       </section>
 
       {/* Timeline - Historia */}
