@@ -16,7 +16,7 @@ const milestones = [
     year: "2000",
     title: "Nuestros Inicios",
     description: "Punto Pas inicia sus actividades bajo la dirección de Franco Becerra, dedicándose a la comercialización de madera. Gracias al esfuerzo, trabajo constante y compromiso con sus clientes, la empresa logra posicionarse como un proveedor confiable en su sector.",
-    image: "https://images.unsplash.com/photo-1520333789090-1afc82db536a?w=800&q=80"
+    image: "https://res.cloudinary.com/dbbkpdhze/image/upload/v1771535501/Historia_Imagen1_xesimt.png"
   },
   {
     year: "2008",
