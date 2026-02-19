@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ArrowLeft, Award, Users, Heart, MapPin, Clock, Target, Sparkles } from "lucide-react";
+import { ArrowLeft, MapPin, Clock, Sparkles, Target } from "lucide-react";
 import logoPuntoPas from "@/assets/logo-punto-pas.png";
 import { useState, useEffect } from "react";
 import { Header } from "@/components/Header";
@@ -35,29 +35,6 @@ const milestones = [
     title: "Visión de Futuro",
     description: "Gracias a su trayectoria, visión empresarial y compromiso con la calidad, Punto Pas se proyecta como una empresa sólida y en constante crecimiento, orientada a satisfacer las necesidades de sus clientes y a fortalecer su presencia en el mercado regional.",
     image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&q=80"
-  }
-];
-
-const values = [
-  {
-    icon: Heart,
-    title: "Pasión",
-    description: "Amamos lo que hacemos y se refleja en cada producto que ofrecemos."
-  },
-  {
-    icon: Award,
-    title: "Calidad",
-    description: "Solo trabajamos con las mejores marcas para garantizar tu satisfacción."
-  },
-  {
-    icon: Users,
-    title: "Servicio",
-    description: "Nuestro equipo está capacitado para asesorarte en cada proyecto."
-  },
-  {
-    icon: Target,
-    title: "Compromiso",
-    description: "Tu éxito es nuestro éxito. Trabajamos para superar tus expectativas."
   }
 ];
 
@@ -347,78 +324,6 @@ export const QuienesSomos = () => {
                 <div className="hidden md:block flex-1" />
               </div>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Values */}
-      <section className="px-4 py-16">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl font-black text-foreground text-center mb-4">
-            💎 Nuestros Valores
-          </h2>
-          <p className="text-muted-foreground text-center mb-12 max-w-2xl mx-auto">
-            Los principios que guían cada decisión y nos hacen ser tu mejor opción
-          </p>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {values.map((value, index) => (
-              <div 
-                key={value.title}
-                className="bg-gradient-to-br from-card to-muted p-6 rounded-2xl text-center hover:shadow-lg transition-all duration-300 border border-border"
-              >
-                <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                  <value.icon className="w-8 h-8 text-primary" />
-                </div>
-                <h3 className="text-lg font-bold text-foreground mb-2">{value.title}</h3>
-                <p className="text-sm text-muted-foreground">{value.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Team/Store Image */}
-      <section className="px-4 py-16 bg-primary text-primary-foreground">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid md:grid-cols-2 gap-8 items-center">
-            <div>
-              <h2 className="text-3xl font-black mb-6">
-                👥 Nuestro Equipo
-              </h2>
-              <p className="text-primary-foreground/90 leading-relaxed mb-6">
-                Contamos con un equipo de profesionales capacitados y apasionados por brindar 
-                la mejor atención. Cada miembro de nuestra familia Punto Pas está comprometido 
-                con tu satisfacción.
-              </p>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 text-center">
-                  <span className="text-3xl font-black">+10</span>
-                  <p className="text-sm text-primary-foreground/80">Años de experiencia</p>
-                </div>
-                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 text-center">
-                  <span className="text-3xl font-black">+5000</span>
-                  <p className="text-sm text-primary-foreground/80">Clientes satisfechos</p>
-                </div>
-                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 text-center">
-                  <span className="text-3xl font-black">+1000</span>
-                  <p className="text-sm text-primary-foreground/80">Productos disponibles</p>
-                </div>
-                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 text-center">
-                  <span className="text-3xl font-black">24/7</span>
-                  <p className="text-sm text-primary-foreground/80">Atención online</p>
-                </div>
-              </div>
-            </div>
-            <div className="rounded-2xl overflow-hidden shadow-2xl">
-              <img 
-                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRDG6sKbpOYHEmPi70Vki_CE5setRcNIBZ7SQ&s"
-                alt="Equipo Punto Pas"
-                className="w-full h-full object-cover"
-                onError={(e) => {
-                  e.currentTarget.src = "https://images.unsplash.com/photo-1552664730-d307ca884978?w=800&q=80";
-                }}
-              />
-            </div>
           </div>
         </div>
       </section>
