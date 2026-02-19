@@ -13,7 +13,7 @@ export const ProductCard = ({ product, onAddToCart, onProductClick }: ProductCar
   const [imageError, setImageError] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
   const [loadingTimeout, setLoadingTimeout] = useState(false);
-  const [showVideo, setShowVideo] = useState(false);
+  const [isHovering, setIsHovering] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   // Add a timeout to handle cases where onLoad doesn't fire
@@ -21,13 +21,33 @@ export const ProductCard = ({ product, onAddToCart, onProductClick }: ProductCar
     const timer = setTimeout(() => {
       if (!imageLoaded && !imageError) {
         setLoadingTimeout(true);
-        // Force show the image after timeout
         setImageLoaded(true);
       }
-    }, 5000); // 5 second timeout
+    }, 5000);
 
     return () => clearTimeout(timer);
   }, [product.image, imageLoaded, imageError]);
+
+  // Control video playback based on hover state
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video || !product.video) return;
+
+    if (isHovering) {
+      // Pequeño delay para evitar reproducción accidental
+      const timeout = setTimeout(() => {
+        video.play().catch(() => {
+          // Si falla la reproducción automática, intentar nuevamente
+          video.load();
+          video.play().catch(() => {});
+        });
+      }, 100);
+      return () => clearTimeout(timeout);
+    } else {
+      video.pause();
+      video.currentTime = 0;
+    }
+  }, [isHovering, product.video]);
 
   const formatPrice = (price: number) => {
     return price.toLocaleString("es-EC", {
@@ -55,18 +75,13 @@ export const ProductCard = ({ product, onAddToCart, onProductClick }: ProductCar
   };
 
   const handleMouseEnter = () => {
-    if (product.video && videoRef.current) {
-      setShowVideo(true);
-      videoRef.current.play();
+    if (product.video) {
+      setIsHovering(true);
     }
   };
 
   const handleMouseLeave = () => {
-    if (videoRef.current) {
-      videoRef.current.pause();
-      videoRef.current.currentTime = 0;
-    }
-    setShowVideo(false);
+    setIsHovering(false);
   };
 
   const getFallbackImage = () => {
@@ -81,23 +96,23 @@ export const ProductCard = ({ product, onAddToCart, onProductClick }: ProductCar
 
   return (
     <div 
-      className="product-card bg-card rounded-xl overflow-hidden shadow-card cursor-pointer animate-fade-in border border-border"
+      className="product-card bg-card rounded-xl overflow-hidden shadow-card cursor-pointer animate-fade-in border border-border group"
       onClick={() => onProductClick(product)}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
       {/* Image container */}
-      <div className="relative aspect-square bg-muted">
+      <div className="relative aspect-square bg-muted overflow-hidden">
         {/* Loading spinner - only show when not loaded and no error */}
         {!imageLoaded && !imageError && !loadingTimeout && (
-          <div className="absolute inset-0 bg-gray-200 animate-pulse flex items-center justify-center z-10">
+          <div className="absolute inset-0 bg-gray-200 animate-pulse flex items-center justify-center z-20">
             <div className="w-8 h-8 border-2 border-gray-300 border-t-gray-600 rounded-full animate-spin" />
           </div>
         )}
         
         {/* Error state */}
         {imageError && (
-          <div className="absolute inset-0 bg-red-50 flex items-center justify-center z-10">
+          <div className="absolute inset-0 bg-red-50 flex items-center justify-center z-20">
             <div className="text-center p-4">
               <div className="text-red-500 text-4xl mb-2">🖼️</div>
               <p className="text-red-600 text-xs">Imagen no disponible</p>
@@ -105,40 +120,37 @@ export const ProductCard = ({ product, onAddToCart, onProductClick }: ProductCar
           </div>
         )}
         
-        {/* Video - Mostrar cuando hay hover y video disponible */}
-        {product.video && showVideo && (
+        {/* VIDEO - Siempre presente pero visible solo en hover (estilo Temu) */}
+        {product.video && (
           <video
             ref={videoRef}
             src={product.video}
             muted
             loop
             playsInline
-            preload="auto"
-            className="absolute inset-0 w-full h-full object-cover z-10"
-            style={{ display: 'block' }}
+            preload="metadata"
+            className={`absolute inset-0 w-full h-full object-cover z-10 transition-opacity duration-300 ${
+              isHovering ? 'opacity-100' : 'opacity-0'
+            }`}
           />
         )}
 
-        {/* Image - Mostrar cuando no hay video o no hay hover */}
-        {!showVideo && (
-          <img
-            src={imageSrc}
-            alt={product.name}
-            className={`w-full h-full object-cover transition-opacity duration-300 ${
-              imageLoaded || loadingTimeout ? 'opacity-100' : 'opacity-0'
-            }`}
-            onLoad={handleImageLoad}
-            onError={handleImageError}
-            loading="lazy"
-            style={{
-              display: 'block', // Ensure image takes up space
-            }}
-          />
-        )}
+        {/* IMAGE - Siempre presente pero oculta en hover cuando hay video */}
+        <img
+          src={imageSrc}
+          alt={product.name}
+          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${
+            imageLoaded || loadingTimeout ? 'opacity-100' : 'opacity-0'
+          } ${product.video && isHovering ? 'opacity-0' : ''}`}
+          onLoad={handleImageLoad}
+          onError={handleImageError}
+          loading="lazy"
+          style={{ zIndex: 5 }}
+        />
         
         {/* Discount badge */}
         {product.discount && (
-          <div className="absolute top-1 left-1 badge-sale text-[10px] px-1 py-0.5 z-20">
+          <div className="absolute top-1 left-1 badge-sale text-[10px] px-1 py-0.5 z-30">
             -{product.discount}%
           </div>
         )}
@@ -146,7 +158,7 @@ export const ProductCard = ({ product, onAddToCart, onProductClick }: ProductCar
         {/* Favorite button */}
         <button
           onClick={handleFavoriteClick}
-          className="absolute top-1 right-1 w-6 h-6 rounded-full bg-card/90 backdrop-blur-sm flex items-center justify-center transition-colors shadow-sm z-20"
+          className="absolute top-1 right-1 w-6 h-6 rounded-full bg-card/90 backdrop-blur-sm flex items-center justify-center transition-colors shadow-sm z-30"
         >
           <Heart
             className={`w-3 h-3 transition-colors ${
@@ -157,16 +169,17 @@ export const ProductCard = ({ product, onAddToCart, onProductClick }: ProductCar
 
         {/* Stock indicator */}
         {product.stock <= 3 && product.stock > 0 && (
-          <div className="absolute bottom-1 left-1 bg-primary/90 text-primary-foreground text-[10px] px-1 py-0.5 rounded-full font-medium z-20">
+          <div className="absolute bottom-1 left-1 bg-primary/90 text-primary-foreground text-[10px] px-1 py-0.5 rounded-full font-medium z-30">
             ¡{product.stock}!
           </div>
         )}
 
         {/* Video indicator badge */}
         {product.video && (
-          <div className="absolute bottom-1 right-1 bg-black/70 text-white text-[9px] px-1.5 py-0.5 rounded-full font-medium z-20 flex items-center gap-1">
-            <span>▶</span>
-            Video
+          <div className={`absolute bottom-1 right-1 px-1.5 py-0.5 rounded-full font-medium z-30 flex items-center gap-1 transition-all duration-300 ${
+            isHovering ? 'bg-primary text-white scale-110' : 'bg-black/70 text-white'
+          }`}>
+            <span className="text-[9px]">{isHovering ? '▶ Reproduciendo' : '▶ Video'}</span>
           </div>
         )}
       </div>

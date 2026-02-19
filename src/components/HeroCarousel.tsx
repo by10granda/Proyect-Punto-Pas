@@ -1,32 +1,20 @@
 import { useState, useEffect, useCallback } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import hero1 from "@/assets/hero-1.jpg";
-import hero2 from "@/assets/hero-2.jpg";
-import hero3 from "@/assets/hero-3.jpg";
 
 const slides = [
   {
     id: 1,
-    // Imagen de portada desde Cloudinary - dimensiones optimizadas 16:6
-    image:
-      "https://res.cloudinary.com/dbbkpdhze/image/upload/v1771032940/P1_rrc7hg.png",
-    title: "Herramientas Pro",
-    subtitle: "Las mejores marcas",
+    image: "https://res.cloudinary.com/dbbkpdhze/image/upload/v1771332997/Portada-1_fvdnon.jpg",
+    title: "Bienvenidos",
+    subtitle: "Todo lo que necesitas en un solo lugar",
     cta: "Ver productos",
   },
   {
     id: 2,
-    image: hero2,
-    title: "Decoración Hogar",
-    subtitle: "Transforma tu espacio",
+    image: "https://res.cloudinary.com/dbbkpdhze/image/upload/v1771335276/Imajen_portada_2_vkfew1.jpg",
+    title: "Ofertas Especiales",
+    subtitle: "Los mejores precios del mercado",
     cta: "Explorar",
-  },
-  {
-    id: 3,
-    image: hero3,
-    title: "Material Eléctrico",
-    subtitle: "Calidad garantizada",
-    cta: "Comprar ahora",
   },
 ];
 
@@ -34,19 +22,8 @@ export const HeroCarousel = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
 
-  // manage image URLs so we can fallback if a public image is missing
-  const fallbackImages = [hero1, hero2, hero3];
-  const [imageUrls, setImageUrls] = useState<string[]>(() => slides.map((s) => s.image));
-
   const handleImageError = (index: number) => {
-    setImageUrls((prev) => {
-      const next = [...prev];
-      // only replace if different to avoid infinite loop
-      if (next[index] !== fallbackImages[index]) {
-        next[index] = fallbackImages[index];
-      }
-      return next;
-    });
+    console.error(`Error loading hero image ${index}`);
   };
 
   const nextSlide = useCallback(() => {
@@ -82,7 +59,7 @@ export const HeroCarousel = () => {
             className="w-full flex-shrink-0 relative aspect-[16/6]"
           >
             <img
-              src={imageUrls[index]}
+              src={slide.image}
               alt={slide.title}
               onError={() => handleImageError(index)}
               className="w-full h-full object-cover"
