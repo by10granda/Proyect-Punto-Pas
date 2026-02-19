@@ -40,11 +40,12 @@ export default function SucursalesModal({ isOpen, onClose }: SucursalesModalProp
         {/* Content - Scrollable */}
         <div className="overflow-y-auto max-h-[calc(90vh-100px)]">
           {/* Advertising Space - Top */}
-          <div className="bg-gradient-to-r from-cyan-100 to-blue-100 p-4 text-center border-b border-cyan-200">
-            <p className="text-cyan-600/60 text-xs uppercase tracking-widest mb-2">Publicidad</p>
-            <div className="h-16 bg-white/80 rounded-xl flex items-center justify-center border-2 border-dashed border-cyan-300">
-              <span className="text-cyan-400/60 text-sm">Espacio Publicitario Premium</span>
-            </div>
+          <div className="overflow-hidden">
+            <img 
+              src="https://res.cloudinary.com/dbbkpdhze/image/upload/v1771535149/muebles_lxrih1.jpg" 
+              alt="Promoción" 
+              className="w-full h-auto object-cover"
+            />
           </div>
 
           {/* Maps Grid */}
@@ -132,11 +133,12 @@ export default function SucursalesModal({ isOpen, onClose }: SucursalesModalProp
             </div>
 
             {/* Advertising Space - Middle */}
-            <div className="mt-6 bg-gradient-to-r from-blue-200/50 to-cyan-200/50 rounded-2xl p-4 text-center border border-blue-200">
-              <p className="text-blue-600/60 text-xs uppercase tracking-widest mb-2">Publicidad</p>
-              <div className="h-20 bg-white/80 rounded-xl flex items-center justify-center border-2 border-dashed border-blue-300">
-                <span className="text-blue-400/60 text-sm">Espacio Publicitario Premium</span>
-              </div>
+            <div className="mt-6 rounded-2xl overflow-hidden shadow-lg">
+              <img 
+                src="https://res.cloudinary.com/dbbkpdhze/image/upload/v1771535149/muebles_lxrih1.jpg" 
+                alt="Promoción" 
+                className="w-full h-auto object-cover"
+              />
             </div>
 
             {/* Info Cards */}
@@ -160,11 +162,12 @@ export default function SucursalesModal({ isOpen, onClose }: SucursalesModalProp
           </div>
 
           {/* Advertising Space - Bottom */}
-          <div className="bg-gradient-to-r from-teal-100 to-cyan-100 p-4 text-center border-t border-teal-200">
-            <p className="text-teal-600/60 text-xs uppercase tracking-widest mb-2">Publicidad</p>
-            <div className="h-16 bg-white/80 rounded-xl flex items-center justify-center border-2 border-dashed border-teal-300">
-              <span className="text-teal-400/60 text-sm">Espacio Publicitario Destacado</span>
-            </div>
+          <div className="overflow-hidden">
+            <img 
+              src="https://res.cloudinary.com/dbbkpdhze/image/upload/v1771535149/muebles_lxrih1.jpg" 
+              alt="Promoción" 
+              className="w-full h-auto object-cover"
+            />
           </div>
         </div>
       </div>
