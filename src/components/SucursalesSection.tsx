@@ -31,11 +31,12 @@ const SucursalesSection = forwardRef<HTMLDivElement>((_, ref) => {
         </div>
 
         {/* Advertising Space - Top */}
-        <div className="bg-gradient-to-r from-cyan-600 to-teal-600 rounded-2xl p-4 text-center mb-8 shadow-lg">
-          <p className="text-white/70 text-xs uppercase tracking-widest mb-2">Publicidad</p>
-          <div className="h-16 bg-white/20 rounded-xl flex items-center justify-center border-2 border-dashed border-white/40">
-            <span className="text-white/60 text-sm">Espacio Publicitario Premium</span>
-          </div>
+        <div className="rounded-2xl overflow-hidden mb-8 shadow-xl hover:shadow-2xl transition-shadow">
+          <img 
+            src="https://res.cloudinary.com/dbbkpdhze/image/upload/v1771535149/muebles_lxrih1.jpg" 
+            alt="Promoción" 
+            className="w-full h-auto object-cover"
+          />
         </div>
 
         {/* Maps Grid */}
