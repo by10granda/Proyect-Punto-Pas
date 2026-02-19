@@ -13,28 +13,28 @@ import { useNavigate } from "react-router-dom";
 
 const milestones = [
   {
-    year: "2010",
+    year: "2000",
     title: "Nuestros Inicios",
-    description: "Punto Pas nació como un pequeño negocio familiar con el sueño de servir a nuestra comunidad.",
-    image: "https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?w=600&q=80"
+    description: "Punto Pas inicia sus actividades bajo la dirección de Franco Becerra, dedicándose a la comercialización de madera. Gracias al esfuerzo, trabajo constante y compromiso con sus clientes, la empresa logra posicionarse como un proveedor confiable en su sector.",
+    image: "https://images.unsplash.com/photo-1520333789090-1afc82db536a?w=800&q=80"
   },
   {
-    year: "2015",
-    title: "Expansión y Crecimiento",
-    description: "Ampliamos nuestro catálogo incorporando las mejores marcas nacionales e internacionales.",
-    image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80"
+    year: "2008",
+    title: "Expansión y Diversificación",
+    description: "Con una visión de crecimiento y diversificación, Punto Pas abre su primera sucursal en San Lorenzo, incorporando la franquicia Disensa, y de manera conjunta inaugura un local de Stihl, ampliando su oferta hacia productos de ferretería, construcción y maquinaria.",
+    image: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=80"
   },
   {
-    year: "2020",
-    title: "Innovación Digital",
-    description: "Lanzamos nuestra plataforma digital para estar más cerca de nuestros clientes.",
-    image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&q=80"
+    year: "2025",
+    title: "Consolidación Regional",
+    description: "Con el apoyo de sus hijos y continuando con su proceso de expansión, Punto Pas abre una nueva sucursal en Esmeraldas, consolidándose como una empresa comercial que ofrece una amplia variedad de productos, desde ferretería y materiales de construcción hasta electrodomésticos y artículos para el hogar.",
+    image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80"
   },
   {
-    year: "2024",
-    title: "Líderes en el Mercado",
-    description: "Hoy somos referentes en el sector ferretero, con miles de clientes satisfechos.",
-    image: "https://images.unsplash.com/photo-1552664730-d307ca884978?w=600&q=80"
+    year: "Presente",
+    title: "Visión de Futuro",
+    description: "Gracias a su trayectoria, visión empresarial y compromiso con la calidad, Punto Pas se proyecta como una empresa sólida y en constante crecimiento, orientada a satisfacer las necesidades de sus clientes y a fortalecer su presencia en el mercado regional.",
+    image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&q=80"
   }
 ];
 
@@ -282,33 +282,69 @@ export const QuienesSomos = () => {
         </p>
       </section>
 
-      {/* Timeline */}
-      <section className="px-4 py-16 bg-muted">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl font-black text-foreground text-center mb-12">
-            📅 Nuestra Trayectoria
-          </h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+      {/* Timeline - Historia */}
+      <section className="px-4 py-20 bg-gradient-to-b from-muted/50 to-background">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-16">
+            <span className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-semibold mb-4">
+              <Clock className="w-4 h-4" />
+              Nuestra Historia
+            </span>
+            <h2 className="text-3xl md:text-4xl font-black text-foreground mb-4">
+              25 Años de Trayectoria
+            </h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Un recorrido de esfuerzo, dedicación y compromiso con nuestros clientes
+            </p>
+          </div>
+
+          {/* Timeline Vertical */}
+          <div className="relative">
+            {/* Línea central vertical */}
+            <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-primary via-primary/50 to-transparent transform md:-translate-x-1/2" />
+
             {milestones.map((milestone, index) => (
               <div 
                 key={milestone.year}
-                className="bg-card rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 group"
-                style={{ animationDelay: `${index * 100}ms` }}
+                className={`relative flex flex-col md:flex-row items-start md:items-center gap-6 mb-16 last:mb-0 ${
+                  index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'
+                }`}
               >
-                <div className="aspect-video overflow-hidden">
-                  <img 
-                    src={milestone.image} 
-                    alt={milestone.title}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                  />
+                {/* Círculo con año */}
+                <div className="absolute left-4 md:left-1/2 transform md:-translate-x-1/2 z-10">
+                  <div className="w-20 h-20 bg-primary rounded-full flex items-center justify-center shadow-xl shadow-primary/30 border-4 border-background">
+                    <span className="text-primary-foreground font-black text-sm text-center leading-tight">
+                      {milestone.year}
+                    </span>
+                  </div>
                 </div>
-                <div className="p-5">
-                  <span className="inline-block bg-primary text-primary-foreground text-sm font-bold px-3 py-1 rounded-full mb-3">
-                    {milestone.year}
-                  </span>
-                  <h3 className="text-lg font-bold text-foreground mb-2">{milestone.title}</h3>
-                  <p className="text-sm text-muted-foreground">{milestone.description}</p>
+
+                {/* Contenido - Izquierda */}
+                <div className={`flex-1 pl-16 md:pl-0 ${index % 2 === 0 ? 'md:pr-24 md:text-right' : 'md:pl-24 md:text-left'}`}>
+                  <div className={`bg-card rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500 border border-border group ${index % 2 === 0 ? 'md:ml-auto' : 'md:mr-auto'} max-w-md`}>
+                    {/* Imagen */}
+                    <div className="aspect-[16/10] overflow-hidden relative">
+                      <img 
+                        src={milestone.image} 
+                        alt={milestone.title}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                      <div className="absolute bottom-3 left-3 right-3">
+                        <h3 className="text-white font-bold text-lg drop-shadow-lg">{milestone.title}</h3>
+                      </div>
+                    </div>
+                    {/* Descripción */}
+                    <div className="p-5">
+                      <p className="text-muted-foreground text-sm leading-relaxed">
+                        {milestone.description}
+                      </p>
+                    </div>
+                  </div>
                 </div>
+
+                {/* Espacio vacío para el otro lado */}
+                <div className="hidden md:block flex-1" />
               </div>
             ))}
           </div>
