@@ -191,12 +191,13 @@ const Sucursales = () => {
               </div>
             </div>
 
-            {/* Advertising Space - Compacto */}
-            <div className="bg-gradient-to-r from-cyan-600 to-teal-600 rounded-xl p-3 text-center mb-4">
-              <p className="text-white/70 text-xs uppercase tracking-widest mb-1">Publicidad</p>
-              <div className="h-12 bg-white/20 rounded-lg flex items-center justify-center border-2 border-dashed border-white/40">
-                <span className="text-white/60 text-xs">Espacio Publicitario</span>
-              </div>
+            {/* Advertising Space */}
+            <div className="rounded-xl overflow-hidden mb-4 shadow-lg">
+              <img 
+                src="https://res.cloudinary.com/dbbkpdhze/image/upload/v1771535149/muebles_lxrih1.jpg" 
+                alt="Promoción" 
+                className="w-full h-auto object-cover"
+              />
             </div>
 
             {/* Sección de Contacto */}
