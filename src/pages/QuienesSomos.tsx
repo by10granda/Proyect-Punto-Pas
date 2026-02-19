@@ -28,13 +28,13 @@ const milestones = [
     year: "2025",
     title: "Consolidación Regional",
     description: "Con el apoyo de sus hijos y continuando con su proceso de expansión, Punto Pas abre una nueva sucursal en Esmeraldas, consolidándose como una empresa comercial que ofrece una amplia variedad de productos, desde ferretería y materiales de construcción hasta electrodomésticos y artículos para el hogar.",
-    image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80"
+    image: "https://res.cloudinary.com/dbbkpdhze/image/upload/v1771536434/Historia_2025_qzxzic.png"
   },
   {
     year: "Presente",
     title: "Visión de Futuro",
     description: "Gracias a su trayectoria, visión empresarial y compromiso con la calidad, Punto Pas se proyecta como una empresa sólida y en constante crecimiento, orientada a satisfacer las necesidades de sus clientes y a fortalecer su presencia en el mercado regional.",
-    image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&q=80"
+    image: "https://res.cloudinary.com/dbbkpdhze/image/upload/v1771536434/Historia_2025_qzxzic.png"
   }
 ];
 
