@@ -11,10 +11,17 @@ const slides = [
   },
   {
     id: 2,
-    image: "https://res.cloudinary.com/dbbkpdhze/image/upload/v1771332997/Portada-1_fvdnon.jpg",
+    image: "https://res.cloudinary.com/dbbkpdhze/image/upload/v1771533974/Portada_2_PP_gsrjf2.png",
     title: "Calidad Garantizada",
     subtitle: "Los mejores productos para tu hogar y construcción",
     cta: "Comprar ahora",
+  },
+  {
+    id: 3,
+    image: "https://res.cloudinary.com/dbbkpdhze/image/upload/v1771332997/Portada-1_fvdnon.jpg",
+    title: "Tu Aliado de Confianza",
+    subtitle: "Más de 25 años de experiencia a tu servicio",
+    cta: "Explorar",
   },
 ];
 
