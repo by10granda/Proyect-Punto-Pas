@@ -123,16 +123,12 @@ const SucursalesSection = forwardRef<HTMLDivElement>((_, ref) => {
         </div>
 
         {/* Advertising Space - Middle */}
-        <div className="bg-gradient-to-r from-blue-500/20 to-cyan-500/20 rounded-2xl p-6 text-center mb-8 border border-blue-200">
-          <p className="text-blue-600/60 text-xs uppercase tracking-widest mb-3">Publicidad</p>
-          <div className="grid md:grid-cols-2 gap-4">
-            <div className="h-20 bg-white/80 rounded-xl flex items-center justify-center border-2 border-dashed border-blue-300 shadow-sm">
-              <span className="text-blue-400/60 text-sm">Espacio Publicitario 1</span>
-            </div>
-            <div className="h-20 bg-white/80 rounded-xl flex items-center justify-center border-2 border-dashed border-blue-300 shadow-sm">
-              <span className="text-blue-400/60 text-sm">Espacio Publicitario 2</span>
-            </div>
-          </div>
+        <div className="rounded-2xl overflow-hidden mb-8 shadow-xl hover:shadow-2xl transition-shadow">
+          <img 
+            src="https://res.cloudinary.com/dbbkpdhze/image/upload/v1771535149/muebles_lxrih1.jpg" 
+            alt="Promoción" 
+            className="w-full h-auto object-cover"
+          />
         </div>
 
         {/* Info Cards */}
@@ -155,11 +151,12 @@ const SucursalesSection = forwardRef<HTMLDivElement>((_, ref) => {
         </div>
 
         {/* Advertising Space - Bottom */}
-        <div className="bg-gradient-to-r from-teal-600 to-cyan-600 rounded-2xl p-4 text-center shadow-lg">
-          <p className="text-white/70 text-xs uppercase tracking-widest mb-2">Publicidad</p>
-          <div className="h-20 bg-white/20 rounded-xl flex items-center justify-center border-2 border-dashed border-white/40">
-            <span className="text-white/60 text-sm">Espacio Publicitario Destacado</span>
-          </div>
+        <div className="rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-shadow">
+          <img 
+            src="https://res.cloudinary.com/dbbkpdhze/image/upload/v1771535149/muebles_lxrih1.jpg" 
+            alt="Promoción" 
+            className="w-full h-auto object-cover"
+          />
         </div>
       </div>
     </section>
