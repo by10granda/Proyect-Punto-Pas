@@ -8,11 +8,11 @@ interface CategoryBarProps {
 }
 
 const categoryImages: Record<string, string> = {
-  "all": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80",
-  "FERRETERIA EN GENERAL": "https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?w=600&q=80",
+  "all": "https://res.cloudinary.com/dbbkpdhze/image/upload/v1771333603/Carrucell_electronicos_snysnk.png",
+  "FERRETERIA EN GENERAL": "https://res.cloudinary.com/dbbkpdhze/image/upload/v1771509694/Categoria_Ferretria_aurmbn.png",
   "HOGAR": "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=600&q=80",
   "HERRAMIENTAS": "https://images.unsplash.com/photo-1530124566582-a618bc2615dc?w=600&q=80",
-  "ELECTRICOS": "https://images.unsplash.com/photo-1565814329452-e1efa11c5b89?w=600&q=80",
+  "ELECTRICOS": "https://res.cloudinary.com/dbbkpdhze/image/upload/v1771334037/Carrucell_electronicos1_mtpwqz.png",
   "ADITIVOS": "https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=600&q=80",
 };
 
