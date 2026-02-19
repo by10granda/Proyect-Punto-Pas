@@ -4,7 +4,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 const slides = [
   {
     id: 1,
-    image: "https://res.cloudinary.com/dbbkpdhze/image/upload/v1771332997/Portada-1_fvdnon.jpg",
+    image: "https://res.cloudinary.com/dbbkpdhze/image/upload/v1771532367/Portada_P1_eboylw.png",
     title: "Bienvenidos",
     subtitle: "Todo lo que necesitas en un solo lugar",
     cta: "Ver productos",
