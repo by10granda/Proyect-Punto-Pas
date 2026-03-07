@@ -80,13 +80,13 @@ const Sucursales = () => {
       {/* Sucursales Content - Compacto */}
       <div className="pt-1">
         {/* Section Header - Reducido */}
-        <div className="bg-gradient-to-br from-cyan-50 via-blue-50 to-teal-50 py-4 px-4">
+        <div className="bg-gradient-to-br from-cyan-50 via-blue-50 to-teal-50 dark:from-cyan-950 dark:via-blue-950 dark:to-teal-950 py-4 px-4">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-6">
-              <h1 className="text-3xl md:text-4xl font-black text-gray-900 mb-2">
+              <h1 className="text-3xl md:text-4xl font-black text-gray-900 dark:text-white mb-2">
                 Nuestras Sucursales
               </h1>
-              <p className="text-gray-600 text-base">
+              <p className="text-gray-600 dark:text-gray-300 text-base">
                 Visítanos en cualquiera de nuestras ubicaciones
               </p>
             </div>
@@ -94,7 +94,7 @@ const Sucursales = () => {
             {/* Maps Grid - Compacto */}
             <div className="grid lg:grid-cols-2 gap-4 mb-4">
               {/* Sucursal 1 */}
-              <div className="bg-white rounded-2xl overflow-hidden shadow-lg border-2 border-cyan-100">
+              <div className="bg-white dark:bg-slate-800 rounded-2xl overflow-hidden shadow-lg border-2 border-cyan-100 dark:border-cyan-800">
                 <div className="bg-gradient-to-r from-cyan-600 to-blue-600 p-3">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
@@ -118,22 +118,22 @@ const Sucursales = () => {
                   ></iframe>
                 </div>
                 
-                <div className="p-3 bg-cyan-50">
+                <div className="p-3 bg-cyan-50 dark:bg-cyan-900/30">
                   <div className="flex flex-wrap gap-2 text-sm">
                     <div className="flex items-center gap-1">
-                      <Clock className="w-4 h-4 text-cyan-600" />
-                      <span className="text-gray-700">8:00 AM - 8:00 PM</span>
+                      <Clock className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
+                      <span className="text-gray-700 dark:text-gray-200">8:00 AM - 8:00 PM</span>
                     </div>
                     <div className="flex items-center gap-1">
-                      <Phone className="w-4 h-4 text-cyan-600" />
-                      <span className="text-gray-700">+593 XXX XXX XXXX</span>
+                      <Phone className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
+                      <span className="text-gray-700 dark:text-gray-200">+593 XXX XXX XXXX</span>
                     </div>
                   </div>
                 </div>
               </div>
 
               {/* Sucursal 2 */}
-              <div className="bg-white rounded-2xl overflow-hidden shadow-lg border-2 border-teal-100">
+              <div className="bg-white dark:bg-slate-800 rounded-2xl overflow-hidden shadow-lg border-2 border-teal-100 dark:border-teal-800">
                 <div className="bg-gradient-to-r from-teal-600 to-cyan-600 p-3">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
@@ -157,15 +157,15 @@ const Sucursales = () => {
                   ></iframe>
                 </div>
                 
-                <div className="p-3 bg-teal-50">
+                <div className="p-3 bg-teal-50 dark:bg-teal-900/30">
                   <div className="flex flex-wrap gap-2 text-sm">
                     <div className="flex items-center gap-1">
-                      <Clock className="w-4 h-4 text-teal-600" />
-                      <span className="text-gray-700">8:00 AM - 8:00 PM</span>
+                      <Clock className="w-4 h-4 text-teal-600 dark:text-teal-400" />
+                      <span className="text-gray-700 dark:text-gray-200">8:00 AM - 8:00 PM</span>
                     </div>
                     <div className="flex items-center gap-1">
-                      <Phone className="w-4 h-4 text-teal-600" />
-                      <span className="text-gray-700">+593 XXX XXX XXXX</span>
+                      <Phone className="w-4 h-4 text-teal-600 dark:text-teal-400" />
+                      <span className="text-gray-700 dark:text-gray-200">+593 XXX XXX XXXX</span>
                     </div>
                   </div>
                 </div>
@@ -174,20 +174,20 @@ const Sucursales = () => {
 
             {/* Info Cards - Compactos */}
             <div className="grid grid-cols-3 gap-3 mb-4">
-              <div className="bg-white rounded-xl p-3 text-center shadow border border-cyan-100">
+              <div className="bg-white dark:bg-slate-800 rounded-xl p-3 text-center shadow border border-cyan-100 dark:border-cyan-800">
                 <Clock className="w-6 h-6 text-cyan-500 mx-auto mb-1" />
-                <h3 className="text-gray-900 font-bold text-sm">Horario</h3>
-                <p className="text-gray-600 text-xs">8:00 AM - 8:00 PM</p>
+                <h3 className="text-gray-900 dark:text-white font-bold text-sm">Horario</h3>
+                <p className="text-gray-600 dark:text-gray-300 text-xs">8:00 AM - 8:00 PM</p>
               </div>
-              <div className="bg-white rounded-xl p-3 text-center shadow border border-teal-100">
+              <div className="bg-white dark:bg-slate-800 rounded-xl p-3 text-center shadow border border-teal-100 dark:border-teal-800">
                 <MapPin className="w-6 h-6 text-teal-500 mx-auto mb-1" />
-                <h3 className="text-gray-900 font-bold text-sm">Parqueo</h3>
-                <p className="text-gray-600 text-xs">Disponible</p>
+                <h3 className="text-gray-900 dark:text-white font-bold text-sm">Parqueo</h3>
+                <p className="text-gray-600 dark:text-gray-300 text-xs">Disponible</p>
               </div>
-              <div className="bg-white rounded-xl p-3 text-center shadow border border-blue-100">
+              <div className="bg-white dark:bg-slate-800 rounded-xl p-3 text-center shadow border border-blue-100 dark:border-blue-800">
                 <Phone className="w-6 h-6 text-blue-500 mx-auto mb-1" />
-                <h3 className="text-gray-900 font-bold text-sm">Atención</h3>
-                <p className="text-gray-600 text-xs">Personalizada</p>
+                <h3 className="text-gray-900 dark:text-white font-bold text-sm">Atención</h3>
+                <p className="text-gray-600 dark:text-gray-300 text-xs">Personalizada</p>
               </div>
             </div>
 

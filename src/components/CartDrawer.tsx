@@ -12,6 +12,8 @@ export interface CartItem {
   code: string;
   name: string;
   price: number;
+  originalPrice?: number;
+  discount?: number;
   image: string;
   quantity: number;
 }

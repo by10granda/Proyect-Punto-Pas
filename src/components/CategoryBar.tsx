@@ -1,6 +1,6 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, memo } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { categories } from "@/data/products";
+import { getCategories } from "@/data/products";
 
 interface CategoryBarProps {
   selectedCategory: string;
@@ -16,7 +16,7 @@ const categoryImages: Record<string, string> = {
   "ADITIVOS": "https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=600&q=80",
 };
 
-export const CategoryBar = ({ selectedCategory, onSelectCategory }: CategoryBarProps) => {
+export const CategoryBar = memo(({ selectedCategory, onSelectCategory }: CategoryBarProps) => {
   const [scrollPosition, setScrollPosition] = useState(0);
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -82,11 +82,11 @@ export const CategoryBar = ({ selectedCategory, onSelectCategory }: CategoryBarP
           className="grid grid-flow-col grid-rows-2 auto-cols-max gap-4 overflow-x-auto scrollbar-hide scroll-smooth pb-2"
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
-          {categories.map((category) => (
+          {getCategories().map((category) => (
             <button
               key={category.id}
               onClick={() => onSelectCategory(category.id)}
-              className={`flex flex-col items-center gap-3 p-4 rounded-2xl transition-all duration-300 flex-shrink-0 group ${
+              className={`flex flex-col items-center gap-3 p-4 rounded-2xl transition-all duration-150 flex-shrink-0 group ${
                 selectedCategory === category.id
                   ? "bg-primary shadow-xl scale-105"
                   : "bg-muted hover:bg-primary/10 hover:shadow-lg hover:scale-102"
@@ -116,4 +116,4 @@ export const CategoryBar = ({ selectedCategory, onSelectCategory }: CategoryBarP
       </div>
     </div>
   );
-};
+});

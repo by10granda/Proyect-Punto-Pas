@@ -18,7 +18,7 @@ export const OffersCarousel = ({ onViewAll }: OffersCarouselProps) => {
             <img
               src="https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=1200&q=80"
               alt="Ofertas Especiales"
-              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+              className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105"
             />
             {/* Overlay gradiente */}
             <div className="absolute inset-0 bg-gradient-to-r from-primary/90 via-primary/70 to-transparent" />

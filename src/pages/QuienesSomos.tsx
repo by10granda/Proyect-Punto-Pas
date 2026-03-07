@@ -15,13 +15,19 @@ const milestones = [
   {
     year: "2000",
     title: "Nuestros Inicios",
-    description: "Punto Pas inicia sus actividades bajo la dirección de Franco Becerra, dedicándose a la comercialización de madera. Gracias al esfuerzo, trabajo constante y compromiso con sus clientes, la empresa logra posicionarse como un proveedor confiable en su sector.",
+    description: "Punto Pas inicia sus actividades en el año 2000 bajo la dirección del Empresario Franco Becerra, dedicándose a la comercialización de madera. Gracias al esfuerzo, trabajo constante y compromiso con sus clientes, la empresa logra posicionarse como un proveedor confiable en su sector.",
     image: "https://res.cloudinary.com/dbbkpdhze/image/upload/v1771535501/Historia_Imagen1_xesimt.png"
+  },
+  {
+    year: "2007",
+    title: "Primer Local Stihl",
+    description: "Con el valioso apoyo y respaldo incondicional de su esposa Marlene Ambuldi, El empresario Franco Becerra materializa una visión empresarial estratégica al fundar el primer local Stihl, marcando así el inicio de una alianza comercial con una de las marcas más prestigiosas del sector de maquinaria y equipos de exterior.",
+    image: "https://res.cloudinary.com/dbbkpdhze/image/upload/v1771619722/Stihl_Historia2007_exyqd0.jpg"
   },
   {
     year: "2008",
     title: "Expansión y Diversificación",
-    description: "Con una visión de crecimiento y diversificación, Punto Pas abre su primera sucursal en San Lorenzo, incorporando la franquicia Disensa, y de manera conjunta inaugura un local de Stihl, ampliando su oferta hacia productos de ferretería, construcción y maquinaria.",
+    description: "Con una visión de crecimiento y diversificación, Punto Pas abre su primera sucursal en San Lorenzo, incorporando la franquicia Disensa, ampliando así su oferta hacia productos de ferretería, construcción y maquinaria.",
     image: "https://res.cloudinary.com/dbbkpdhze/image/upload/v1771535752/Disensa_2008_qcyig9.jpg"
   },
   {
@@ -49,7 +55,7 @@ export const QuienesSomos = () => {
 
   const heroSlides = [
     {
-      image: "https://res.cloudinary.com/dbbkpdhze/image/upload/v1771529556/Portada_QuienesSomos_qfcxdy.jpg",
+      image: "https://res.cloudinary.com/dbbkpdhze/image/upload/v1771603921/QuienesSomos_Portada_kobvuc.jpg",
       title: "Quiénes Somos",
       subtitle: "25 años de historia, compromiso y servicio",
       overlay: "from-primary via-primary/80 to-transparent"
@@ -212,10 +218,16 @@ export const QuienesSomos = () => {
               </h2>
             </div>
             <p className="text-muted-foreground leading-relaxed text-justify">
-              En <strong className="text-foreground">PuntoPas</strong> somos una empresa dedicada a la comercialización de una amplia variedad de productos para el hogar, la construcción y el uso diario. Ofrecemos desde artículos de ferretería y materiales de construcción hasta electrodomésticos y productos de consumo, brindando a nuestros clientes soluciones completas en un solo lugar.
+              En <strong className="text-foreground">Punto-Pas</strong> somos una empresa 
+              dedicada a la comercialización de una amplia variedad de productos para el hogar, 
+              la construcción y el uso diario. Ofrecemos desde artículos de ferretería y materiales 
+              de construcción hasta electrodomésticos, brindando a nuestros clientes soluciones 
+              completas en un solo lugar.
             </p>
             <p className="text-muted-foreground leading-relaxed mt-4 text-justify">
-              Nos caracterizamos por la <strong className="text-primary">calidad de nuestros productos</strong>, la atención personalizada y el compromiso con la satisfacción de quienes confían en nosotros.
+              Nos caracterizamos por la <strong className="text-primary">calidad de nuestros productos</strong>, 
+              la atención personalizada y el compromiso con la satisfacción de quienes 
+              confían en nosotros.
             </p>
           </div>
 
@@ -232,7 +244,9 @@ export const QuienesSomos = () => {
                 </h2>
               </div>
               <p className="text-muted-foreground leading-relaxed text-justify">
-                Satisfacer las necesidades de nuestros clientes ofreciendo productos variados, confiables y a precios competitivos, acompañados de un servicio responsable y cercano, que garantice una experiencia de compra segura y eficiente.
+                Satisfacer las necesidades de nuestros clientes ofreciendo productos variados, 
+                confiables y a precios competitivos, acompañados de un servicio responsable y 
+                cercano, que garantice una experiencia de compra segura y eficiente.
               </p>
             </div>
 
@@ -247,7 +261,10 @@ export const QuienesSomos = () => {
                 </h2>
               </div>
               <p className="text-muted-foreground leading-relaxed text-justify">
-                Ser una empresa referente en la comercialización de productos para el hogar, la construcción y el comercio en general, reconocida por su variedad, calidad y excelencia en el servicio, consolidándonos como una opción confiable y preferida por nuestros clientes.
+                Ser una empresa referente en la comercialización de productos para el hogar, 
+                la construcción y el comercio en general, reconocida por su variedad, 
+                calidad y excelencia en el servicio, consolidándonos como una opción confiable 
+                y preferida por nuestros clientes.
               </p>
             </div>
           </div>

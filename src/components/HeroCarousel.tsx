@@ -1,24 +1,25 @@
 import { useState, useEffect, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const slides = [
   {
     id: 1,
-    image: "https://res.cloudinary.com/dbbkpdhze/image/upload/v1771532367/Portada_P1_eboylw.png",
+    image: "https://res.cloudinary.com/dbbkpdhze/image/upload/v1771599318/Portada_3_evdruh.png",
     title: "Bienvenidos",
     subtitle: "Todo lo que necesitas en un solo lugar",
     cta: "Ver productos",
   },
   {
     id: 2,
-    image: "https://res.cloudinary.com/dbbkpdhze/image/upload/v1771533974/Portada_2_PP_gsrjf2.png",
+    image: "https://res.cloudinary.com/dbbkpdhze/image/upload/v1771600517/Portada_2_emjt7n.png",
     title: "Calidad Garantizada",
     subtitle: "Los mejores productos para tu hogar y construcción",
     cta: "Comprar ahora",
   },
   {
     id: 3,
-    image: "https://res.cloudinary.com/dbbkpdhze/image/upload/v1771332997/Portada-1_fvdnon.jpg",
+    image: "https://res.cloudinary.com/dbbkpdhze/image/upload/v1771603530/Portada_1_btm1ot.png",
     title: "Tu Aliado de Confianza",
     subtitle: "Más de 25 años de experiencia a tu servicio",
     cta: "Explorar",
@@ -28,6 +29,7 @@ const slides = [
 export const HeroCarousel = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+  const navigate = useNavigate();
 
   const handleImageError = (index: number) => {
     console.error(`Error loading hero image ${index}`);
@@ -57,35 +59,21 @@ export const HeroCarousel = () => {
     <div className="relative w-full overflow-hidden">
       {/* Slides container */}
       <div
-        className="flex transition-transform duration-500 ease-out"
+        className="flex transition-transform duration-200 ease-out"
         style={{ transform: `translateX(-${currentSlide * 100}%)` }}
       >
         {slides.map((slide, index) => (
           <div
             key={slide.id}
             className="w-full flex-shrink-0 relative aspect-[16/6]"
+            onClick={() => slide.id === 2 ? navigate('/?tab=offers') : null}
           >
             <img
               src={slide.image}
               alt={slide.title}
               onError={() => handleImageError(index)}
-              className="w-full h-full object-cover"
+              className={`w-full h-full object-cover ${slide.id === 2 ? 'cursor-pointer' : ''}`}
             />
-            {/* Gradient overlay */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-
-            {/* Content overlay */}
-            <div className="absolute bottom-4 left-4 right-4 text-primary-foreground">
-              <h2 className="text-2xl md:text-3xl font-black mb-1 drop-shadow-lg">
-                {slide.title}
-              </h2>
-              <p className="text-lg font-semibold mb-3 drop-shadow-md opacity-90">
-                {slide.subtitle}
-              </p>
-              <button className="bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-2.5 rounded-full font-bold text-sm shadow-lg transition-all duration-200 active:scale-95">
-                {slide.cta}
-              </button>
-            </div>
           </div>
         ))}
       </div>

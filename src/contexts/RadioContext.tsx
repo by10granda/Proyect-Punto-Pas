@@ -117,16 +117,21 @@ export function RadioProvider({ children }: { children: ReactNode }) {
         audioRef.current.src = `${RADIO_STREAM_URL}?t=${Date.now()}`;
         audioRef.current.load();
         
-        await audioRef.current.play();
+        const playPromise = audioRef.current.play();
+        
+        if (playPromise !== undefined) {
+          await playPromise;
+        }
         
         // Actualizar metadata inmediatamente
         fetchMetadata();
       }
     } catch (err: any) {
-      if (err.name === 'NotAllowedError') {
+      console.error('Radio error:', err);
+      if (err.name === 'NotAllowedError' || err.name === 'AbortError') {
         setError('Haz clic en la página primero, luego en Play');
       } else {
-        setError(`Error: ${err.message || 'No se pudo reproducir'}`);
+        setError('Radio no disponible');
       }
       
       setIsPlaying(false);

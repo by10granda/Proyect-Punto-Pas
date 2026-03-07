@@ -25,7 +25,9 @@ export const ProductModal = ({ product, isOpen, onClose, onAddToCart }: ProductM
   if (!product) return null;
 
   // Carrusel con imagen principal y video (si existe)
-  const productImages = [product.image];
+  const productImages = product.images 
+    ? [product.image, ...product.images] 
+    : [product.image];
   
   // Agregar video al final del array si existe
   if (product.video) {

@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef } from "react";
+import { useState, useMemo, useRef, useEffect } from "react";
 import { Header } from "@/components/Header";
 import { CategoryBar } from "@/components/CategoryBar";
 import { HeroCarousel } from "@/components/HeroCarousel";
@@ -10,18 +10,24 @@ import { CartDrawer, CartItem } from "@/components/CartDrawer";
 import { Footer } from "@/components/Footer";
 import { WhatsAppButton } from "@/components/WhatsAppButton";
 import {
-  getProductsByCategory,
   getDiscountedProducts,
-  searchProducts,
   products,
   categories,
+  getCategories,
   Product,
+  loadProductsFromAPI,
 } from "@/data/products";
+import { authService } from "@/services/api";
 import { toast } from "sonner";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 const Index = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const [allProducts, setAllProducts] = useState<Product[]>(products);
+  const [isLoadingProducts, setIsLoadingProducts] = useState(true);
+  const [apiError, setApiError] = useState<string | null>(null);
+  const [apiStatus, setApiStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [activeTab, setActiveTab] = useState("home");
   const [searchQuery, setSearchQuery] = useState("");
@@ -33,6 +39,9 @@ const Index = () => {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isProductModalOpen, setIsProductModalOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [productCategories, setProductCategories] = useState(categories);
+  const [visibleCount, setVisibleCount] = useState(12);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
 
   // Refs for scrolling to sections
   const categoriesRef = useRef<HTMLDivElement>(null);
@@ -44,19 +53,92 @@ const Index = () => {
     localStorage.setItem("puntopas_cart", JSON.stringify(newCart));
   };
 
-  const displayedProducts = useMemo(() => {
-    if (searchQuery) {
-      return searchProducts(searchQuery);
+  // Handle tab from URL query params
+  useEffect(() => {
+    const tab = searchParams.get("tab");
+    if (tab === "offers") {
+      setActiveTab("offers");
     }
+  }, [searchParams]);
+
+  // Reset pagination when filters change
+  useEffect(() => {
+    setVisibleCount(12);
+  }, [selectedCategory, activeTab, searchQuery, offersCategory]);
+
+  // Function to load products from API
+  const loadAPIProducts = async () => {
+    try {
+      setIsLoadingProducts(true);
+      setApiStatus('loading');
+      setApiError(null);
+      
+      const apiProducts = await loadProductsFromAPI();
+      
+      if (apiProducts && apiProducts.length > 0) {
+        setAllProducts(apiProducts);
+        setProductCategories(getCategories());
+        setApiStatus('success');
+      } else {
+        setApiStatus('error');
+        setApiError('No se recibieron productos de la API');
+      }
+    } catch (error: any) {
+      console.error('❌ Error cargando productos de API:', error.message);
+      setApiStatus('error');
+      setApiError(error.message);
+    } finally {
+      setIsLoadingProducts(false);
+    }
+  };
+
+  // Load products from API on mount
+  useEffect(() => {
+    loadAPIProducts();
+  }, []);
+
+  const filteredProducts = useMemo(() => {
+    const sourceProducts = apiStatus === 'success' && allProducts.length > 0 ? allProducts : products;
+    
+    if (searchQuery) {
+      const lowerQuery = searchQuery.toLowerCase();
+      return sourceProducts.filter(p => 
+        p.isActive && (
+          p.name.toLowerCase().includes(lowerQuery) ||
+          p.description?.toLowerCase().includes(lowerQuery) ||
+          p.brand.toLowerCase().includes(lowerQuery) ||
+          p.code.toLowerCase().includes(lowerQuery)
+        )
+      );
+    }
+    
     if (activeTab === "offers") {
-      const allOffers = getDiscountedProducts();
+      const allOffers = sourceProducts.filter(p => p.isActive && p.discount && p.discount > 0);
       if (offersCategory === "all") {
         return allOffers;
       }
       return allOffers.filter(p => p.category === offersCategory || p.type === offersCategory);
     }
-    return getProductsByCategory(selectedCategory);
-  }, [selectedCategory, activeTab, searchQuery, offersCategory]);
+    
+    if (selectedCategory === "all") {
+      return sourceProducts.filter(p => p.isActive);
+    }
+    return sourceProducts.filter(p => p.isActive && (p.category === selectedCategory || p.type === selectedCategory));
+  }, [selectedCategory, activeTab, searchQuery, offersCategory, allProducts, apiStatus]);
+
+  const displayedProducts = useMemo(() => {
+    return filteredProducts.slice(0, visibleCount);
+  }, [filteredProducts, visibleCount]);
+
+  const hasMore = visibleCount < filteredProducts.length;
+
+  const loadMore = () => {
+    setIsLoadingMore(true);
+    setTimeout(() => {
+      setVisibleCount(prev => prev + 12);
+      setIsLoadingMore(false);
+    }, 300);
+  };
 
   const cartItemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
@@ -184,7 +266,7 @@ const Index = () => {
       if (offersCategory === "all") {
         return "🔥 Todas las Ofertas";
       }
-      const categoryName = categories.find(c => c.id === offersCategory)?.name || offersCategory;
+      const categoryName = productCategories.find(c => c.id === offersCategory)?.name || offersCategory;
       return `🔥 Ofertas: ${categoryName}`;
     }
     return "🛒 Todos Nuestros Productos";
@@ -205,7 +287,16 @@ const Index = () => {
           <div ref={categoriesRef}>
             <CategoryBar 
               selectedCategory={selectedCategory}
-              onSelectCategory={setSelectedCategory}
+              onSelectCategory={(cat) => {
+                setSelectedCategory(cat);
+                // Scroll to products section after selecting category
+                setTimeout(() => {
+                  const productsSection = document.getElementById('productos');
+                  if (productsSection) {
+                    productsSection.scrollIntoView({ behavior: 'auto', block: 'start' });
+                  }
+                }, 50);
+              }}
             />
           </div>
         </>
@@ -219,22 +310,23 @@ const Index = () => {
             setActiveTab("home");
             // Scroll to products section after switching to home tab
             setTimeout(() => {
-              if (productsRef.current) {
-                productsRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+              const productsSection = document.getElementById('productos');
+              if (productsSection) {
+                productsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
               }
             }, 100);
           }}
         />
       )}
 
-      <div ref={productsRef}>
+      <div ref={productsRef} id="productos">
         {/* Category filter for Offers tab */}
         {activeTab === "offers" && (
           <div className="px-4 py-4 bg-gradient-to-r from-primary/5 via-background to-primary/5">
             <div className="max-w-7xl mx-auto">
               <p className="text-sm text-muted-foreground mb-3 font-medium">Filtrar ofertas por categoría:</p>
               <div className="flex flex-wrap gap-2">
-                {categories.map((category) => {
+                {productCategories.map((category) => {
                   const count = category.id === "all" 
                     ? getDiscountedProducts().length 
                     : getDiscountedProducts().filter(p => p.category === category.id || p.type === category.id).length;
@@ -274,10 +366,41 @@ const Index = () => {
           onProductClick={handleProductClick}
           title={getTitle()}
         />
+
+        {hasMore && (
+          <div className="flex justify-center py-8">
+            <button
+              onClick={loadMore}
+              disabled={isLoadingMore}
+              className="px-8 py-3 bg-primary text-primary-foreground rounded-full font-semibold hover:bg-primary/90 transition-all duration-150 shadow-lg hover:shadow-xl disabled:opacity-70 flex items-center gap-2"
+            >
+              {isLoadingMore ? (
+                <>
+                  <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+                  Cargando...
+                </>
+              ) : (
+                "Ver más productos"
+              )}
+            </button>
+          </div>
+        )}
       </div>
 
       {activeTab === "home" && !searchQuery && (
-        <BrandsBanner />
+        <BrandsBanner 
+          products={allProducts} 
+          onBrandClick={(brand) => {
+            setSearchQuery(brand);
+            setActiveTab("home");
+            setTimeout(() => {
+              const productsSection = document.getElementById('productos');
+              if (productsSection) {
+                productsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              }
+            }, 100);
+          }}
+        />
       )}
 
       <Footer />

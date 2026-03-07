@@ -139,7 +139,7 @@
 
   /* Product card hover effect */
   .product-card {
-    @apply transition-all duration-300 ease-out;
+    @apply transition-all duration-150 ease-out;
   }
 
   .product-card:hover {

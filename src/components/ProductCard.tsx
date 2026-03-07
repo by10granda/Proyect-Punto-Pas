@@ -1,6 +1,6 @@
 import { ShoppingCart, Heart, Star } from "lucide-react";
 import { Product } from "@/data/products";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, memo } from "react";
 
 interface ProductCardProps {
   product: Product;
@@ -8,7 +8,7 @@ interface ProductCardProps {
   onProductClick: (product: Product) => void;
 }
 
-export const ProductCard = ({ product, onAddToCart, onProductClick }: ProductCardProps) => {
+export const ProductCard = memo(({ product, onAddToCart, onProductClick }: ProductCardProps) => {
   const [isFavorite, setIsFavorite] = useState(false);
   const [imageError, setImageError] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
@@ -23,7 +23,7 @@ export const ProductCard = ({ product, onAddToCart, onProductClick }: ProductCar
         setLoadingTimeout(true);
         setImageLoaded(true);
       }
-    }, 5000);
+    }, 2000);
 
     return () => clearTimeout(timer);
   }, [product.image, imageLoaded, imageError]);
@@ -129,7 +129,7 @@ export const ProductCard = ({ product, onAddToCart, onProductClick }: ProductCar
             loop
             playsInline
             preload="metadata"
-            className={`absolute inset-0 w-full h-full object-cover z-10 transition-opacity duration-300 ${
+            className={`absolute inset-0 w-full h-full object-cover z-10 transition-opacity duration-150 ${
               isHovering ? 'opacity-100' : 'opacity-0'
             }`}
           />
@@ -139,7 +139,7 @@ export const ProductCard = ({ product, onAddToCart, onProductClick }: ProductCar
         <img
           src={imageSrc}
           alt={product.name}
-          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${
+          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-150 ${
             imageLoaded || loadingTimeout ? 'opacity-100' : 'opacity-0'
           } ${product.video && isHovering ? 'opacity-0' : ''}`}
           onLoad={handleImageLoad}
@@ -176,7 +176,7 @@ export const ProductCard = ({ product, onAddToCart, onProductClick }: ProductCar
 
         {/* Video indicator badge */}
         {product.video && (
-          <div className={`absolute bottom-1 right-1 px-1.5 py-0.5 rounded-full font-medium z-30 flex items-center gap-1 transition-all duration-300 ${
+          <div className={`absolute bottom-1 right-1 px-1.5 py-0.5 rounded-full font-medium z-30 flex items-center gap-1 transition-all duration-150 ${
             isHovering ? 'bg-primary text-white scale-110' : 'bg-black/70 text-white'
           }`}>
             <span className="text-[9px]">{isHovering ? '▶ Reproduciendo' : '▶ Video'}</span>
@@ -225,4 +225,4 @@ export const ProductCard = ({ product, onAddToCart, onProductClick }: ProductCar
       </div>
     </div>
   );
-};
+});

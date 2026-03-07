@@ -22,9 +22,11 @@ export const WhatsAppButton = () => {
         alt="WhatsApp"
         className="w-7 h-7"
         onError={(e) => {
-          // Fallback a SVG si la imagen no carga
-          e.currentTarget.style.display = 'none';
-          e.currentTarget.nextElementSibling.style.display = 'block';
+          const target = e.currentTarget as HTMLImageElement;
+          target.style.display = 'none';
+          if (target.nextElementSibling) {
+            (target.nextElementSibling as HTMLElement).style.display = 'block';
+          }
         }}
       />
       <svg 

@@ -6,12 +6,12 @@ export const Footer = () => {
   return (
     <footer id="contacto" className="bg-slate-900 text-white">
       {/* Main footer content */}
-      <div className="max-w-7xl mx-auto px-4 py-16">
-        <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-12">
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
           {/* Brand section */}
-          <div className="lg:col-span-2">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-16 h-16 shadow-lg">
+          <div className="lg:col-span-1">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-12 h-12 shadow-lg">
                 <img 
                   src={logoPuntoPas} 
                   alt="Punto Pas" 
@@ -19,20 +19,19 @@ export const Footer = () => {
                 />
               </div>
               <div>
-                <h3 className="text-2xl font-black tracking-tight">PUNTO PAS</h3>
+                <h3 className="text-xl font-black tracking-tight">PUNTO PAS</h3>
                 <p className="text-xs text-slate-400 tracking-widest">ENCUENTRA TODO EN UN SOLO LUGAR</p>
               </div>
             </div>
-            <p className="text-slate-400 leading-relaxed text-sm">
-              Tu ferretería de confianza. Ofrecemos productos de la más alta calidad 
-              para construcción, hogar y proyectos profesionales.
+            <p className="text-slate-400 text-xs leading-relaxed">
+              Tu ferretería de confianza.
             </p>
           </div>
 
           {/* Services / Links */}
           <div>
-            <h4 className="text-lg font-bold mb-6 flex items-center gap-2">
-              <span className="w-8 h-1 bg-primary rounded-full"></span>
+            <h4 className="text-sm font-bold mb-4 flex items-center gap-2">
+              <span className="w-6 h-1 bg-primary rounded-full"></span>
               Servicios
             </h4>
             <div className="space-y-3">
@@ -86,44 +85,44 @@ export const Footer = () => {
 
           {/* Contact Info */}
           <div>
-            <h4 className="text-lg font-bold mb-6 flex items-center gap-2">
-              <span className="w-8 h-1 bg-primary rounded-full"></span>
+            <h4 className="text-sm font-bold mb-4 flex items-center gap-2">
+              <span className="w-6 h-1 bg-primary rounded-full"></span>
               Contáctanos
             </h4>
-            <div className="space-y-4">
+            <div className="space-y-3">
               <a 
                 href="tel:+593992085931" 
-                className="flex items-center gap-3 text-slate-300 hover:text-primary transition-colors group"
+                className="flex items-center gap-2 text-slate-300 hover:text-primary transition-colors group"
               >
-                <div className="w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                  <Phone className="w-5 h-5" />
+                <div className="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                  <Phone className="w-4 h-4" />
                 </div>
                 <div>
-                  <p className="text-xs text-slate-500">Teléfono / WhatsApp</p>
-                  <p className="font-medium">+593 99 208 5931</p>
+                  <p className="text-xs text-slate-500">Teléfono</p>
+                  <p className="text-sm font-medium">+593 99 208 5931</p>
                 </div>
               </a>
 
               <a 
                 href="mailto:contacto@puntopas.com" 
-                className="flex items-center gap-3 text-slate-300 hover:text-primary transition-colors group"
+                className="flex items-center gap-2 text-slate-300 hover:text-primary transition-colors group"
               >
-                <div className="w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                  <Mail className="w-5 h-5" />
+                <div className="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                  <Mail className="w-4 h-4" />
                 </div>
                 <div>
                   <p className="text-xs text-slate-500">Email</p>
-                  <p className="font-medium">contacto@puntopas.com</p>
+                  <p className="text-sm font-medium">contacto@puntopas.com</p>
                 </div>
               </a>
 
-              <div className="flex items-center gap-3 text-slate-300">
-                <div className="w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center">
-                  <Clock className="w-5 h-5" />
+              <div className="flex items-center gap-2 text-slate-300">
+                <div className="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center">
+                  <Clock className="w-4 h-4" />
                 </div>
                 <div>
                   <p className="text-xs text-slate-500">Horario</p>
-                  <p className="font-medium">Lun - Sáb: 8:00 AM - 6:00 PM</p>
+                  <p className="text-sm font-medium">Lun - Sáb: 8AM - 6PM</p>
                 </div>
               </div>
             </div>
@@ -131,9 +130,9 @@ export const Footer = () => {
 
           {/* Social Media */}
           <div>
-            <h4 className="text-lg font-bold mb-6 flex items-center gap-2">
-              <span className="w-8 h-1 bg-primary rounded-full"></span>
-              Redes Sociales
+            <h4 className="text-sm font-bold mb-4 flex items-center gap-2">
+              <span className="w-6 h-1 bg-primary rounded-full"></span>
+              Redes
             </h4>
             <div className="space-y-3">
               <a
@@ -167,45 +166,20 @@ export const Footer = () => {
             </div>
           </div>
 
-          {/* Location */}
-          <div>
-            <h4 className="text-lg font-bold mb-6 flex items-center gap-2">
-              <span className="w-8 h-1 bg-primary rounded-full"></span>
-              Ubicación
-            </h4>
-            <div className="flex items-start gap-3 text-slate-300 mb-4">
-              <MapPin className="w-5 h-5 mt-0.5 flex-shrink-0 text-primary" />
-              <p className="text-sm">Ecuador - Tu ferretería de confianza cerca de ti</p>
-            </div>
-            <div className="rounded-2xl overflow-hidden shadow-2xl border border-slate-700">
-              <iframe 
-                src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d10925.215127800555!2d-78.81681414407421!3d1.2804919531416215!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1ses!2sec!4v1770175357122!5m2!1ses!2sec" 
-                width="100%" 
-                height="180" 
-                style={{ border: 0 }} 
-                allowFullScreen 
-                loading="lazy" 
-                referrerPolicy="no-referrer-when-downgrade"
-                title="Ubicación Punto Pas"
-                className="grayscale hover:grayscale-0 transition-all duration-500"
-              />
-            </div>
-          </div>
         </div>
       </div>
 
       {/* Bottom bar */}
       <div className="border-t border-slate-800">
-        <div className="max-w-7xl mx-auto px-4 py-6 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-sm text-slate-500 text-center md:text-left">
+        <div className="max-w-7xl mx-auto px-4 py-3 flex flex-col md:flex-row items-center justify-between gap-2">
+          <p className="text-xs text-slate-500 text-center md:text-left">
             © 2024 <span className="font-bold text-primary">Punto Pas</span>. Todos los derechos reservados.
           </p>
-          <div className="flex items-center gap-6 text-xs text-slate-500">
-            <Link to="/privacidad" className="hover:text-primary transition-colors flex items-center gap-1">
-              <Shield className="w-3 h-3" />
-              Política de Privacidad
+          <div className="flex items-center gap-4 text-xs text-slate-500">
+            <Link to="/privacidad" className="hover:text-primary transition-colors">
+              Privacidad
             </Link>
-            <span>Hecho con ❤️ en Ecuador</span>
+            <span>Hecho en Ecuador</span>
           </div>
         </div>
       </div>

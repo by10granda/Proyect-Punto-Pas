@@ -1,5 +1,6 @@
 import { Product } from "@/data/products";
 import { ProductCard } from "./ProductCard";
+import { memo } from "react";
 
 interface ProductGridProps {
   products: Product[];
@@ -8,7 +9,7 @@ interface ProductGridProps {
   title?: string;
 }
 
-export const ProductGrid = ({ products, onAddToCart, onProductClick, title }: ProductGridProps) => {
+export const ProductGrid = memo(({ products, onAddToCart, onProductClick, title }: ProductGridProps) => {
   if (products.length === 0) {
     return (
       <div className="px-4 py-12 text-center">
@@ -45,4 +46,4 @@ export const ProductGrid = ({ products, onAddToCart, onProductClick, title }: Pr
       </div>
     </div>
   );
-};
+});
