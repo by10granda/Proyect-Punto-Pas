@@ -41,6 +41,8 @@ const Index = () => {
   const [brandsBannerBrand, setBrandsBannerBrand] = useState("all");
   const [imageCollageBrand, setImageCollageBrand] = useState("all");
   const [carouselCategory, setCarouselCategory] = useState("LAVADORAS Y SECADORAS");
+  // Estado independiente para WeeklyDeals
+  const [weeklyDealsCategory, setWeeklyDealsCategory] = useState("all");
   const [cart, setCart] = useState<CartItem[]>(() => {
     const saved = localStorage.getItem("puntopas_cart");
     return saved ? JSON.parse(saved) : [];
@@ -148,6 +150,21 @@ const Index = () => {
       p.brand?.toUpperCase().trim() === imageCollageBrand.toUpperCase().trim()
     );
   }, [imageCollageBrand, allProducts]);
+
+  // Productos filtrados para WeeklyDeals (independiente)
+  const weeklyDealsProducts = useMemo(() => {
+    let dealsProducts = allProducts.filter(p => p.discount && p.discount > 0 && p.isActive);
+    
+    if (weeklyDealsCategory !== "all") {
+      const categoryUpper = weeklyDealsCategory.toUpperCase().trim();
+      dealsProducts = dealsProducts.filter(p => 
+        p.category?.toUpperCase().trim() === categoryUpper || 
+        p.type?.toUpperCase().trim() === categoryUpper
+      );
+    }
+    
+    return dealsProducts;
+  }, [weeklyDealsCategory, allProducts]);
 
   const displayedProducts = useMemo(() => {
     return filteredProducts;
@@ -500,23 +517,27 @@ const Index = () => {
              />
              </div>
 
+             <div id="weeklydeals-section">
              <WeeklyDeals
-              images={[
-                "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777429427/Descuento1_s.png",
-                "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777429432/Descuento2_s.png",
-                "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777429429/Descuento3_s.png",
-                "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777429442/Descuento4_s.png",
-                "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777433322/Descuento5_s.png",
-                "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777429436/Descuento6_s.png",
-                "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777429439/Descuento7_s.png",
-                "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777429448/Descuento8_s.png",
-              ]}
-              products={filteredProducts}
-              onProductClick={(product) => {
-                setSelectedProduct(product);
-                setIsProductModalOpen(true);
-              }}
-            />
+               images={[
+                 "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777429427/Descuento1_s.png",
+                 "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777429432/Descuento2_s.png",
+                 "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777429429/Descuento3_s.png",
+                 "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777429442/Descuento4_s.png",
+                 "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777433322/Descuento5_s.png",
+                 "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777429436/Descuento6_s.png",
+                 "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777429439/Descuento7_s.png",
+                 "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777429448/Descuento8_s.png",
+               ]}
+               products={weeklyDealsProducts}
+               selectedCategory={weeklyDealsCategory}
+               onCategoryChange={setWeeklyDealsCategory}
+               onProductClick={(product) => {
+                 setSelectedProduct(product);
+                 setIsProductModalOpen(true);
+               }}
+             />
+             </div>
           </>
         )}
       </div>
