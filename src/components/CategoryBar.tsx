@@ -41,8 +41,8 @@ export const CategoryBar = ({ selectedCategory, onSelectCategory, products = [] 
   const itemWidth = 380;
 
   const getProductCount = (type: string) => {
-    if (type === "all") return products.length;
-    return products.filter(p => p.type === type).length;
+    if (type === "all") return products.filter(p => p.isActive).length;
+    return products.filter(p => p.isActive && (p.type === type || p.category === type)).length;
   };
 
   const updateScrollButtons = () => {
@@ -158,7 +158,7 @@ export const CategoryBar = ({ selectedCategory, onSelectCategory, products = [] 
                       <img src={getCategoryImage(type)} alt={type} className="w-full h-full object-cover" />
                     </div>
                     <span className="text-xs text-center font-medium">{type}</span>
-                    <span className="text-[10px] text-gray-500 hidden">{getProductCount(type)}</span>
+                    <span className="text-[10px] text-gray-500">{getProductCount(type)}</span>
                   </button>
                 ))}
               </div>
