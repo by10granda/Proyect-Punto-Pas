@@ -23,7 +23,7 @@ export const Footer = ({ onCartClick }: FooterProps) => {
                 />
               </div>
               <div>
-                <h3 className="text-2xl font-black tracking-tight">PUNTO PAS</h3>
+                <h3 className="text-2xl font-black tracking-tight text-white">PUNTO PAS</h3>
                 <p className="text-xs text-white/80 font-medium tracking-wide">ENCUENTRA TODO EN UN SOLO LUGAR</p>
               </div>
             </div>
@@ -38,7 +38,7 @@ export const Footer = ({ onCartClick }: FooterProps) => {
                   rel="noopener noreferrer"
                   className="w-10 h-10 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition-all hover:scale-110"
                 >
-                  <ExternalLink className="w-5 h-5" />
+                  <ExternalLink className="w-5 h-5 text-white" />
                 </a>
               <a
                 href="https://www.tiktok.com/@punto_pas"
@@ -46,7 +46,7 @@ export const Footer = ({ onCartClick }: FooterProps) => {
                 rel="noopener noreferrer"
                 className="w-10 h-10 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition-all hover:scale-110 border border-white/20"
               >
-                <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
+                <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-white">
                   <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
                 </svg>
               </a>
@@ -56,14 +56,14 @@ export const Footer = ({ onCartClick }: FooterProps) => {
                 rel="noopener noreferrer"
                 className="w-10 h-10 rounded-lg bg-white/10 hover:bg-green-500 flex items-center justify-center transition-all hover:scale-110"
               >
-                <MessageCircle className="w-5 h-5" />
+                <MessageCircle className="w-5 h-5 text-white" />
               </a>
             </div>
           </div>
           
           {/* Navigation - Minimalist */}
           <div>
-            <h4 className="text-base font-bold mb-5 flex items-center gap-2">
+            <h4 className="text-base font-bold mb-5 flex items-center gap-2 text-white">
               <span className="w-8 h-1 bg-white/30 rounded-full"></span>
               Navegación
             </h4>
@@ -73,27 +73,27 @@ export const Footer = ({ onCartClick }: FooterProps) => {
                 className="flex items-center gap-3 text-white/70 hover:text-white transition-colors group"
               >
                 <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center group-hover:bg-white/20 transition-colors">
-                  <Home className="w-4 h-4" />
+                  <Home className="w-4 h-4 text-white" />
                 </div>
-                <span>Inicio</span>
+                <span className="text-white">Inicio</span>
               </Link>
               <Link 
                 to="/quienes-somos" 
                 className="flex items-center gap-3 text-white/70 hover:text-white transition-colors group"
               >
                 <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center group-hover:bg-white/20 transition-colors">
-                  <Info className="w-4 h-4" />
+                  <Info className="w-4 h-4 text-white" />
                 </div>
-                <span>Quiénes Somos</span>
+                <span className="text-white">Quiénes Somos</span>
               </Link>
               <Link 
                 to="/sucursales" 
                 className="flex items-center gap-3 text-white/70 hover:text-white transition-colors group"
               >
                 <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center group-hover:bg-white/20 transition-colors">
-                  <MapPinIcon className="w-4 h-4" />
+                  <MapPinIcon className="w-4 h-4 text-white" />
                 </div>
-                <span>Sucursales</span>
+                <span className="text-white">Sucursales</span>
               </Link>
               {onCartClick ? (
                 <button 
@@ -101,9 +101,9 @@ export const Footer = ({ onCartClick }: FooterProps) => {
                   className="flex items-center gap-3 text-white/70 hover:text-white transition-colors group w-full"
                 >
                   <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center group-hover:bg-white/20 transition-colors">
-                    <ShoppingCart className="w-4 h-4" />
+                    <ShoppingCart className="w-4 h-4 text-white" />
                   </div>
-                  <span>Carrito de compras</span>
+                  <span className="text-white">Carrito de compras</span>
                 </button>
               ) : (
                 <Link 
@@ -111,9 +111,9 @@ export const Footer = ({ onCartClick }: FooterProps) => {
                   className="flex items-center gap-3 text-white/70 hover:text-white transition-colors group"
                 >
                   <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center group-hover:bg-white/20 transition-colors">
-                    <ShoppingCart className="w-4 h-4" />
+                    <ShoppingCart className="w-4 h-4 text-white" />
                   </div>
-                  <span>Carrito de compras</span>
+                  <span className="text-white">Carrito de compras</span>
                 </Link>
               )}
             </div>
@@ -121,7 +121,7 @@ export const Footer = ({ onCartClick }: FooterProps) => {
           
           {/* Contact Info - Minimalist */}
           <div>
-            <h4 className="text-base font-bold mb-5 flex items-center gap-2">
+            <h4 className="text-base font-bold mb-5 flex items-center gap-2 text-white">
               <span className="w-8 h-1 bg-white/30 rounded-full"></span>
               Contáctanos
             </h4>
@@ -131,34 +131,34 @@ export const Footer = ({ onCartClick }: FooterProps) => {
                 className="flex items-start gap-3 text-white/70 hover:text-white transition-colors group"
               >
                 <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center group-hover:bg-white/20 transition-colors flex-shrink-0">
-                  <Phone className="w-5 h-5" />
+                  <Phone className="w-5 h-5 text-white" />
                 </div>
                 <div>
                   <p className="text-xs text-white/50 mb-0.5">Teléfono</p>
-                  <p className="font-semibold">095 999 0999</p>
+                  <p className="font-semibold text-white">095 999 0999</p>
                 </div>
               </a>
-             
+              
               <a 
                 href="mailto:variedadespas2025@gmail.com" 
                 className="flex items-start gap-3 text-white/70 hover:text-white transition-colors group"
               >
                 <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center group-hover:bg-white/20 transition-colors flex-shrink-0">
-                  <Mail className="w-5 h-5" />
+                  <Mail className="w-5 h-5 text-white" />
                 </div>
                 <div>
                   <p className="text-xs text-white/50 mb-0.5">Email</p>
-                  <p className="font-semibold">variedadespas2025@gmail.com</p>
+                  <p className="font-semibold text-white">variedadespas2025@gmail.com</p>
                 </div>
               </a>
               
               <div className="flex items-start gap-3 text-white/70">
                 <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center flex-shrink-0">
-                  <Clock className="w-5 h-5" />
+                  <Clock className="w-5 h-5 text-white" />
                 </div>
                 <div>
                   <p className="text-xs text-white/50 mb-0.5">Horario de atención</p>
-                  <p className="font-semibold">Lun - Sáb: 8AM - 6PM</p>
+                  <p className="font-semibold text-white">Lun - Sáb: 8AM - 6PM</p>
                 </div>
               </div>
             </div>
@@ -166,7 +166,7 @@ export const Footer = ({ onCartClick }: FooterProps) => {
           
           {/* WhatsApp CTA - Minimalist */}
           <div>
-            <h4 className="text-base font-bold mb-5 flex items-center gap-2">
+            <h4 className="text-base font-bold mb-5 flex items-center gap-2 text-white">
               <span className="w-8 h-1 bg-white/30 rounded-full"></span>
               ¿Necesitas ayuda?
             </h4>
@@ -183,8 +183,8 @@ export const Footer = ({ onCartClick }: FooterProps) => {
               Chatear por WhatsApp
             </a>
             <div className="flex items-center gap-2 text-sm text-white/50">
-              <Shield className="w-4 h-4" />
-              <span>Compra segura y protegida</span>
+              <Shield className="w-4 h-4 text-white" />
+              <span className="text-white/70">Compra segura y protegida</span>
             </div>
           </div>
         </div>
