@@ -276,8 +276,8 @@ export const QuienesSomos = () => {
 
           {/* Ola SVG inferior */}
           <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-none translate-y-full">
-            <svg viewBox="0 0 1200 120" preserveAspectRatio="none" className="w-full h-[120px]">
-              <path d="M0,60 C150,120 350,0 600,60 C850,120 1050,0 1200,60 L1200,120 L0,120 Z" fill="#ffffff" />
+            <svg viewBox="0 0 1200 100" preserveAspectRatio="none" className="w-full h-[100px]">
+              <path d="M0,40 C200,100 400,0 600,40 C800,80 1000,10 1200,50 L1200,100 L0,100 Z" fill="#ffffff" />
             </svg>
           </div>
         </section>
