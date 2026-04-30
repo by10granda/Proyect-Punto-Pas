@@ -96,19 +96,19 @@ const Index = () => {
   }, []);
 
   const filteredProducts = useMemo(() => {
-    const sourceProducts = apiStatus === 'success' && allProducts.length > 0 ? allProducts : products;
+    const sourceProducts = apiStatus === 'success' ? allProducts : products;
     
     if (searchQuery) {
       const lowerQuery = searchQuery.toLowerCase();
-      return sourceProducts.filter(p => 
+      const results = sourceProducts.filter(p => 
         p.isActive && (
           p.name.toLowerCase().includes(lowerQuery) ||
-          p.description?.toLowerCase().includes(lowerQuery) ||
-          p.brand.toLowerCase().includes(lowerQuery) ||
-          p.code.toLowerCase().includes(lowerQuery) ||
-          p.category?.toLowerCase().includes(lowerQuery)
+          p.brand?.toLowerCase().includes(lowerQuery) ||
+          p.description?.toLowerCase().includes(lowerQuery)
         )
       );
+      console.log(`Search "${searchQuery}":`, results.length, 'results');
+      return results;
     }
     
     if (activeTab === "offers") {
@@ -120,9 +120,20 @@ const Index = () => {
     }
     
     if (selectedCategory === "all") {
+      console.log('Showing all products, count:', sourceProducts.filter(p => p.isActive).length);
       return sourceProducts.filter(p => p.isActive);
     }
-    return sourceProducts.filter(p => p.isActive && (p.category === selectedCategory || p.type === selectedCategory));
+    
+    const selectedUpper = selectedCategory.toUpperCase().trim();
+    const filtered = sourceProducts.filter(p => p.isActive && (
+      p.category?.toUpperCase().trim() === selectedUpper || 
+      p.type?.toUpperCase().trim() === selectedUpper
+    ));
+    console.log(`Filtering by category: "${selectedCategory}" (uppercase: "${selectedUpper}")`);
+    console.log('Sample product category:', sourceProducts[0]?.category);
+    console.log('Sample product type:', sourceProducts[0]?.type);
+    console.log('Filtered count:', filtered.length);
+    return filtered;
   }, [selectedCategory, activeTab, searchQuery, offersCategory, allProducts, apiStatus]);
 
   const displayedProducts = useMemo(() => {
