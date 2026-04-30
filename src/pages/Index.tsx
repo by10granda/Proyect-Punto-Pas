@@ -35,6 +35,7 @@ const Index = () => {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [activeTab, setActiveTab] = useState("home");
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedBrand, setSelectedBrand] = useState("all");
   const [offersCategory, setOffersCategory] = useState("all");
   const [cart, setCart] = useState<CartItem[]>(() => {
     const saved = localStorage.getItem("puntopas_cart");
@@ -117,16 +118,24 @@ const Index = () => {
       return allOffers.filter(p => p.category === offersCategory || p.type === offersCategory);
     }
     
-    if (selectedCategory === "all") {
-      return sourceProducts.filter(p => p.isActive);
+    let filtered = sourceProducts.filter(p => p.isActive);
+    
+    if (selectedCategory !== "all") {
+      const selectedUpper = selectedCategory.toUpperCase().trim();
+      filtered = filtered.filter(p => 
+        p.category?.toUpperCase().trim() === selectedUpper || 
+        p.type?.toUpperCase().trim() === selectedUpper
+      );
     }
     
-    const selectedUpper = selectedCategory.toUpperCase().trim();
-    return sourceProducts.filter(p => p.isActive && (
-      p.category?.toUpperCase().trim() === selectedUpper || 
-      p.type?.toUpperCase().trim() === selectedUpper
-    ));
-  }, [selectedCategory, activeTab, searchQuery, offersCategory, allProducts, apiStatus]);
+    if (selectedBrand !== "all") {
+      filtered = filtered.filter(p => 
+        p.brand?.toUpperCase().trim() === selectedBrand.toUpperCase().trim()
+      );
+    }
+    
+    return filtered;
+  }, [selectedCategory, selectedBrand, activeTab, searchQuery, offersCategory, allProducts, apiStatus]);
 
   const displayedProducts = useMemo(() => {
     return filteredProducts;
@@ -438,8 +447,9 @@ const Index = () => {
             <BrandsBanner
               products={allProducts} 
               onBrandClick={(brand) => {
-                setSearchQuery(brand);
-                setActiveTab("home");
+                setSelectedBrand(brand.toUpperCase().trim());
+                setSelectedCategory("all");
+                setSearchQuery("");
                 setTimeout(() => {
                   const productsSection = document.getElementById('productos');
                   if (productsSection) {
