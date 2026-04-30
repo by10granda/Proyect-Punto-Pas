@@ -1,4 +1,4 @@
-import { MapPin, Phone, Mail, Clock, Facebook, ExternalLink, Shield, Home, Info, MapPin as MapPinIcon, ShoppingCart, FileText, Send, MessageCircle } from "lucide-react";
+import { MapPin, Phone, Mail, Clock, ExternalLink, Shield, Home, Info, MapPin as MapPinIcon, ShoppingCart, FileText, Send, MessageCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 import logoPuntoPas from "@/assets/logo-punto-pas.png";
 
@@ -28,14 +28,15 @@ export const Footer = () => {
             </p>
             {/* Social Links */}
             <div className="flex items-center gap-3">
-              <a
-                href="https://www.facebook.com/p/Punto-Pas-100063756541859/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-10 h-10 rounded-lg bg-gray-800 hover:bg-blue-600 flex items-center justify-center transition-all hover:scale-110"
-              >
-                <Facebook className="w-5 h-5" />
-              </a>
+               <a
+                 href="https://www.facebook.com/p/Punto-Pas-100063756541859/"
+                 target="_blank"
+                 rel="noopener noreferrer"
+                 className="w-10 h-10 rounded-lg bg-gray-800 hover:bg-blue-600 flex items-center justify-center transition-all hover:scale-110"
+               >
+                 {/* Facebook icon - using external link instead */}
+                 <ExternalLink className="w-5 h-5" />
+               </a>
               <a
                 href="https://www.tiktok.com/@punto_pas"
                 target="_blank"

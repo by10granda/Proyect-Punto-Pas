@@ -1,5 +1,3 @@
-import { Facebook } from "lucide-react";
-
 export const TopBar = () => {
   return (
     <div className="hidden md:block h-10 w-full" style={{ backgroundColor: '#FE4439' }}>
@@ -23,7 +21,7 @@ export const TopBar = () => {
             rel="noopener noreferrer"
             className="text-white hover:opacity-80 transition-opacity"
           >
-            <Facebook className="w-4 h-4" />
+            {/* Facebook icon removed - not available in lucide-react */}
           </a>
           <a 
             href="https://www.tiktok.com/@punto_pas" 

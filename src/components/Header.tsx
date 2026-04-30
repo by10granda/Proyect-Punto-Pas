@@ -1,4 +1,4 @@
-import { ShoppingCart, Mic, MicOff, Plus, MapPin, X, Headphones, Radio, Play, Pause, Shield, Volume2 as Volume2Icon, VolumeX } from "lucide-react";
+import { ShoppingCart, Mic, MicOff, Plus, MapPin, X, Headphones, Radio, Play, Pause, Shield, Volume2, VolumeX } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useRadio } from "@/contexts/RadioContext";
@@ -461,7 +461,7 @@ export const Header = ({ cartCount, onSearch, onCartClick, onGoToHome, products 
                       className="text-gray-400 hover:text-gray-600"
                       title="Volumen máximo"
                     >
-                      <Volume2Icon className="w-4 h-4" />
+                      <Volume2 className="w-4 h-4" />
                     </button>
                   </div>
                   <div className="text-center mt-1">
