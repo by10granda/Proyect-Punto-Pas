@@ -270,7 +270,7 @@ const Sucursales = () => {
         </div>
       )}
 
-      <Footer />
+      <Footer onCartClick={() => setIsCartOpen(true)} />
 
       <CartDrawer
         isOpen={isCartOpen}

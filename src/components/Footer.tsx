@@ -2,7 +2,11 @@ import { MapPin, Phone, Mail, Clock, ExternalLink, Shield, Home, Info, MapPin as
 import { Link } from "react-router-dom";
 import logoPuntoPas from "@/assets/logo-punto-pas.png";
 
-export const Footer = () => {
+interface FooterProps {
+  onCartClick?: () => void;
+}
+
+export const Footer = ({ onCartClick }: FooterProps) => {
   return (
     <footer id="contacto" className="bg-gray-900 text-white">
       {/* Main footer content */}
@@ -92,15 +96,27 @@ export const Footer = () => {
                 </div>
                 <span>Sucursales</span>
               </Link>
-              <Link 
-                to="/checkout" 
-                className="flex items-center gap-3 text-gray-400 hover:text-white transition-colors group"
-              >
-                <div className="w-8 h-8 rounded-lg bg-gray-800 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                  <ShoppingCart className="w-4 h-4" />
-                </div>
-                <span>Carrito de compras</span>
-              </Link>
+              {onCartClick ? (
+                <button 
+                  onClick={onCartClick}
+                  className="flex items-center gap-3 text-gray-400 hover:text-white transition-colors group w-full"
+                >
+                  <div className="w-8 h-8 rounded-lg bg-gray-800 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                    <ShoppingCart className="w-4 h-4" />
+                  </div>
+                  <span>Carrito de compras</span>
+                </button>
+              ) : (
+                <Link 
+                  to="/checkout" 
+                  className="flex items-center gap-3 text-gray-400 hover:text-white transition-colors group"
+                >
+                  <div className="w-8 h-8 rounded-lg bg-gray-800 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                    <ShoppingCart className="w-4 h-4" />
+                  </div>
+                  <span>Carrito de compras</span>
+                </Link>
+              )}
             </div>
           </div>
 

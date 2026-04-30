@@ -532,7 +532,7 @@ const Index = () => {
          )}
       </div>
 
-      <Footer />
+       <Footer onCartClick={() => setIsCartOpen(true)} />
 
       <BottomNav
         activeTab={activeTab}
