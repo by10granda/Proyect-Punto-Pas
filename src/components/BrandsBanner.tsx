@@ -1,132 +1,129 @@
-import { useState, useEffect, memo } from "react";
+import { memo, useRef, useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight, Star } from "lucide-react";
 import { Product } from "@/data/products";
+import { useNavigate } from "react-router-dom";
 
 interface BrandsBannerProps {
   products: Product[];
   onBrandClick: (brand: string) => void;
 }
 
-const brandColors = [
-  "from-blue-600 via-blue-700 to-blue-900",
-  "from-red-600 via-red-700 to-red-900",
-  "from-green-600 via-green-700 to-green-900",
-  "from-purple-600 via-purple-700 to-purple-900",
-  "from-orange-500 via-orange-600 to-orange-800",
-  "from-pink-500 via-pink-600 to-pink-800",
-  "from-teal-500 via-teal-600 to-teal-800",
-  "from-indigo-500 via-indigo-600 to-indigo-800",
-  "from-yellow-500 via-yellow-600 to-yellow-800",
-  "from-cyan-500 via-cyan-600 to-cyan-800",
-];
+const CLOUDINARY_BASE = "https://res.cloudinary.com/dbbkpdhze/image/upload/v1775830755";
 
 export const BrandsBanner = memo(({ products, onBrandClick }: BrandsBannerProps) => {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [isHovered, setIsHovered] = useState(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
+  const [isScrolling, setIsScrolling] = useState(false);
+  const scrollIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const uniqueBrands = [...new Set(products.map(p => p.brand).filter(Boolean))];
-  
-  const getBrandInfo = (brand: string, index: number) => ({
-    name: brand,
-    color: brandColors[index % brandColors.length],
-  });
+  const duplicatedBrands = [...uniqueBrands, ...uniqueBrands];
 
-  useEffect(() => {
-    if (isHovered || uniqueBrands.length === 0) return;
-    const interval = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % uniqueBrands.length);
-    }, 4000);
-    return () => clearInterval(interval);
-  }, [isHovered, uniqueBrands.length]);
-
-  const nextBrand = () => {
-    setCurrentIndex((prev) => (prev + 1) % uniqueBrands.length);
+  const startScrolling = (direction: "left" | "right") => {
+    if (scrollIntervalRef.current) return;
+    setIsScrolling(true);
+    
+    const scrollStep = () => {
+      if (scrollRef.current) {
+        const multiplier = direction === "left" ? -1 : 1;
+        scrollRef.current.scrollLeft += 300 * multiplier;
+      }
+    };
+    
+    scrollIntervalRef.current = setInterval(scrollStep, 16);
   };
 
-  const prevBrand = () => {
-    setCurrentIndex((prev) => (prev - 1 + uniqueBrands.length) % uniqueBrands.length);
+  const stopScrolling = () => {
+    setIsScrolling(false);
+    if (scrollIntervalRef.current) {
+      clearInterval(scrollIntervalRef.current);
+      scrollIntervalRef.current = null;
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      if (scrollIntervalRef.current) {
+        clearInterval(scrollIntervalRef.current);
+      }
+    };
+  }, []);
+
+  const scroll = (direction: "left" | "right") => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollBy({
+        left: direction === "left" ? -200 : 200,
+        behavior: "smooth",
+      });
+    }
+  };
+
+  const getLogoUrl = (brand: string) => {
+    return `${CLOUDINARY_BASE}/${brand.toUpperCase().replace(/\s+/g, "_")}_1.png`;
+  };
+
+  const handleBrandClick = (brand: string) => {
+    onBrandClick(brand);
+    navigate(`/?tab=all&brand=${encodeURIComponent(brand)}`);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   if (uniqueBrands.length === 0) return null;
 
-  const currentBrand = getBrandInfo(uniqueBrands[currentIndex], currentIndex);
-  const visibleBrands = uniqueBrands.slice(0, 12);
+return (
+    <section className="py-8 bg-white">
+      <div className="mb-6 px-4">
+        <h3 className="text-lg md:text-xl lg:text-2xl font-black uppercase tracking-wide" style={{ color: '#FA003F', fontFamily: 'Nunito, sans-serif' }}>
+          Nuestras Marcas
+        </h3>
+      </div>
 
-  return (
-    <section className="py-10 bg-muted/50">
-      <div className="max-w-7xl mx-auto px-4">
-        <div className="flex items-center justify-center gap-3 mb-8">
-          <Star className="w-6 h-6 text-primary animate-pulse" />
-          <h3 className="text-2xl md:text-3xl font-black text-foreground text-center">
-            NUESTRAS MARCAS
-          </h3>
-          <Star className="w-6 h-6 text-primary animate-pulse" />
-        </div>
-        
-        <div 
-          className="relative"
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
+      <div className="relative group">
+        <button
+          onMouseDown={() => startScrolling("left")}
+          onMouseUp={stopScrolling}
+          onMouseLeave={stopScrolling}
+          className="absolute left-2 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white shadow-xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-gray-50"
         >
-          <button
-            onClick={prevBrand}
-            className="absolute right-14 md:right-20 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-xl hover:bg-white transition-colors"
-          >
-            <ChevronLeft className="w-5 h-5" />
-          </button>
+          <ChevronLeft className="w-5 h-5 text-gray-600" />
+        </button>
 
-          <div className={`relative overflow-hidden rounded-3xl bg-gradient-to-r ${currentBrand.color} transition-all duration-200`}>
-            <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-transparent to-black/50" />
-            
-            <div className="relative z-10 flex flex-col md:flex-row items-center justify-between p-8 md:p-12 gap-8">
-              <div className="text-white text-center md:text-left max-w-lg">
-                <h4 className="text-3xl md:text-4xl font-black mb-2">
-                  {currentBrand.name}
-                </h4>
-                <p className="text-white/80 text-lg">
-                  Productos de calidad garantizada
-                </p>
-                <button
-                  onClick={() => onBrandClick(currentBrand.name)}
-                  className="mt-4 px-6 py-2 bg-white text-gray-900 rounded-full font-semibold hover:bg-white/90 transition-all duration-150"
-                >
-                  Ver productos
-                </button>
-              </div>
-              
-              <div className="hidden md:block text-white/30 text-6xl md:text-8xl font-black opacity-50">
-                {currentIndex + 1}/{uniqueBrands.length}
-              </div>
-            </div>
-          </div>
-
-          <button
-            onClick={nextBrand}
-            className="absolute left-14 md:left-20 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-xl hover:bg-white transition-colors"
-          >
-            <ChevronRight className="w-5 h-5" />
-          </button>
-        </div>
-
-        <div className="mt-8">
-          <p className="text-center text-sm text-muted-foreground mb-4">Todas las marcas:</p>
-          <div className="flex flex-wrap justify-center gap-3">
-            {visibleBrands.map((brand, index) => (
-              <button
-                key={brand}
-                onClick={() => onBrandClick(brand)}
-                className="px-4 py-2 bg-card hover:bg-primary hover:text-primary-foreground rounded-full text-sm font-medium transition-all duration-150 border border-border hover:border-primary"
-              >
+        <div
+          ref={scrollRef}
+          className="flex gap-6 overflow-x-auto scrollbar-hide scroll-smooth pb-4 px-4"
+          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+        >
+          {duplicatedBrands.map((brand, index) => (
+            <button
+              key={`${brand}-${index}`}
+              onClick={() => handleBrandClick(brand)}
+              className="flex-shrink-0 h-16 w-36 flex items-center justify-center overflow-hidden"
+            >
+              <img
+                src={getLogoUrl(brand)}
+                alt={brand}
+                className="h-full w-auto object-contain transition-transform duration-200 hover:scale-125"
+                onError={(e) => {
+                  const img = e.target as HTMLImageElement;
+                  img.style.display = 'none';
+                  img.nextElementSibling?.classList.remove('hidden');
+                }}
+              />
+              <span className="hidden font-bold text-gray-700 text-sm uppercase tracking-wide">
                 {brand}
-              </button>
-            ))}
-            {uniqueBrands.length > 12 && (
-              <span className="px-4 py-2 text-sm text-muted-foreground">
-                +{uniqueBrands.length - 12} más
               </span>
-            )}
-          </div>
+            </button>
+          ))}
         </div>
+
+        <button
+          onMouseDown={() => startScrolling("right")}
+          onMouseUp={stopScrolling}
+          onMouseLeave={stopScrolling}
+          className="absolute right-2 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white shadow-xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-gray-50"
+        >
+          <ChevronRight className="w-5 h-5 text-gray-600" />
+        </button>
       </div>
     </section>
   );

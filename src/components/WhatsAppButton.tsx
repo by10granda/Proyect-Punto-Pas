@@ -2,7 +2,7 @@ import { MessageCircle } from "lucide-react";
 import socialIcon from "@/assets/social.png";
 
 export const WhatsAppButton = () => {
-  const phoneNumber = "+593992085931";
+  const phoneNumber = "+593959990999";
   const message = "Hola, me interesa obtener más información sobre sus productos.";
   
   const handleClick = () => {

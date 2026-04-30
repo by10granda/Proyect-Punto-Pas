@@ -1,12 +1,16 @@
 import { useState, useMemo, useRef, useEffect } from "react";
 import { Header } from "@/components/Header";
+import { TopBar } from "@/components/TopBar";
 import { CategoryBar } from "@/components/CategoryBar";
 import { HeroCarousel } from "@/components/HeroCarousel";
 import { BrandsBanner } from "@/components/BrandsBanner";
+import { ImageCollage } from "@/components/ImageCollage";
+import { WeeklyDeals } from "@/components/WeeklyDeals";
 import { ProductGrid } from "@/components/ProductGrid";
 import { BottomNav } from "@/components/BottomNav";
 import { ProductModal } from "@/components/ProductModal";
 import { CartDrawer, CartItem } from "@/components/CartDrawer";
+import { ProductCarouselSection } from "@/components/ProductCarouselSection";
 import { Footer } from "@/components/Footer";
 import { WhatsAppButton } from "@/components/WhatsAppButton";
 import {
@@ -43,17 +47,14 @@ const Index = () => {
   const [visibleCount, setVisibleCount] = useState(12);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
 
-  // Refs for scrolling to sections
   const categoriesRef = useRef<HTMLDivElement>(null);
   const productsRef = useRef<HTMLDivElement>(null);
 
-  // Persist cart to localStorage
   const updateCart = (newCart: CartItem[]) => {
     setCart(newCart);
     localStorage.setItem("puntopas_cart", JSON.stringify(newCart));
   };
 
-  // Handle tab from URL query params
   useEffect(() => {
     const tab = searchParams.get("tab");
     if (tab === "offers") {
@@ -61,20 +62,16 @@ const Index = () => {
     }
   }, [searchParams]);
 
-  // Reset pagination when filters change
   useEffect(() => {
     setVisibleCount(12);
   }, [selectedCategory, activeTab, searchQuery, offersCategory]);
 
-  // Function to load products from API
   const loadAPIProducts = async () => {
     try {
       setIsLoadingProducts(true);
       setApiStatus('loading');
       setApiError(null);
-      
       const apiProducts = await loadProductsFromAPI();
-      
       if (apiProducts && apiProducts.length > 0) {
         setAllProducts(apiProducts);
         setProductCategories(getCategories());
@@ -82,17 +79,18 @@ const Index = () => {
       } else {
         setApiStatus('error');
         setApiError('No se recibieron productos de la API');
+        toast.error("La API no devolvió productos. Verifica la consola.");
       }
     } catch (error: any) {
-      console.error('❌ Error cargando productos de API:', error.message);
+      console.error('Error cargando productos de API:', error.message);
       setApiStatus('error');
       setApiError(error.message);
+      toast.error(`Error de conexión: ${error.message}`);
     } finally {
       setIsLoadingProducts(false);
     }
   };
 
-  // Load products from API on mount
   useEffect(() => {
     loadAPIProducts();
   }, []);
@@ -107,7 +105,8 @@ const Index = () => {
           p.name.toLowerCase().includes(lowerQuery) ||
           p.description?.toLowerCase().includes(lowerQuery) ||
           p.brand.toLowerCase().includes(lowerQuery) ||
-          p.code.toLowerCase().includes(lowerQuery)
+          p.code.toLowerCase().includes(lowerQuery) ||
+          p.category?.toLowerCase().includes(lowerQuery)
         )
       );
     }
@@ -127,18 +126,8 @@ const Index = () => {
   }, [selectedCategory, activeTab, searchQuery, offersCategory, allProducts, apiStatus]);
 
   const displayedProducts = useMemo(() => {
-    return filteredProducts.slice(0, visibleCount);
-  }, [filteredProducts, visibleCount]);
-
-  const hasMore = visibleCount < filteredProducts.length;
-
-  const loadMore = () => {
-    setIsLoadingMore(true);
-    setTimeout(() => {
-      setVisibleCount(prev => prev + 12);
-      setIsLoadingMore(false);
-    }, 300);
-  };
+    return filteredProducts;
+  }, [filteredProducts]);
 
   const cartItemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
@@ -155,6 +144,7 @@ const Index = () => {
           code: product.code,
           name: product.name,
           price: product.price,
+          pvpPrice: product.pvpPrice,
           originalPrice: product.originalPrice,
           discount: product.discount,
           image: product.image,
@@ -163,6 +153,7 @@ const Index = () => {
       }
       
       updateCart(newCart);
+      setIsCartOpen(true);
       toast.success(`${product.name} agregado al carrito`, {
         description: `Cantidad: ${quantity}`,
         duration: 2000,
@@ -179,7 +170,8 @@ const Index = () => {
         return;
       }
       
-      const product = products.find(p => p.id === id);
+      const sourceProducts = apiStatus === 'success' ? allProducts : products;
+      const product = sourceProducts.find(p => p.id === id);
       const maxQuantity = product ? product.stock : 999;
       
       const newCart = cart.map((item) => 
@@ -213,10 +205,22 @@ const Index = () => {
   };
 
   const handleSearch = (query: string) => {
+    console.log("Search query received:", query);
+    if (!query || query.trim() === "") return;
+    
     setSearchQuery(query);
-    if (query) {
-      setActiveTab("home");
-    }
+    setActiveTab("home");
+    setSelectedCategory("all");
+    setOffersCategory("all");
+    console.log("Variables state updated, searching for:", query);
+    
+    setTimeout(() => {
+      const productsSection = document.getElementById('productos');
+      console.log("Found products section:", !!productsSection);
+      if (productsSection) {
+        productsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 150);
   };
 
   const handleTabChange = (tab: string) => {
@@ -242,16 +246,13 @@ const Index = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // Scroll to categories when the categories tab is clicked so the section is visible
   const handleTabChangeWithScroll = (tab: string) => {
     handleTabChange(tab);
     if (tab === "categories") {
-      // Wait a tick for DOM to update then scroll the categories into view
       setTimeout(() => {
         if (categoriesRef.current) {
           categoriesRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
         } else {
-          // fallback: scroll to top
           window.scrollTo({ top: 0, behavior: "smooth" });
         }
       }, 50);
@@ -264,32 +265,76 @@ const Index = () => {
     }
     if (activeTab === "offers") {
       if (offersCategory === "all") {
-        return "🔥 Todas las Ofertas";
+        return "Todas las Ofertas";
       }
       const categoryName = productCategories.find(c => c.id === offersCategory)?.name || offersCategory;
-      return `🔥 Ofertas: ${categoryName}`;
+      return `Ofertas: ${categoryName}`;
     }
-    return "🛒 Todos Nuestros Productos";
+    if (selectedCategory === "all") {
+      return "Todos Nuestros Productos";
+    }
+    const categoryName = productCategories.find(c => c.id === selectedCategory)?.name || selectedCategory;
+    return categoryName;
   };
 
   return (
     <div className="min-h-screen bg-background">
+      <TopBar />
+      <div className="h-[2px] bg-white/30 -mt-px relative z-40" />
       <Header 
         cartCount={cartItemCount} 
-        onSearch={handleSearch}
+        onSearch={(q) => {
+          console.log("Header calling handleSearch with:", q);
+          handleSearch(q);
+        }}
         onCartClick={() => setIsCartOpen(true)}
         onGoToHome={handleGoToHome}
+        products={allProducts.length > 0 ? allProducts : products}
+        popularSearches={["Lavadoras", "Televisores", "Refrigeradores", "Celulares"]}
+        onProductClick={handleProductClick}
       />
-      
       {activeTab === "home" && !searchQuery && (
         <>
-          <HeroCarousel />
+          <div className="-mt-1">
+            <HeroCarousel 
+              onProductClick={(code) => {
+                const sourceProducts = apiStatus === 'success' ? allProducts : products;
+                const product = sourceProducts.find(p => p.code === code);
+                if (product) {
+                  setSelectedProduct(product);
+                  setIsProductModalOpen(true);
+                }
+              }}
+              onCategoryClick={(category) => {
+                setActiveTab("home");
+                setSearchQuery(category);
+                setTimeout(() => {
+                  const productsSection = document.getElementById('productos');
+                  if (productsSection) {
+                    productsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  }
+                }, 100);
+              }}
+            />
+          </div>
+          
+          {/* Second Banner Image - below hero */}
+          <section className="py-4 bg-white">
+            <div className="max-w-[98vw] mx-auto px-0">
+              <img
+                src="https://res.cloudinary.com/dbbkpdhze/image/upload/v1777323714/PORTADA_SECCION_2.png"
+                alt="Sección Principal"
+                className="w-full h-auto rounded-[50px]"
+              />
+            </div>
+          </section>
+          
           <div ref={categoriesRef}>
             <CategoryBar 
               selectedCategory={selectedCategory}
+              products={allProducts}
               onSelectCategory={(cat) => {
                 setSelectedCategory(cat);
-                // Scroll to products section after selecting category
                 setTimeout(() => {
                   const productsSection = document.getElementById('productos');
                   if (productsSection) {
@@ -305,10 +350,10 @@ const Index = () => {
       {activeTab === "categories" && (
         <CategoryBar 
           selectedCategory={selectedCategory}
+          products={allProducts}
           onSelectCategory={(cat) => {
             setSelectedCategory(cat);
             setActiveTab("home");
-            // Scroll to products section after switching to home tab
             setTimeout(() => {
               const productsSection = document.getElementById('productos');
               if (productsSection) {
@@ -320,9 +365,8 @@ const Index = () => {
       )}
 
       <div ref={productsRef} id="productos">
-        {/* Category filter for Offers tab */}
         {activeTab === "offers" && (
-          <div className="px-4 py-4 bg-gradient-to-r from-primary/5 via-background to-primary/5">
+          <div className="px-4 py-8 bg-gradient-to-r from-primary/5 via-background to-primary/5">
             <div className="max-w-7xl mx-auto">
               <p className="text-sm text-muted-foreground mb-3 font-medium">Filtrar ofertas por categoría:</p>
               <div className="flex flex-wrap gap-2">
@@ -362,50 +406,105 @@ const Index = () => {
         
         <ProductGrid 
           products={displayedProducts}
-          onAddToCart={(product) => handleAddToCart(product, 1)}
+          onAddToCart={handleAddToCart}
           onProductClick={handleProductClick}
           title={getTitle()}
         />
 
-        {hasMore && (
-          <div className="flex justify-center py-8">
-            <button
-              onClick={loadMore}
-              disabled={isLoadingMore}
-              className="px-8 py-3 bg-primary text-primary-foreground rounded-full font-semibold hover:bg-primary/90 transition-all duration-150 shadow-lg hover:shadow-xl disabled:opacity-70 flex items-center gap-2"
-            >
-              {isLoadingMore ? (
-                <>
-                  <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
-                  Cargando...
-                </>
-              ) : (
-                "Ver más productos"
-              )}
-            </button>
-          </div>
+        {activeTab === "home" && !searchQuery && (
+          <>
+            <ProductCarouselSection
+              products={allProducts}
+              category="LAVADORAS Y SECADORAS"
+              bannerImage="https://res.cloudinary.com/dbbkpdhze/image/upload/v1777411113/IMAGEN_SECCION_LAVADORAS.png"
+              onBannerClick={() => {
+                setActiveTab("home");
+                setSearchQuery("lavadora");
+                setTimeout(() => {
+                  const productsSection = document.getElementById('productos');
+                  if (productsSection) {
+                    productsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  }
+                }, 100);
+              }}
+              onProductClick={handleProductClick}
+              onAddToCart={(product) => handleAddToCart(product, 1)}
+            />
+
+            <BrandsBanner
+              products={allProducts} 
+              onBrandClick={(brand) => {
+                setSearchQuery(brand);
+                setActiveTab("home");
+                setTimeout(() => {
+                  const productsSection = document.getElementById('productos');
+                  if (productsSection) {
+                    productsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  }
+                }, 100);
+              }}
+            />
+
+            <ImageCollage
+              images={[
+                "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777305703/IMAGEN_1.png",
+                "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777305710/IMAGEN_2.png",
+                "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777306355/IMAGEN_3.png",
+                "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777301931/IMAGEN_4.png",
+                "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777413591/IMAGEN_5.png",
+                "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777301925/IMAGEN_6.png",
+              ]}
+              onImageClick={(index) => {
+                if (index === 0) {
+                  const sourceProducts = apiStatus === 'success' ? allProducts : products;
+                  const product = sourceProducts.find(p => p.code === "00000467");
+                  console.log("Looking for 00000467 in", sourceProducts.length, "products, found:", !!product);
+                  if (product) {
+                    setSelectedProduct(product);
+                    setIsProductModalOpen(true);
+                  } else {
+                    console.log("Product 00000467 not found");
+                  }
+                  return;
+                }
+                const brands = ["INDURAMA", "MABE", "TCL", "PHILIPS", "HONOR", "RCA"];
+                if (brands[index]) {
+                  setActiveTab("home");
+                  setSearchQuery(brands[index]);
+                  setTimeout(() => {
+                    const productsSection = document.getElementById('productos');
+                    if (productsSection) {
+                      productsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                  }, 100);
+                }
+              }}
+            />
+
+            <WeeklyDeals
+              images={[
+                "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777429427/Descuento1_s.png",
+                "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777429432/Descuento2_s.png",
+                "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777429429/Descuento3_s.png",
+                "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777429442/Descuento4_s.png",
+                "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777433322/Descuento5_s.png",
+                "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777429436/Descuento6_s.png",
+                "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777429439/Descuento7_s.png",
+                "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777429448/Descuento8_s.png",
+              ]}
+              products={filteredProducts}
+              onProductClick={(product) => {
+                setSelectedProduct(product);
+                setIsProductModalOpen(true);
+              }}
+            />
+          </>
         )}
       </div>
 
-      {activeTab === "home" && !searchQuery && (
-        <BrandsBanner 
-          products={allProducts} 
-          onBrandClick={(brand) => {
-            setSearchQuery(brand);
-            setActiveTab("home");
-            setTimeout(() => {
-              const productsSection = document.getElementById('productos');
-              if (productsSection) {
-                productsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-              }
-            }, 100);
-          }}
-        />
-      )}
-
       <Footer />
 
-      <BottomNav 
+      <BottomNav
         activeTab={activeTab}
         onTabChange={handleTabChangeWithScroll}
         cartCount={cartItemCount}
@@ -424,6 +523,7 @@ const Index = () => {
         isOpen={isCartOpen}
         onClose={() => setIsCartOpen(false)}
         items={cart}
+        products={apiStatus === 'success' ? allProducts : products}
         onUpdateQuantity={handleUpdateQuantity}
         onRemoveItem={handleRemoveItem}
         onClearCart={handleClearCart}

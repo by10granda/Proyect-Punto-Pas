@@ -1,12 +1,6 @@
-import { useState, useRef } from "react";
-import { X, ChevronLeft, ChevronRight, ShoppingCart, Minus, Plus, ZoomIn } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { X, Minus, Plus, ShoppingCart, Check } from "lucide-react";
 import { Product } from "@/data/products";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 
 interface ProductModalProps {
   product: Product | null;
@@ -16,295 +10,263 @@ interface ProductModalProps {
 }
 
 export const ProductModal = ({ product, isOpen, onClose, onAddToCart }: ProductModalProps) => {
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
-  const [showZoom, setShowZoom] = useState(false);
-  const [zoomPosition, setZoomPosition] = useState({ x: 0, y: 0 });
-  const imageRef = useRef<HTMLDivElement>(null);
+  const [addedToCart, setAddedToCart] = useState(false);
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const [errorImages, setErrorImages] = useState<Set<number>>(new Set());
+  const [isZooming, setIsZooming] = useState(false);
+  const [zoomPosition, setZoomPosition] = useState({ x: 50, y: 50 });
+  const imageContainerRef = useRef<HTMLDivElement>(null);
 
-  if (!product) return null;
+  useEffect(() => {
+    if (isOpen && product) {
+      setQuantity(1);
+      setAddedToCart(false);
+      setSelectedImageIndex(0);
+      setErrorImages(new Set());
+      setIsZooming(false);
+      document.body.style.overflow = 'hidden';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isOpen, product?.id]);
 
-  // Carrusel con imagen principal y video (si existe)
-  const productImages = product.images 
-    ? [product.image, ...product.images] 
-    : [product.image];
+  useEffect(() => {
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    if (isOpen) {
+      document.addEventListener('keydown', handleEsc);
+    }
+    return () => document.removeEventListener('keydown', handleEsc);
+  }, [isOpen, onClose]);
+
+  if (!isOpen || !product) return null;
+
+  const rawImages = product.images && product.images.length > 0 ? product.images : [product.image];
+  const productImages = rawImages.slice(0, 4);
   
-  // Agregar video al final del array si existe
-  if (product.video) {
-    productImages.push(product.video);
-  }
+  const activeImages = productImages.filter((_, idx) => !errorImages.has(idx));
+  const validImageCount = activeImages.length;
+  const showThumbnails = validImageCount > 1;
+  
+  const hasDiscount = product.pvpPrice && product.puntoPasPrice && product.pvpPrice > product.puntoPasPrice;
+  const discountPercent = hasDiscount ? Math.round((1 - product.puntoPasPrice! / product.pvpPrice!) * 100) : 0;
+  const displayPrice = product.puntoPasPrice || product.pvpPrice || product.price;
 
-  const isVideo = (index: number) => product.video && index === productImages.length - 1;
+  const handleAddToCart = () => {
+    if (product.stock <= 0 || addedToCart) return;
+    onAddToCart(product, quantity);
+    setAddedToCart(true);
+    setTimeout(() => onClose(), 1500);
+  };
 
-  const formatPrice = (price: number) => {
-    return price.toLocaleString("es-EC", {
-      style: "currency",
-      currency: "USD",
+  const handleImageError = (idx: number) => {
+    setErrorImages(prev => {
+      const newSet = new Set(prev);
+      newSet.add(idx);
+      return newSet;
     });
   };
 
-  const nextImage = () => {
-    setCurrentImageIndex((prev) => (prev + 1) % productImages.length);
-  };
-
-  const prevImage = () => {
-    setCurrentImageIndex((prev) => (prev - 1 + productImages.length) % productImages.length);
-  };
-
-  const handleAddToCart = () => {
-    onAddToCart(product, quantity);
-    setQuantity(1);
-    onClose();
-  };
-
-  const incrementQuantity = () => {
-    if (quantity < product.stock) {
-      setQuantity(quantity + 1);
-    }
-  };
-
-  const decrementQuantity = () => {
-    if (quantity > 1) {
-      setQuantity(quantity - 1);
-    }
-  };
-
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!imageRef.current) return;
-    const rect = imageRef.current.getBoundingClientRect();
+    if (!imageContainerRef.current || !isZooming) return;
+    const rect = imageContainerRef.current.getBoundingClientRect();
     const x = ((e.clientX - rect.left) / rect.width) * 100;
     const y = ((e.clientY - rect.top) / rect.height) * 100;
-    setZoomPosition({ x, y });
+    setZoomPosition({ 
+      x: Math.max(0, Math.min(100, x)), 
+      y: Math.max(0, Math.min(100, y)) 
+    });
+  };
+
+  const handleSelectImage = (index: number) => {
+    setSelectedImageIndex(index);
+  };
+
+  const getDisplayImage = () => {
+    if (selectedImageIndex < activeImages.length) {
+      return activeImages[selectedImageIndex];
+    }
+    return activeImages[0] || product.image;
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[95vh] overflow-y-auto p-0 gap-0">
-        <DialogHeader className="sr-only">
-          <DialogTitle>{product.name}</DialogTitle>
-        </DialogHeader>
-        
-        {/* Close button */}
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-2 lg:p-4">
+      <div className="absolute inset-0 bg-black/60" onClick={onClose} />
+      
+      <div className="relative w-full max-w-5xl bg-white rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200 max-h-[95vh] overflow-y-auto">
         <button
           onClick={onClose}
-          className="absolute top-3 right-3 z-50 w-10 h-10 rounded-full bg-card shadow-lg flex items-center justify-center hover:bg-muted transition-colors"
+          className="absolute top-2 right-2 z-50 w-8 h-8 lg:w-10 lg:h-10 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center transition-colors"
         >
-          <X className="w-5 h-5" />
+          <X className="w-4 h-4 lg:w-5 lg:h-5 text-gray-600" />
         </button>
 
-        <div className="grid md:grid-cols-2 gap-0">
-          {/* Image Gallery Section */}
-          <div className="bg-muted p-4">
-             {/* Main Image with Zoom */}
-             <div 
-               ref={imageRef}
-               className="relative aspect-square bg-card rounded-xl overflow-hidden mb-4"
-               onMouseEnter={() => !isVideo(currentImageIndex) && setShowZoom(true)}
-               onMouseLeave={() => setShowZoom(false)}
-               onMouseMove={handleMouseMove}
-             >
-               {/* Video - Si el índice actual es el video */}
-               {isVideo(currentImageIndex) ? (
-                 <video
-                   src={productImages[currentImageIndex]}
-                   muted
-                   controls
-                   autoPlay
-                   playsInline
-                   className="w-full h-full object-contain bg-black"
-                 />
-               ) : (
-                 /* Image - Vista normal */
-                 <img
-                   src={productImages[currentImageIndex]}
-                   alt={product.name}
-                   className="w-full h-full object-contain cursor-zoom-in"
-                 />
-               )}
-               
-               {/* Zoom indicator - Solo mostrar si NO es video */}
-               {!isVideo(currentImageIndex) && (
-                 <div className="absolute bottom-3 right-3 bg-card/90 backdrop-blur-sm rounded-full px-3 py-1.5 flex items-center gap-1.5 text-xs font-medium shadow-md">
-                   <ZoomIn className="w-4 h-4" />
-                   Zoom
-                 </div>
-               )}
-
-               {/* Indicador de Video - Solo mostrar si ES video */}
-               {isVideo(currentImageIndex) && (
-                 <div className="absolute top-3 right-3 bg-red-600 text-white px-3 py-1.5 rounded-full flex items-center gap-1.5 text-xs font-bold shadow-md z-20">
-                   <span>▶</span>
-                   VIDEO
-                 </div>
-               )}
-
-               {/* Navigation arrows */}
-               <button
-                 onClick={prevImage}
-                 className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-card/90 backdrop-blur-sm flex items-center justify-center shadow-md hover:bg-card transition-colors"
-               >
-                 <ChevronLeft className="w-5 h-5" />
-               </button>
-               <button
-                 onClick={nextImage}
-                 className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-card/90 backdrop-blur-sm flex items-center justify-center shadow-md hover:bg-card transition-colors"
-               >
-                 <ChevronRight className="w-5 h-5" />
-               </button>
-
-              {/* Discount badge */}
-              {product.discount && (
-                <div className="absolute top-3 left-3 badge-sale text-sm px-3 py-1.5">
-                  -{product.discount}% OFF
-                </div>
-              )}
+        <div className="flex flex-col lg:flex-row">
+          {showThumbnails && (
+            <div className="w-full lg:w-20 p-2 lg:p-4 flex lg:flex-col gap-2 overflow-x-auto lg:overflow-y-auto bg-gray-50">
+              {productImages.map((img, idx) => {
+                if (errorImages.has(idx)) return null;
+                const isActive = activeImages[idx] === activeImages[selectedImageIndex];
+                return (
+                  <button
+                    key={idx}
+                    onClick={() => handleSelectImage(idx)}
+                    className={`flex-shrink-0 w-12 h-12 lg:w-full lg:h-20 rounded-lg overflow-hidden border-2 transition-all cursor-pointer ${
+                      isActive 
+                        ? 'border-red-500 ring-2 ring-red-200' 
+                        : 'border-gray-200 hover:border-gray-300'
+                    }`}
+                  >
+                    <img 
+                      src={img} 
+                      alt={`${product.name} ${idx + 1}`} 
+                      className="w-full h-full object-cover"
+                      onError={() => handleImageError(idx)}
+                    />
+                  </button>
+                );
+              })}
             </div>
+          )}
 
-            {/* Zoom preview window - Solo mostrar si NO es video */}
-            {showZoom && !isVideo(currentImageIndex) && (
-              <div className="hidden md:block absolute top-4 left-[calc(50%+1rem)] w-80 h-80 border-2 border-primary rounded-xl overflow-hidden shadow-2xl bg-white z-40">
-                <img
-                  src={productImages[currentImageIndex]}
-                  alt="Zoom"
-                  className="w-full h-full object-cover"
-                  style={{
-                    objectPosition: `${zoomPosition.x}% ${zoomPosition.y}%`,
-                    transform: 'scale(3)',
-                    transformOrigin: `${zoomPosition.x}% ${zoomPosition.y}%`,
-                  }}
-                />
-              </div>
-            )}
-
-            {/* Thumbnails */}
-            <div className="flex gap-2 overflow-x-auto pb-2">
-              {productImages.map((img, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentImageIndex(index)}
-                  className={`w-16 h-16 rounded-lg overflow-hidden flex-shrink-0 border-2 transition-all ${
-                    index === currentImageIndex ? "border-primary ring-2 ring-primary/30" : "border-border hover:border-primary/50"
-                  } ${isVideo(index) ? 'bg-gray-900' : ''}`}
-                >
-                  {isVideo(index) ? (
-                    /* Miniatura de video */
-                    <div className="w-full h-full flex flex-col items-center justify-center bg-gray-800 text-white">
-                      <span className="text-2xl mb-1">▶</span>
-                      <span className="text-[8px] font-bold">VIDEO</span>
-                    </div>
-                  ) : (
-                    /* Miniatura de imagen normal */
-                    <img src={img} alt={`Vista ${index + 1}`} className="w-full h-full object-cover" />
-                  )}
-                </button>
-              ))}
+          <div 
+            ref={imageContainerRef}
+            className="w-full lg:flex-1 bg-gray-50 p-2 lg:p-8 flex items-center justify-center overflow-hidden min-h-[250px] lg:min-h-[400px]"
+            onMouseEnter={() => setIsZooming(true)}
+            onMouseLeave={() => setIsZooming(false)}
+            onMouseMove={handleMouseMove}
+          >
+            <div className="w-full max-w-md overflow-hidden">
+              <img
+                src={getDisplayImage()}
+                alt={product.name}
+                className="w-full h-auto object-contain transition-transform duration-100"
+                style={{
+                  transform: isZooming ? `scale(2.5) translate(${(50 - zoomPosition.x) * 0.3}%, ${(50 - zoomPosition.y) * 0.3}%)` : 'scale(1)',
+                  transformOrigin: `${zoomPosition.x}% ${zoomPosition.y}%`,
+                  cursor: isZooming ? 'zoom-out' : 'zoom-in'
+                }}
+                onError={(e) => {
+                  const img = e.target as HTMLImageElement;
+                  if (img.src !== product.image) {
+                    img.src = product.image;
+                  }
+                }}
+              />
             </div>
           </div>
 
-          {/* Product Details Section */}
-          <div className="p-6 flex flex-col">
-            {/* Brand */}
-            <p className="text-primary font-semibold text-sm mb-1">{product.brand}</p>
-            
-            {/* Name */}
-            <h2 className="text-2xl font-bold text-foreground mb-3">{product.name}</h2>
-
-            {/* Price */}
-            <div className="flex items-baseline gap-3 mb-4">
-              <span className="text-4xl font-black text-primary">
-                {formatPrice(product.price)}
+          <div className="w-full lg:w-[45%] p-4 lg:p-8 flex flex-col">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-xs uppercase tracking-wider text-gray-500">
+                {product.brand || 'General'}
               </span>
-              {product.originalPrice && (
-                <span className="text-lg text-muted-foreground line-through">
-                  {formatPrice(product.originalPrice)}
-                </span>
-              )}
-              {product.discount && (
-                <span className="bg-primary/10 text-primary text-sm font-bold px-2 py-0.5 rounded">
-                  {product.discount}% OFF
-                </span>
-              )}
+              <span className="text-xs text-gray-400">|</span>
+              <span className="text-xs text-gray-500">Código: {product.code}</span>
             </div>
+            
+            <h2 className="text-lg lg:text-xl font-semibold text-gray-900 mb-3 lg:mb-4 leading-snug">
+              {product.name}
+            </h2>
 
-            {/* Description */}
-            {product.description && (
-              <p className="text-muted-foreground mb-4 leading-relaxed">{product.description}</p>
-            )}
-
-            {/* Characteristics */}
-            <div className="bg-muted rounded-xl p-4 mb-4">
-              <h3 className="font-bold text-foreground mb-3 flex items-center gap-2">
-                📋 Características del Producto
-              </h3>
-              <div className="grid grid-cols-2 gap-3 text-sm">
-                <div className="bg-card rounded-lg p-2.5">
-                  <span className="text-muted-foreground block text-xs">Código</span>
-                  <span className="font-semibold">{product.code}</span>
-                </div>
-                <div className="bg-card rounded-lg p-2.5">
-                  <span className="text-muted-foreground block text-xs">Marca</span>
-                  <span className="font-semibold">{product.brand}</span>
-                </div>
-                <div className="bg-card rounded-lg p-2.5">
-                  <span className="text-muted-foreground block text-xs">Unidad</span>
-                  <span className="font-semibold">{product.unit}</span>
-                </div>
-                <div className="bg-card rounded-lg p-2.5">
-                  <span className="text-muted-foreground block text-xs">Categoría</span>
-                  <span className="font-semibold">{product.category}</span>
-                </div>
-                <div className="bg-card rounded-lg p-2.5">
-                  <span className="text-muted-foreground block text-xs">Tipo</span>
-                  <span className="font-semibold">{product.type}</span>
-                </div>
-                <div className="bg-card rounded-lg p-2.5">
-                  <span className="text-muted-foreground block text-xs">Stock</span>
-                  <span className={`font-semibold ${product.stock <= 3 ? "text-destructive" : "text-success"}`}>
-                    {product.stock} disponibles
+            <div className="mb-4">
+              <div className="flex items-baseline gap-3">
+                <span className="text-2xl font-bold" style={{ color: '#FA003F' }}>
+                  ${displayPrice.toFixed(2)}
+                </span>
+                {hasDiscount && (
+                  <span className="text-sm text-gray-400 line-through">
+                    ${product.pvpPrice?.toFixed(2)}
                   </span>
-                </div>
+                )}
               </div>
+              {hasDiscount && (
+                <span 
+                  className="inline-block mt-2 text-xs font-semibold px-2 py-1 rounded-full"
+                  style={{ backgroundColor: '#FA003F', color: 'white' }}
+                >
+                  -{discountPercent}%
+                </span>
+              )}
             </div>
 
-            {/* Quantity selector */}
-            <div className="flex items-center justify-between bg-muted rounded-xl p-4 mb-4">
-              <span className="font-semibold text-foreground">Cantidad:</span>
-              <div className="flex items-center gap-4">
+            <div className="mb-6">
+              <span className="text-sm text-gray-600 mb-2 block">
+                {product.stock === 0 ? (
+                  <span className="text-red-600 font-medium">Sin stock</span>
+                ) : (
+                  `${product.stock} unidades disponibles`
+                )}
+              </span>
+            </div>
+
+            <div className="mb-6">
+              <span className="text-sm font-medium text-gray-700 mb-2 block">Cantidad</span>
+              <div className="flex items-center gap-3">
                 <button
-                  onClick={decrementQuantity}
+                  onClick={() => setQuantity(q => Math.max(1, q - 1))}
                   disabled={quantity <= 1}
-                  className="w-10 h-10 rounded-full bg-card flex items-center justify-center disabled:opacity-50 hover:bg-border transition-colors shadow-sm"
+                  className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center font-bold disabled:opacity-40"
                 >
                   <Minus className="w-4 h-4" />
                 </button>
-                <span className="w-12 text-center text-xl font-bold">{quantity}</span>
+                <input
+                  type="number"
+                  min={1}
+                  max={product.stock}
+                  value={quantity}
+                  onChange={(e) => {
+                    const val = parseInt(e.target.value) || 1;
+                    setQuantity(Math.max(1, Math.min(val, product.stock)));
+                  }}
+                  className="w-16 h-10 rounded-lg text-center font-medium border"
+                />
                 <button
-                  onClick={incrementQuantity}
+                  onClick={() => setQuantity(q => Math.min(product.stock, q + 1))}
                   disabled={quantity >= product.stock}
-                  className="w-10 h-10 rounded-full bg-card flex items-center justify-center disabled:opacity-50 hover:bg-border transition-colors shadow-sm"
+                  className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center font-bold disabled:opacity-40"
                 >
                   <Plus className="w-4 h-4" />
                 </button>
               </div>
             </div>
 
-            {/* Total */}
-            <div className="flex items-center justify-between mb-4 px-2">
-              <span className="text-muted-foreground">Total:</span>
-              <span className="text-3xl font-black text-primary">{formatPrice(product.price * quantity)}</span>
+            <div className="mt-auto">
+              <div className="flex items-center justify-between mb-3 lg:mb-2 text-base lg:text-lg font-semibold text-gray-700">
+                <span>Total</span>
+                <span className="text-2xl lg:text-3xl font-bold" style={{ color: '#FA003F' }}>
+                  ${(displayPrice * quantity).toFixed(2)}
+                </span>
+              </div>
+              
+              <button
+                onClick={handleAddToCart}
+                disabled={product.stock === 0 || addedToCart}
+                className="w-full py-3 rounded-xl font-semibold transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                style={{ 
+                  backgroundColor: addedToCart ? '#10B981' : '#FA003F', 
+                  color: 'white' 
+                }}
+              >
+                {addedToCart ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <Check className="w-5 h-5" />
+                    Agregado
+                  </span>
+                ) : (
+                  <span className="flex items-center justify-center gap-2">
+                    <ShoppingCart className="w-5 h-5" />
+                    {product.stock === 0 ? 'Sin stock' : 'Agregar al carrito'}
+                  </span>
+                )}
+              </button>
             </div>
-
-            {/* Add to cart button */}
-            <button
-              onClick={handleAddToCart}
-              className="w-full flex items-center justify-center gap-3 bg-primary hover:bg-primary/90 text-primary-foreground py-4 rounded-xl font-bold text-lg transition-all duration-200 shadow-lg active:scale-[0.98]"
-            >
-              <ShoppingCart className="w-6 h-6" />
-              Agregar al carrito
-            </button>
           </div>
         </div>
-      </DialogContent>
-    </Dialog>
+      </div>
+    </div>
   );
 };

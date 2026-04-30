@@ -1,17 +1,22 @@
-import { Search, ShoppingCart, Mic, MicOff, Plus, MapPin, X, Headphones, Radio, Play, Pause, Shield } from "lucide-react";
+import { ShoppingCart, Mic, MicOff, Plus, MapPin, X, Headphones, Radio, Play, Pause, Shield, Volume2, VolumeX } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useRadio } from "@/contexts/RadioContext";
+import { SmartSearch } from "./SmartSearch";
 import logoPuntoPas from "@/assets/logo-punto-pas.png";
+import { Product } from "@/data/products";
 
 interface HeaderProps {
   cartCount: number;
   onSearch: (query: string) => void;
   onCartClick: () => void;
   onGoToHome?: () => void;
+  products?: Product[];
+  popularSearches?: string[];
+  onProductClick?: (product: Product) => void;
 }
 
-export const Header = ({ cartCount, onSearch, onCartClick, onGoToHome }: HeaderProps) => {
+export const Header = ({ cartCount, onSearch, onCartClick, onGoToHome, products = [], popularSearches, onProductClick }: HeaderProps) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isListening, setIsListening] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -144,7 +149,7 @@ export const Header = ({ cartCount, onSearch, onCartClick, onGoToHome }: HeaderP
 
   return (
     <>
-      <header className="sticky top-0 z-40 bg-primary shadow-xl">
+      <header className="sticky top-0 z-40 bg-primary">
         {/* Main header bar */}
         <div className="flex items-center justify-between px-4 py-3 gap-3 max-w-7xl mx-auto">
           {/* Logo - Navigate to home */}
@@ -167,40 +172,19 @@ export const Header = ({ cartCount, onSearch, onCartClick, onGoToHome }: HeaderP
           </div>
 
           {/* Search bar */}
-          <form onSubmit={handleSearch} className="flex-1 max-w-xl">
-            <div className="relative flex items-center">
-              <Search className="absolute left-4 w-5 h-5 text-muted-foreground" />
-              <input
-                type="text"
-                placeholder="¿Qué estás buscando hoy?"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-12 pr-14 py-3 rounded-full bg-card text-foreground placeholder:text-muted-foreground text-sm focus:outline-none focus:ring-2 focus:ring-ring shadow-inner"
-              />
-              <button
-                type="button"
-                onClick={isListening ? stopVoiceSearch : startVoiceSearch}
-                className={`absolute right-3 w-8 h-8 rounded-full flex items-center justify-center transition-all ${
-                  isListening 
-                    ? "bg-primary text-primary-foreground animate-pulse" 
-                    : "bg-muted hover:bg-primary/10 text-muted-foreground hover:text-primary"
-                }`}
-              >
-                {isListening ? (
-                  <MicOff className="w-4 h-4" />
-                ) : (
-                  <Mic className="w-4 h-4" />
-                )}
-              </button>
-            </div>
-          </form>
+          <SmartSearch
+            products={products}
+            onSearch={onSearch}
+            popularSearches={popularSearches}
+            onProductClick={onProductClick}
+          />
 
           {/* Navigation links */}
           <nav className="hidden lg:flex items-center gap-6">
             <Link 
               to="/quienes-somos"
               onClick={scrollToTop}
-              className="text-primary-foreground text-sm font-semibold hover:text-primary-foreground/80 transition-colors whitespace-nowrap"
+              className="text-primary-foreground text-sm font-semibold hover:text-primary-foreground/80 transition-colors whitespace-nowrap font-rubik"
             >
               Quiénes Somos
             </Link>
@@ -214,7 +198,7 @@ export const Header = ({ cartCount, onSearch, onCartClick, onGoToHome }: HeaderP
                     if (element) element.scrollIntoView({ behavior: "smooth" });
                   }, 100);
                 }}
-                className="text-primary-foreground text-sm font-semibold hover:text-primary-foreground/80 transition-colors"
+                className="text-primary-foreground text-sm font-semibold hover:text-primary-foreground/80 transition-colors font-rubik"
               >
                 Contacto
               </button>
@@ -264,16 +248,16 @@ export const Header = ({ cartCount, onSearch, onCartClick, onGoToHome }: HeaderP
                 {/* Radio Option - Abre solo el widget */}
                 <button
                   onClick={openRadioWidget}
-                  className="w-full flex items-center gap-3 p-3 rounded-lg bg-gradient-to-r from-violet-50 to-fuchsia-50 hover:from-violet-100 hover:to-fuchsia-100 border border-violet-100 hover:border-violet-300 transition-all duration-300 group"
+                  className="w-full flex items-center gap-3 p-3 rounded-lg bg-gradient-to-r from-red-50 to-red-50 hover:from-red-100 hover:to-red-100 border border-red-100 hover:border-red-300 transition-all duration-300 group"
                 >
-                  <div className="w-10 h-10 bg-gradient-to-br from-violet-500 to-fuchsia-500 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                  <div className="w-10 h-10 bg-gradient-to-br from-red-500 to-red-500 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
                     <Headphones className="w-5 h-5 text-white" />
                   </div>
                   <div className="text-left flex-1">
-                    <h3 className="font-bold text-gray-900 text-sm group-hover:text-violet-700 transition-colors">Radio Punto Pas</h3>
+                    <h3 className="font-bold text-gray-900 text-sm group-hover:text-red-700 transition-colors">Radio Punto Pas</h3>
                     <p className="text-xs text-gray-500">Escucha nuestra radio</p>
                   </div>
-                  <Radio className="w-4 h-4 text-violet-400 group-hover:text-violet-600 transition-colors" />
+                  <Radio className="w-4 h-4 text-red-400 group-hover:text-red-600 transition-colors" />
                 </button>
                 
                 {/* Maps Option - Navega a la página completa */}
@@ -354,22 +338,18 @@ export const Header = ({ cartCount, onSearch, onCartClick, onGoToHome }: HeaderP
       {showMiniPlayer && (
         <div className="fixed bottom-40 right-4 z-50 animate-in slide-in-from-bottom-5 fade-in duration-500">
           <div 
-            className={`bg-white rounded-3xl shadow-[0_0_40px_rgba(139,92,246,0.4)] border-4 border-violet-400 w-80 overflow-hidden transform transition-all duration-300 hover:scale-[1.02] ${isPlaying ? 'shadow-[0_0_60px_rgba(236,72,153,0.6)]' : ''}`}
+            className="bg-white rounded-xl border border-gray-200 w-80 overflow-hidden"
           >
-            {/* Header - More attractive with glow */}
-            <div className="bg-gradient-to-r from-violet-600 via-purple-600 to-fuchsia-600 p-4 flex items-center justify-between relative overflow-hidden">
-              {/* Animated background effect */}
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-shimmer"></div>
-              
-              <div className="flex items-center gap-3 relative z-10">
-                <div className={`w-10 h-10 bg-white/25 rounded-xl flex items-center justify-center backdrop-blur-sm ${isPlaying ? 'animate-pulse' : ''}`}>
+            <div className="bg-red-600 p-4 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
                   <Radio className="w-5 h-5 text-white" />
                 </div>
                 <div>
                   <h3 className="font-black text-white text-base tracking-wide">Radio Punto Pas</h3>
                   <div className="flex items-center gap-1.5">
-                    <span className={`w-2 h-2 rounded-full ${isPlaying ? 'bg-green-400 animate-ping' : 'bg-yellow-400'}`}></span>
-                    <span className="text-xs text-white/90 font-semibold">{isPlaying ? '🔴 EN VIVO' : '⏸️ En Pausa'}</span>
+                    <span className={`w-2 h-2 rounded-full ${isPlaying ? 'bg-green-400' : 'bg-yellow-400'}`}></span>
+                    <span className="text-xs text-white/90 font-semibold">{isPlaying ? 'EN VIVO' : 'En Pausa'}</span>
                   </div>
                 </div>
               </div>
@@ -386,27 +366,24 @@ export const Header = ({ cartCount, onSearch, onCartClick, onGoToHome }: HeaderP
               </button>
             </div>
 
-            {/* Enhanced Visualizer / Status */}
-            <div className="px-4 py-3 bg-gradient-to-b from-gray-50 to-white">
+            <div className="px-4 py-3 bg-gray-50">
               {error ? (
-                <div className="flex items-center justify-center h-10 text-red-500 text-sm text-center px-2 bg-red-50 rounded-lg">
-                  <span className="font-medium">⚠️ {error}</span>
+                <div className="flex items-center justify-center h-10 text-red-500 text-sm text-center px-2">
+                  <span className="font-medium">{error}</span>
                 </div>
               ) : isLoading ? (
-                <div className="flex items-center justify-center h-10 text-violet-600 text-sm bg-violet-50 rounded-lg">
-                  <div className="w-5 h-5 border-3 border-violet-300 border-t-violet-600 rounded-full animate-spin mr-2"></div>
-                  <span className="font-semibold">Conectando...</span>
+                <div className="flex items-center justify-center h-10 text-red-600 text-sm">
+                  <div className="w-5 h-5 border-2 border-red-300 border-t-red-600 rounded-full animate-spin mr-2"></div>
+                  <span>Conectando...</span>
                 </div>
               ) : (
                 <div className="flex items-center justify-center gap-1 h-10">
                   {[...Array(16)].map((_, i) => (
                     <div
                       key={i}
-                      className={`w-1.5 rounded-full ${isPlaying ? 'bg-gradient-to-t from-violet-500 to-fuchsia-400 animate-pulse' : 'bg-gray-300'}`}
+                      className={`w-1.5 rounded-full ${isPlaying ? 'bg-red-500' : 'bg-gray-300'}`}
                       style={{
                         height: isPlaying ? `${Math.random() * 80 + 20}%` : '20%',
-                        animationDelay: `${i * 0.08}s`,
-                        animationDuration: `${0.3 + Math.random() * 0.4}s`
                       }}
                     ></div>
                   ))}
@@ -414,76 +391,84 @@ export const Header = ({ cartCount, onSearch, onCartClick, onGoToHome }: HeaderP
               )}
             </div>
 
-            {/* Now Playing - More prominent */}
-            <div className="px-4 py-3 bg-gradient-to-r from-violet-100 via-purple-50 to-fuchsia-100 border-y-2 border-violet-200">
+            <div className="px-4 py-3 border-t border-gray-100">
               <div className="flex items-center justify-center gap-2">
-                <span className="text-lg">🎵</span>
-                <p className="text-sm text-violet-800 font-bold text-center truncate flex-1" title={currentSong}>
+                <p className="text-sm text-gray-700 font-medium text-center truncate flex-1">
                   {currentSong}
                 </p>
-                {isPlaying && (
-                  <span className="flex h-3 w-3">
-                    <span className="animate-ping absolute inline-flex h-3 w-3 rounded-full bg-pink-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-3 w-3 bg-pink-500"></span>
-                  </span>
-                )}
               </div>
             </div>
 
-            {/* Controls - Enhanced */}
             <div className="p-4 bg-white">
-              <div className="flex items-center justify-between gap-4">
+              <div className="flex items-center justify-center gap-4">
                 <button 
                   onClick={toggleRadio}
                   disabled={isLoading}
-                  className={`flex-1 flex items-center justify-center gap-2 text-white px-6 py-3 rounded-full font-bold shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 active:scale-95 ${
+                  className={`flex-1 flex items-center justify-center gap-2 text-white px-6 py-3 rounded-lg font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
                     isPlaying 
-                      ? 'bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-600 hover:to-pink-700 shadow-red-500/30' 
-                      : 'bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 shadow-green-500/30'
+                      ? 'bg-red-600 hover:bg-red-700' 
+                      : 'bg-green-600 hover:bg-green-700'
                   }`}
                 >
                   {isLoading ? (
                     <>
-                      <div className="w-5 h-5 border-3 border-white/30 border-t-white rounded-full animate-spin"></div>
+                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
                       <span>Cargando</span>
                     </>
                   ) : isPlaying ? (
                     <>
-                      <Pause className="w-6 h-6" />
-                      <span className="text-base">PAUSAR</span>
+                      <Pause className="w-5 h-5" />
+                      <span>PAUSAR</span>
                     </>
                   ) : (
                     <>
-                      <Play className="w-6 h-6 ml-1" />
-                      <span className="text-base">REPRODUCIR</span>
+                      <Play className="w-5 h-5" />
+                      <span>REPRODUCIR</span>
                     </>
                   )}
                 </button>
 
-                {/* Volume Button - Enhanced */}
                 <button
                   onClick={() => setShowVolumeSlider(!showVolumeSlider)}
-                  className="w-12 h-12 bg-gradient-to-br from-violet-100 to-fuchsia-100 rounded-full flex items-center justify-center text-violet-600 hover:from-violet-200 hover:to-fuchsia-200 transition-all shadow-md hover:shadow-lg"
+                  className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center text-gray-600 hover:bg-gray-200 transition-all"
                 >
                   <span className="text-xl">{volume === 0 ? '🔇' : volume < 0.5 ? '🔉' : '🔊'}</span>
                 </button>
               </div>
 
-              {/* Volume Slider - Enhanced */}
+              {/* Volume Slider */}
               {showVolumeSlider && (
-                <div className="mt-4 flex items-center gap-3 px-2 py-2 bg-gray-50 rounded-xl">
-                  <span className="text-lg">🔈</span>
-                  <input
-                    type="range"
-                    min="0"
-                    max="1"
-                    step="0.1"
-                    value={volume}
-                    onChange={(e) => setVolume(parseFloat(e.target.value))}
-                    className="flex-1 h-2 bg-gradient-to-r from-violet-200 to-fuchsia-200 rounded-lg appearance-none cursor-pointer accent-violet-600"
-                  />
-                  <span className="text-lg">🔊</span>
-                  <span className="text-sm font-bold text-violet-600 w-10 text-right">{Math.round(volume * 100)}%</span>
+                <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 w-48 p-3 bg-white rounded-xl shadow-lg border border-gray-100 z-50">
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => setVolume(0)}
+                      className="text-gray-400 hover:text-gray-600"
+                      title="Silenciar"
+                    >
+                      <VolumeX className="w-4 h-4" />
+                    </button>
+                    <input
+                      type="range"
+                      min="0"
+                      max="1"
+                      step="0.01"
+                      value={volume}
+                      onChange={(e) => setVolume(parseFloat(e.target.value))}
+                      className="flex-1 h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-red-600"
+                    />
+                    <button
+                      onClick={() => setVolume(1)}
+                      className="text-gray-400 hover:text-gray-600"
+                      title="Volumen máximo"
+                    >
+                      <Volume2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                  <div className="text-center mt-1">
+                    <span className="text-xs font-medium" style={{ color: '#FA003F' }}>
+                      {Math.round(volume * 100)}%
+                    </span>
+                  </div>
                 </div>
               )}
             </div>

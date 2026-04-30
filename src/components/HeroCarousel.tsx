@@ -1,111 +1,155 @@
-import { useState, useEffect, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useRef, useEffect, useState, useCallback } from "react";
 
 const slides = [
   {
     id: 1,
-    image: "https://res.cloudinary.com/dbbkpdhze/image/upload/v1771599318/Portada_3_evdruh.png",
-    title: "Bienvenidos",
-    subtitle: "Todo lo que necesitas en un solo lugar",
-    cta: "Ver productos",
+    type: "video" as const,
+    src: "https://res.cloudinary.com/dbbkpdhze/video/upload/v1776308811/PORTADA_1.mp4",
+    action: "productCode" as const,
+    value: "00000467",
   },
   {
     id: 2,
-    image: "https://res.cloudinary.com/dbbkpdhze/image/upload/v1771600517/Portada_2_emjt7n.png",
-    title: "Calidad Garantizada",
-    subtitle: "Los mejores productos para tu hogar y construcción",
-    cta: "Comprar ahora",
+    type: "image" as const,
+    src: "https://res.cloudinary.com/dbbkpdhze/image/upload/v1776338344/PORTADA_2.png",
+    action: "category" as const,
+    value: "TELEVISORES",
   },
   {
     id: 3,
-    image: "https://res.cloudinary.com/dbbkpdhze/image/upload/v1771603530/Portada_1_btm1ot.png",
-    title: "Tu Aliado de Confianza",
-    subtitle: "Más de 25 años de experiencia a tu servicio",
-    cta: "Explorar",
+    type: "image" as const,
+    src: "https://res.cloudinary.com/dbbkpdhze/image/upload/v1776346058/PORTADA_3.png",
+    action: "category" as const,
+    value: "COLCHONES",
+  },
+  {
+    id: 4,
+    type: "image" as const,
+    src: "https://res.cloudinary.com/dbbkpdhze/image/upload/v1776786143/PORTADA_4.png",
+    action: "category" as const,
+    value: "MUEBLERIA COMEDORES Y MESAS",
   },
 ];
 
-export const HeroCarousel = () => {
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
-  const navigate = useNavigate();
+interface HeroCarouselProps {
+  onProductClick?: (productCode: string) => void;
+  onCategoryClick?: (category: string) => void;
+}
 
-  const handleImageError = (index: number) => {
-    console.error(`Error loading hero image ${index}`);
+export const HeroCarousel = ({ onProductClick, onCategoryClick }: HeroCarouselProps) => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const [displayIndex, setDisplayIndex] = useState(0);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const slide = slides[currentIndex];
+    if (slide.type === "video" && videoRef.current) {
+      videoRef.current.src = slide.src;
+      videoRef.current.load();
+      videoRef.current.play().catch(() => {});
+    }
+  }, [currentIndex]);
+
+  const goToSlide = useCallback((index: number) => {
+    if (index === currentIndex || isTransitioning) return;
+    
+    setIsTransitioning(true);
+    setDisplayIndex(index);
+    
+    setTimeout(() => {
+      setCurrentIndex(index);
+      setDisplayIndex(index);
+      setIsTransitioning(false);
+    }, 600);
+  }, [currentIndex, isTransitioning]);
+
+  const handlePrev = () => {
+    const newIndex = (currentIndex - 1 + slides.length) % slides.length;
+    goToSlide(newIndex);
   };
 
-  const nextSlide = useCallback(() => {
-    setCurrentSlide((prev) => (prev + 1) % slides.length);
-  }, []);
-
-  const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
-  };
-
-  const goToSlide = (index: number) => {
-    setCurrentSlide(index);
-    setIsAutoPlaying(false);
-    setTimeout(() => setIsAutoPlaying(true), 5000);
+  const handleNext = () => {
+    const newIndex = (currentIndex + 1) % slides.length;
+    goToSlide(newIndex);
   };
 
   useEffect(() => {
-    if (!isAutoPlaying) return;
-    const interval = setInterval(nextSlide, 4000);
-    return () => clearInterval(interval);
-  }, [isAutoPlaying, nextSlide]);
+    const timer = setInterval(() => {
+      const newIndex = (currentIndex + 1) % slides.length;
+      goToSlide(newIndex);
+    }, 9000);
+    return () => clearInterval(timer);
+  }, [currentIndex, goToSlide]);
+
+  const handleClick = () => {
+    const slide = slides[currentIndex];
+    if (slide.action === "productCode" && onProductClick) {
+      onProductClick(slide.value);
+    } else if (slide.action === "category" && onCategoryClick) {
+      onCategoryClick(slide.value);
+    }
+  };
+
+  const currentSlide = slides[displayIndex];
 
   return (
-    <div className="relative w-full overflow-hidden">
-      {/* Slides container */}
-      <div
-        className="flex transition-transform duration-200 ease-out"
-        style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+    <div 
+      className="relative w-full mx-auto overflow-hidden"
+      style={{ 
+        aspectRatio: "2560/500",
+        maxHeight: "500px"
+      }}
+    >
+      {/* Main container with smooth crossfade */}
+      <div 
+        className={`absolute inset-0 transition-all duration-700 ease-in-out ${
+          isTransitioning 
+            ? 'opacity-0' 
+            : 'opacity-100'
+        }`}
+        onClick={handleClick}
       >
-        {slides.map((slide, index) => (
-          <div
-            key={slide.id}
-            className="w-full flex-shrink-0 relative aspect-[16/6]"
-            onClick={() => slide.id === 2 ? navigate('/?tab=offers') : null}
-          >
-            <img
-              src={slide.image}
-              alt={slide.title}
-              onError={() => handleImageError(index)}
-              className={`w-full h-full object-cover ${slide.id === 2 ? 'cursor-pointer' : ''}`}
-            />
-          </div>
-        ))}
-      </div>
-
-      {/* Navigation arrows */}
-      <button
-        onClick={prevSlide}
-        className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-card/90 backdrop-blur-sm flex items-center justify-center text-foreground shadow-lg hover:bg-card transition-colors"
-      >
-        <ChevronLeft className="w-5 h-5" />
-      </button>
-      <button
-        onClick={nextSlide}
-        className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-card/90 backdrop-blur-sm flex items-center justify-center text-foreground shadow-lg hover:bg-card transition-colors"
-      >
-        <ChevronRight className="w-5 h-5" />
-      </button>
-
-      {/* Dots indicator */}
-      <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-2">
-        {slides.map((_, index) => (
-          <button
-            key={index}
-            onClick={() => goToSlide(index)}
-            className={`h-2 rounded-full transition-all duration-300 ${
-              currentSlide === index
-                ? "w-6 bg-primary"
-                : "w-2 bg-primary-foreground/50 hover:bg-primary-foreground/70"
-            }`}
+        {currentSlide.type === "video" ? (
+          <video
+            ref={videoRef}
+            autoPlay
+            muted
+            loop={!isTransitioning}
+            playsInline
+            className="w-full h-full object-contain"
           />
-        ))}
+        ) : (
+          <img
+            src={currentSlide.src}
+            alt=""
+            className="w-full h-full object-contain"
+          />
+        )}
       </div>
+
+      {/* Navigation Arrows */}
+      {slides.length > 1 && (
+        <>
+          <button
+            onClick={handlePrev}
+            className="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-14 h-14 rounded-full bg-white/80 backdrop-blur-sm shadow-xl flex items-center justify-center hover:bg-white hover:scale-110 transition-all duration-300"
+          >
+            <svg className="w-7 h-7 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+
+          <button
+            onClick={handleNext}
+            className="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-14 h-14 rounded-full bg-white/80 backdrop-blur-sm shadow-xl flex items-center justify-center hover:bg-white hover:scale-110 transition-all duration-300"
+          >
+            <svg className="w-7 h-7 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+        </>
+      )}
     </div>
   );
 };

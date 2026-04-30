@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { ArrowLeft, MapPin, Clock, Sparkles, Target } from "lucide-react";
 import logoPuntoPas from "@/assets/logo-punto-pas.png";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Header } from "@/components/Header";
 import { CartDrawer, CartItem } from "@/components/CartDrawer";
 import { Footer } from "@/components/Footer";
@@ -52,10 +52,20 @@ export const QuienesSomos = () => {
     return saved ? JSON.parse(saved) : [];
   });
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [visibleStats, setVisibleStats] = useState(false);
+  const statsRef = useRef<HTMLDivElement>(null);
+  const carouselRef = useRef<HTMLDivElement>(null);
 
-  const heroSlides = [
+  const scroll = (direction: 'left' | 'right') => {
+    if (carouselRef.current) {
+      const scrollAmount = 400;
+      carouselRef.current.scrollLeft += direction === 'left' ? -scrollAmount : scrollAmount;
+    }
+  };
+
+   const heroSlides = [
     {
-      image: "https://res.cloudinary.com/dbbkpdhze/image/upload/v1771603921/QuienesSomos_Portada_kobvuc.jpg",
+      image: "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777489090/Portada_Q.png",
       title: "Quiénes Somos",
       subtitle: "25 años de historia, compromiso y servicio",
       overlay: "from-primary via-primary/80 to-transparent"
@@ -135,25 +145,26 @@ export const QuienesSomos = () => {
         onCartClick={() => setIsCartOpen(true)}
       />
 
-      {/* Hero Section con Carrusel */}
-      <header className="relative h-[70vh] overflow-hidden">
-        {/* Carrusel de imágenes de fondo */}
-        <div className="absolute inset-0">
-          {heroSlides.map((slide, index) => (
-            <div
-              key={index}
-              className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
-                index === currentSlide ? 'opacity-100' : 'opacity-0'
-              }`}
-            >
-              <div 
-                className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-                style={{ backgroundImage: `url(${slide.image})` }}
-              />
-              <div className={`absolute inset-0 bg-gradient-to-t ${slide.overlay}`} />
-            </div>
-          ))}
-        </div>
+       {/* Hero Section con Carrusel */}
+       <header className="relative h-[70vh] overflow-hidden">
+         {/* Carrusel de imágenes de fondo */}
+         <div className="absolute inset-0">
+           {heroSlides.map((slide, index) => (
+             <div
+               key={index}
+               className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
+                 index === currentSlide ? 'opacity-100' : 'opacity-0'
+               }`}
+             >
+               <div 
+                 className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+                 style={{ backgroundImage: `url(${slide.image})` }}
+               />
+               {/* Efecto oscuro sutil */}
+               <div className="absolute inset-0 bg-black/30" />
+             </div>
+           ))}
+         </div>
 
         {/* Contenido animado */}
         <div className="relative z-10 h-full flex flex-col">
@@ -204,185 +215,214 @@ export const QuienesSomos = () => {
         </div>
       </header>
 
-      {/* Quiénes Somos, Misión y Visión - Cards */}
-      <section className="px-4 py-16 max-w-6xl mx-auto">
-        <div className="grid gap-6">
-          {/* Quiénes Somos */}
-          <div className="bg-card border-2 border-border rounded-xl p-8 shadow-lg hover:shadow-xl transition-shadow">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
-                <Sparkles className="w-6 h-6 text-primary" />
-              </div>
-              <h2 className="text-2xl md:text-3xl font-black text-foreground">
-                ¿Quiénes somos?
-              </h2>
-            </div>
-            <p className="text-muted-foreground leading-relaxed text-justify">
-              En <strong className="text-foreground">Punto-Pas</strong> somos una empresa 
-              dedicada a la comercialización de una amplia variedad de productos para el hogar, 
-              la construcción y el uso diario. Ofrecemos desde artículos de ferretería y materiales 
-              de construcción hasta electrodomésticos, brindando a nuestros clientes soluciones 
-              completas en un solo lugar.
-            </p>
-            <p className="text-muted-foreground leading-relaxed mt-4 text-justify">
-              Nos caracterizamos por la <strong className="text-primary">calidad de nuestros productos</strong>, 
-              la atención personalizada y el compromiso con la satisfacción de quienes 
-              confían en nosotros.
-            </p>
-          </div>
+        {/* Quiénes Somos, Misión y Visión - Cards */}
+        <section className="px-4 py-16 max-w-6xl mx-auto bg-[#ffbd2b] relative">
+          <div className="grid gap-6">
+            {/* Quiénes Somos */}
+            <div className="bg-white border-2 border-border rounded-xl p-8 shadow-lg hover:shadow-xl transition-shadow">
+              <div className="mb-4">
+                 <h2 className="text-2xl md:text-3xl font-black" style={{fontFamily: "'Josefin Sans', sans-serif", color: '#ffbd2b'}}>
+                   ¿Quiénés somos?
+                 </h2>
+               </div>
+               <p className="text-muted-foreground leading-relaxed text-justify">
+                 En <strong className="text-foreground">Punto-Pas</strong> somos una empresa
+                 dedicada a la comercialización de una amplia variedad de productos para el hogar,
+                 la construcción y el uso diario. Ofrecemos desde artículos de ferretería y materiales
+                 de construcción hasta electrodomésticos, brindando a nuestros clientes soluciones
+                 completas en un solo lugar.
+               </p>
+               <p className="text-muted-foreground leading-relaxed mt-4 text-justify">
+                 Nos caracterizamos por la <strong className="text-primary">calidad de nuestros productos</strong>,
+                 la atención personalizada y el compromiso con la satisfacción de quienes
+                 confían en nosotros.
+               </p>
+             </div>
 
-          {/* Misión y Visión en grid */}
-          <div className="grid md:grid-cols-2 gap-6">
-            {/* Misión */}
-            <div className="bg-gradient-to-br from-primary/5 to-primary/10 border-2 border-primary/20 rounded-xl p-8 shadow-lg hover:shadow-xl transition-shadow">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-12 h-12 bg-primary rounded-lg flex items-center justify-center">
-                  <Target className="w-6 h-6 text-primary-foreground" />
+            {/* Misión y Visión en grid */}
+            <div className="grid md:grid-cols-2 gap-6">
+              {/* Misión */}
+              <div className="bg-white border-2 border-border rounded-xl p-8 shadow-lg hover:shadow-xl transition-shadow">
+                <div className="mb-4">
+                  <h2 className="text-left text-xl md:text-2xl font-bold" style={{fontFamily: "'Josefin Sans', sans-serif", color: '#FB0548'}}>
+                    Misión
+                  </h2>
                 </div>
-                <h2 className="text-xl md:text-2xl font-black text-foreground">
-                  Misión
-                </h2>
+                <p className="text-muted-foreground leading-relaxed text-justify">
+                  Satisfacer las necesidades de nuestros clientes ofreciendo productos variados,
+                  confiables y a precios competitivos, acompañados de un servicio responsable y
+                  cercano, que garantice una experiencia de compra segura y eficiente.
+                </p>
               </div>
-              <p className="text-muted-foreground leading-relaxed text-justify">
-                Satisfacer las necesidades de nuestros clientes ofreciendo productos variados, 
-                confiables y a precios competitivos, acompañados de un servicio responsable y 
-                cercano, que garantice una experiencia de compra segura y eficiente.
-              </p>
-            </div>
 
-            {/* Visión */}
-            <div className="bg-gradient-to-br from-primary/5 to-primary/10 border-2 border-primary/20 rounded-xl p-8 shadow-lg hover:shadow-xl transition-shadow">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-12 h-12 bg-primary rounded-lg flex items-center justify-center">
-                  <Sparkles className="w-6 h-6 text-primary-foreground" />
+              {/* Visión */}
+              <div className="bg-white border-2 border-border rounded-xl p-8 shadow-lg hover:shadow-xl transition-shadow">
+                <div className="mb-4">
+                  <h2 className="text-left text-xl md:text-2xl font-bold" style={{fontFamily: "'Josefin Sans', sans-serif", color: '#FB0548'}}>
+                    Visión
+                  </h2>
                 </div>
-                <h2 className="text-xl md:text-2xl font-black text-foreground">
-                  Visión
-                </h2>
+                <p className="text-muted-foreground leading-relaxed text-justify">
+                  Ser una empresa referente en la comercialización de productos para el hogar,
+                  la construcción y el comercio en general, reconocida por su variedad,
+                  calidad y excelencia en el servicio, consolidándonos como una opción confiable
+                  y preferida por nuestros clientes.
+                </p>
               </div>
-              <p className="text-muted-foreground leading-relaxed text-justify">
-                Ser una empresa referente en la comercialización de productos para el hogar, 
-                la construcción y el comercio en general, reconocida por su variedad, 
-                calidad y excelencia en el servicio, consolidándonos como una opción confiable 
-                y preferida por nuestros clientes.
-              </p>
             </div>
           </div>
-        </div>
-      </section>
 
-      {/* Timeline - Historia */}
-      <section className="px-4 py-20 bg-gradient-to-b from-muted/50 to-background">
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-16">
-            <span className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-semibold mb-4">
-              <Clock className="w-4 h-4" />
-              Nuestra Historia
-            </span>
-            <h2 className="text-3xl md:text-4xl font-black text-foreground mb-4">
-              25 Años de Trayectoria
-            </h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Un recorrido de esfuerzo, dedicación y compromiso con nuestros clientes
-            </p>
+          {/* Ola SVG inferior */}
+          <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-none translate-y-full">
+            <svg viewBox="0 0 1200 60" preserveAspectRatio="none" className="w-full h-[60px]">
+              <path d="M0,30 C200,60 400,0 600,30 C800,60 1000,0 1200,30 L1200,60 L0,60 Z" fill="#ffffff" />
+            </svg>
           </div>
+        </section>
 
-          {/* Timeline Vertical */}
+       {/* Timeline - Historia */}
+       <section className="px-4 py-20 bg-[#ffbd2b] relative">
+         {/* Ola SVG superior */}
+         <div className="absolute top-0 left-0 w-full overflow-hidden leading-none -translate-y-full">
+           <svg viewBox="0 0 1200 60" preserveAspectRatio="none" className="w-full h-[60px]">
+             <path d="M0,30 C200,0 400,60 600,30 C800,0 1000,60 1200,30 L1200,0 L0,0 Z" fill="#ffffff" />
+           </svg>
+         </div>
+
+         <div className="max-w-5xl mx-auto">
+           <div className="text-left mb-16">
+             <span className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-semibold mb-4">
+               <Clock className="w-4 h-4" />
+               Nuestra Historia
+             </span>
+             <h2 className="text-left text-3xl md:text-4xl font-bold text-[#FB0548] mt-4" style={{fontFamily: "'Josefin Sans', sans-serif"}}>
+                25 Años de Trayectoria
+             </h2>
+             <p className="text-muted-foreground max-w-2xl mt-2">
+               Un recorrido de esfuerzo, dedicación y compromiso con nuestros clientes
+             </p>
+           </div>
+
+           {/* Timeline Vertical */}
+           <div className="relative">
+             {/* Línea central vertical */}
+             <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-primary via-primary/50 to-transparent transform md:-translate-x-1/2" />
+
+             {milestones.map((milestone, index) => (
+               <div
+                 key={milestone.year}
+                 className={`relative flex flex-col md:flex-row items-start md:items-center gap-6 mb-16 last:mb-0 ${
+                   index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'
+                 }`}
+               >
+                 {/* Círculo con año */}
+                 <div className="absolute left-4 md:left-1/2 transform md:-translate-x-1/2 z-10">
+                   <div className="w-20 h-20 bg-primary rounded-full flex items-center justify-center shadow-xl shadow-primary/30 border-4 border-background">
+                     <span className="text-primary-foreground font-black text-sm text-center leading-tight">
+                       {milestone.year}
+                     </span>
+                   </div>
+                 </div>
+
+                 {/* Contenido - Izquierda */}
+                 <div className={`flex-1 pl-16 md:pl-0 ${index % 2 === 0 ? 'md:pr-24 md:text-right' : 'md:pl-24 md:text-left'}`}>
+                   <div className={`bg-card rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500 border border-border group ${index % 2 === 0 ? 'md:ml-auto' : 'md:mr-auto'} max-w-md`}>
+                     {/* Imagen */}
+                     <div className="aspect-[16/10] overflow-hidden relative">
+                       <img
+                         src={milestone.image}
+                         alt={milestone.title}
+                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                       />
+                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                       <div className="absolute bottom-3 left-3 right-3">
+                         <h3 className="text-white font-bold text-lg drop-shadow-lg">{milestone.title}</h3>
+                       </div>
+                     </div>
+                     {/* Descripción */}
+                     <div className="p-5">
+                       <p className="text-muted-foreground text-sm leading-relaxed">
+                         {milestone.description}
+                       </p>
+                     </div>
+                   </div>
+                 </div>
+
+                 {/* Espacio vacío para el otro lado */}
+                 <div className="hidden md:block flex-1" />
+               </div>
+             ))}
+           </div>
+         </div>
+
+         {/* Ola SVG inferior */}
+         <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-none translate-y-full">
+           <svg viewBox="0 0 1200 60" preserveAspectRatio="none" className="w-full h-[60px]">
+             <path d="M0,30 C200,60 400,0 600,30 C800,60 1000,0 1200,30 L1200,60 L0,60 Z" fill="#ffffff" />
+           </svg>
+         </div>
+       </section>
+
+      {/* Sección de Videos - Carrusel */}
+      <section className="py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-left text-2xl md:text-3xl font-bold text-[#FB0548] mb-10" style={{fontFamily: "'Josefin Sans', sans-serif"}}>
+            Nuestros Videos
+          </h2>
+          <p className="mt-2 text-sm text-gray-500">
+            Conoce más sobre Punto Pas en nuestras redes
+          </p>
+          
+          {/* Carrusel con scroll-snap */}
           <div className="relative">
-            {/* Línea central vertical */}
-            <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-primary via-primary/50 to-transparent transform md:-translate-x-1/2" />
+            {/* Flecha izquierda */}
+            <button 
+              onClick={() => scroll('left')}
+              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-10 h-10 bg-[#FB0548] rounded-full shadow-md flex items-center justify-center hover:bg-[#d9043f] transition-colors"
+            >
+              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={4} d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
 
-            {milestones.map((milestone, index) => (
-              <div 
-                key={milestone.year}
-                className={`relative flex flex-col md:flex-row items-start md:items-center gap-6 mb-16 last:mb-0 ${
-                  index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'
-                }`}
-              >
-                {/* Círculo con año */}
-                <div className="absolute left-4 md:left-1/2 transform md:-translate-x-1/2 z-10">
-                  <div className="w-20 h-20 bg-primary rounded-full flex items-center justify-center shadow-xl shadow-primary/30 border-4 border-background">
-                    <span className="text-primary-foreground font-black text-sm text-center leading-tight">
-                      {milestone.year}
-                    </span>
-                  </div>
+            <div 
+              ref={carouselRef}
+              className="flex gap-6 overflow-x-auto snap-x snap-mandatory scrollbar-hide pb-4"
+              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+            >
+              {[
+                { id: '7627152226280244753', cite: 'https://www.tiktok.com/@punto_pas/video/7634170687552310536?is_from_webapp=1&sender_device=pc&web_id=7627152226280244753' },
+                { id: '7633990538231893256', cite: 'https://www.tiktok.com/@punto_pas/video/7633990538231893256' },
+                { id: '7622439772660698376', cite: 'https://www.tiktok.com/@punto_pas/video/7622439772660698376' },
+                { id: '7622438037452000530', cite: 'https://www.tiktok.com/@punto_pas/video/7622438037452000530' },
+                { id: '7600147557926341895', cite: 'https://www.tiktok.com/@punto_pas/video/7600147557926341895' },
+              ].map((video, index) => (
+                <div 
+                  key={index} 
+                  className="flex-none w-full md:w-[400px] snap-center"
+                >
+                  <blockquote 
+                    className="tiktok-embed" 
+                    cite={video.cite}
+                    data-video-id={video.id}
+                  >
+                    <section>
+                      <a target="_blank" title="@punto_pas" href="https://www.tiktok.com/@punto_pas">@punto_pas</a>
+                    </section>
+                  </blockquote>
                 </div>
-
-                {/* Contenido - Izquierda */}
-                <div className={`flex-1 pl-16 md:pl-0 ${index % 2 === 0 ? 'md:pr-24 md:text-right' : 'md:pl-24 md:text-left'}`}>
-                  <div className={`bg-card rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500 border border-border group ${index % 2 === 0 ? 'md:ml-auto' : 'md:mr-auto'} max-w-md`}>
-                    {/* Imagen */}
-                    <div className="aspect-[16/10] overflow-hidden relative">
-                      <img 
-                        src={milestone.image} 
-                        alt={milestone.title}
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                      <div className="absolute bottom-3 left-3 right-3">
-                        <h3 className="text-white font-bold text-lg drop-shadow-lg">{milestone.title}</h3>
-                      </div>
-                    </div>
-                    {/* Descripción */}
-                    <div className="p-5">
-                      <p className="text-muted-foreground text-sm leading-relaxed">
-                        {milestone.description}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Espacio vacío para el otro lado */}
-                <div className="hidden md:block flex-1" />
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Location Card */}
-      <section className="px-4 py-16 bg-slate-900">
-        <div className="max-w-4xl mx-auto bg-slate-800 rounded-3xl shadow-2xl overflow-hidden border border-slate-700">
-          <div className="grid md:grid-cols-2">
-            <div className="p-8 text-white">
-              <h2 className="text-2xl font-black mb-6 flex items-center gap-2">
-                <MapPin className="w-6 h-6 text-cyan-400" />
-                Visítanos
-              </h2>
-              <div className="space-y-4">
-                <div className="flex items-start gap-3">
-                  <MapPin className="w-5 h-5 text-cyan-400 mt-1 flex-shrink-0" />
-                  <p className="text-slate-300">Ecuador - Tu ferretería de confianza</p>
-                </div>
-                <div className="flex items-start gap-3">
-                  <Clock className="w-5 h-5 text-cyan-400 mt-1 flex-shrink-0" />
-                  <div>
-                    <p className="font-medium text-white">Horario de atención</p>
-                    <p className="text-slate-300">Lunes a Sábado: 8:00 AM - 6:00 PM</p>
-                  </div>
-                </div>
-              </div>
-              <Link 
-                to="/"
-                className="inline-flex items-center gap-2 bg-cyan-600 hover:bg-cyan-500 text-white px-6 py-3 rounded-xl font-bold mt-6 transition-all duration-200 shadow-lg hover:shadow-cyan-500/25"
-              >
-                Ver productos
-              </Link>
+              ))}
             </div>
-            <div className="aspect-square md:aspect-auto relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 opacity-95" />
-              <iframe 
-                src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d10925.215127800555!2d-78.81681414407421!3d1.2804919531416215!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1ses!2sec!4v1770175357122!5m2!1ses!2sec" 
-                width="100%" 
-                height="100%" 
-                style={{ border: 0, minHeight: '350px', filter: 'contrast(1.1) brightness(0.9)' }} 
-                allowFullScreen 
-                loading="lazy" 
-                referrerPolicy="no-referrer-when-downgrade"
-                title="Ubicación Punto Pas"
-                className="relative z-10"
-              />
-            </div>
+
+            {/* Flecha derecha */}
+            <button 
+              onClick={() => scroll('right')}
+              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-10 h-10 bg-[#FB0548] rounded-full shadow-md flex items-center justify-center hover:bg-[#d9043f] transition-colors"
+            >
+              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={4} d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
           </div>
         </div>
       </section>
@@ -422,6 +462,7 @@ export const QuienesSomos = () => {
         isOpen={isCartOpen}
         onClose={() => setIsCartOpen(false)}
         items={cart}
+        products={products}
         onUpdateQuantity={handleUpdateQuantity}
         onRemoveItem={handleRemoveItem}
         onClearCart={handleClearCart}

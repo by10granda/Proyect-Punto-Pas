@@ -1,119 +1,171 @@
-import { useState, useRef, useEffect, memo } from "react";
+import { useState, useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { getCategories } from "@/data/products";
+import { Product } from "@/data/products";
 
 interface CategoryBarProps {
   selectedCategory: string;
   onSelectCategory: (categoryId: string) => void;
+  products?: Product[];
 }
 
-const categoryImages: Record<string, string> = {
-  "all": "https://res.cloudinary.com/dbbkpdhze/image/upload/v1771333603/Carrucell_electronicos_snysnk.png",
-  "FERRETERIA EN GENERAL": "https://res.cloudinary.com/dbbkpdhze/image/upload/v1771509694/Categoria_Ferretria_aurmbn.png",
-  "HOGAR": "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=600&q=80",
-  "HERRAMIENTAS": "https://images.unsplash.com/photo-1530124566582-a618bc2615dc?w=600&q=80",
-  "ELECTRICOS": "https://res.cloudinary.com/dbbkpdhze/image/upload/v1771334037/Carrucell_electronicos1_mtpwqz.png",
-  "ADITIVOS": "https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=600&q=80",
-};
+const CLOUDINARY_VERSION = 'v1775785362';
 
-export const CategoryBar = memo(({ selectedCategory, onSelectCategory }: CategoryBarProps) => {
-  const [scrollPosition, setScrollPosition] = useState(0);
+export const CategoryBar = ({ selectedCategory, onSelectCategory, products = [] }: CategoryBarProps) => {
+  const [showAllCategories, setShowAllCategories] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(true);
 
-  const scroll = (direction: "left" | "right") => {
-    if (!scrollRef.current) return;
-    const scrollAmount = 200;
-    const newPosition = direction === "left" 
-      ? scrollPosition - scrollAmount 
-      : scrollPosition + scrollAmount;
+  const getCategoryImage = (categoryId: string): string => {
+    if (categoryId === "all") {
+      return "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777335777/TODOS.png";
+    }
+    const formattedName = categoryId.toUpperCase().trim().replace(/\s+/g, '_');
+    return `https://res.cloudinary.com/dbbkpdhze/image/upload/${CLOUDINARY_VERSION}/${formattedName}_123.png`;
+  };
+
+  const PRIORITY_CATEGORIES = [
+    "all",
+    "TELEVISORES",
+    "MUEBLERIA COMEDORES Y MESAS",
+    "LAVADORAS Y SECADORAS",
+    "COCINAS Y CAMPANAS",
+    "CELULARES",
+    "CONGELADORES Y NEVERAS"
+  ];
+  
+  const allTypes = [...new Set(products.map(p => p.type).filter(Boolean))].sort();
+  const displayTypes = PRIORITY_CATEGORIES.filter(cat => 
+    cat === "all" || allTypes.includes(cat)
+  );
+  const itemWidth = 380;
+
+  const getProductCount = (type: string) => {
+    if (type === "all") return products.length;
+    return products.filter(p => p.type === type).length;
+  };
+
+  const updateScrollButtons = () => {
+    const el = scrollRef.current;
+    if (el) {
+      setCanScrollLeft(el.scrollLeft > 10);
+      setCanScrollRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 10);
+    }
+  };
+
+  const scroll = (dir: "left" | "right") => {
+    const el = scrollRef.current;
+    if (!el) return;
     
-    scrollRef.current.scrollTo({ left: newPosition, behavior: "smooth" });
-    setScrollPosition(newPosition);
-  };
-
-  const handleScroll = () => {
-    if (scrollRef.current) {
-      setScrollPosition(scrollRef.current.scrollLeft);
+    const current = Math.round(el.scrollLeft / itemWidth);
+    
+    if (dir === "left" && current > 0) {
+      el.scrollTo({ left: (current - 1) * itemWidth, behavior: "smooth" });
+    } else if (dir === "right" && current < displayTypes.length - 1) {
+      el.scrollTo({ left: (current + 1) * itemWidth, behavior: "smooth" });
     }
+    
+    setTimeout(updateScrollButtons, 350);
   };
-
-  useEffect(() => {
-    const ref = scrollRef.current;
-    if (ref) {
-      ref.addEventListener("scroll", handleScroll);
-      return () => ref.removeEventListener("scroll", handleScroll);
-    }
-  }, []);
-
-  const canScrollLeft = scrollPosition > 0;
-  const canScrollRight = scrollRef.current 
-    ? scrollPosition < scrollRef.current.scrollWidth - scrollRef.current.clientWidth - 10
-    : true;
 
   return (
-    <div className="bg-card py-8 px-4 shadow-sm">
-      <div className="max-w-7xl mx-auto">
-        <div className="flex items-center justify-between mb-10">
-          <h3 className="text-3xl md:text-4xl font-black text-foreground bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent leading-relaxed">🏷️ CATEGORÍAS</h3>
-          <div className="flex gap-2">
-            <button
-              onClick={() => scroll("left")}
-              disabled={!canScrollLeft}
-              className={`w-10 h-10 rounded-full bg-muted flex items-center justify-center transition-all ${
-                canScrollLeft ? "hover:bg-primary hover:text-primary-foreground" : "opacity-30"
-              }`}
-            >
-              <ChevronLeft className="w-5 h-5" />
-            </button>
-            <button
-              onClick={() => scroll("right")}
-              disabled={!canScrollRight}
-              className={`w-10 h-10 rounded-full bg-muted flex items-center justify-center transition-all ${
-                canScrollRight ? "hover:bg-primary hover:text-primary-foreground" : "opacity-30"
-              }`}
-            >
-              <ChevronRight className="w-5 h-5" />
-            </button>
-          </div>
+    <section className="py-8 bg-white">
+      <div className="max-w-[99vw] mx-auto px-2">
+        <div className="flex items-center justify-between mb-6 px-2">
+          <h3 className="text-lg md:text-xl lg:text-2xl font-black uppercase tracking-wide" style={{ color: '#FA003F', fontFamily: 'Nunito, sans-serif' }}>
+            CATEGORÍAS
+          </h3>
+          <button
+            onClick={() => setShowAllCategories(true)}
+            className="px-4 py-2 text-white rounded-full font-semibold text-sm"
+            style={{ backgroundColor: '#FF000B' }}
+          >
+            Ver todas
+          </button>
         </div>
 
-        <div
-          ref={scrollRef}
-          className="grid grid-flow-col grid-rows-2 auto-cols-max gap-4 overflow-x-auto scrollbar-hide scroll-smooth pb-2"
-          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
-        >
-          {getCategories().map((category) => (
-            <button
-              key={category.id}
-              onClick={() => onSelectCategory(category.id)}
-              className={`flex flex-col items-center gap-3 p-4 rounded-2xl transition-all duration-150 flex-shrink-0 group ${
-                selectedCategory === category.id
-                  ? "bg-primary shadow-xl scale-105"
-                  : "bg-muted hover:bg-primary/10 hover:shadow-lg hover:scale-102"
-              }`}
+        <div className="flex items-center gap-0 pl-2">
+          <button 
+            onClick={() => scroll("left")} 
+            className="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center transition-transform z-10 disabled:opacity-50"
+            style={{ backgroundColor: '#FF0000' }}
+            disabled={!canScrollLeft}
+          >
+            <ChevronLeft className="w-5 h-5 text-white" />
+          </button>
+
+          <div className="overflow-hidden px-2">
+            <div 
+              ref={scrollRef} 
+              className="flex justify-start overflow-x-auto scroll-smooth hide-scrollbar py-4"
+              style={{ scrollbarWidth: 'none' }}
             >
-              <div className={`w-44 h-44 md:w-56 md:h-56 rounded-2xl overflow-hidden border-4 transition-all shadow-lg ${
-                selectedCategory === category.id 
-                  ? "border-primary-foreground" 
-                  : "border-border group-hover:border-primary"
-              }`}>
-                <img
-                  src={categoryImages[category.id] || categoryImages["all"]}
-                  alt={category.name}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                />
-              </div>
-              <span className={`text-sm font-bold text-center transition-colors mt-4 ${
-                selectedCategory === category.id 
-                  ? "text-primary-foreground" 
-                  : "text-foreground group-hover:text-primary"
-              }`}>
-                {category.name}
-              </span>
-            </button>
-          ))}
+              {displayTypes.map((type) => {
+                const isSelected = selectedCategory === type;
+                const count = getProductCount(type);
+                const imgSrc = getCategoryImage(type);
+                
+                return (
+                  <button
+                    key={type}
+                    onClick={() => onSelectCategory(type)}
+                    className={`flex-shrink-0 flex flex-col items-center gap-2 transition-all ${isSelected ? 'scale-105' : ''}`}
+                  >
+                    <div 
+                      className="relative" 
+                      style={{ width: "350px", height: "175px", minWidth: "340px", borderRadius: "12px" }}
+                    >
+                      <img src={imgSrc} alt={type} className="w-full h-full object-contain" />
+                    </div>
+                    <span className="text-xs font-medium text-center max-w-[350px]" style={{ color: isSelected ? '#FF000B' : '#374151', fontWeight: isSelected ? 700 : 400 }}>
+                      {type === "all" ? "TODOS" : type}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          <button 
+            onClick={() => scroll("right")} 
+            className="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center transition-transform z-10 disabled:opacity-50"
+            style={{ backgroundColor: '#FF0000' }}
+            disabled={!canScrollRight}
+          >
+            <ChevronRight className="w-5 h-5 text-white" />
+          </button>
         </div>
       </div>
-    </div>
+
+      {showAllCategories && (
+        <div className="fixed inset-0 z-50">
+          <div className="absolute inset-0 bg-black/60" onClick={() => setShowAllCategories(false)} />
+          <div className="absolute inset-4 bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col">
+            <div className="flex items-center justify-between p-6" style={{ backgroundColor: '#FA003F' }}>
+              <div>
+                <h3 className="text-xl font-bold text-white">Todas las categorías</h3>
+                <p className="text-sm text-white/80">{allTypes.length} tipos</p>
+              </div>
+              <button onClick={() => setShowAllCategories(false)} className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
+                <span className="text-white text-xl">×</span>
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto p-6">
+              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 gap-4">
+                {allTypes.map((type) => (
+                  <button key={type} onClick={() => { onSelectCategory(type); setShowAllCategories(false); }} className="flex flex-col items-center gap-2 p-2 rounded-xl hover:bg-gray-50 transition-all">
+                    <div className="relative rounded-full overflow-hidden shadow-md" style={{ width: "80px", height: "80px" }}>
+                      <img src={getCategoryImage(type)} alt={type} className="w-full h-full object-cover" />
+                    </div>
+                    <span className="text-xs text-center font-medium">{type}</span>
+                    <span className="text-[10px] text-gray-500 hidden">{getProductCount(type)}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </section>
   );
-});
+};

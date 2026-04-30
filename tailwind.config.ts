@@ -15,7 +15,9 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
+        sans: ['Open Sans', 'Roboto', 'Inter', 'system-ui', 'sans-serif'],
+        josefin: ['Josefin Sans', 'sans-serif'],
+        rubik: ['Rubik', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",
