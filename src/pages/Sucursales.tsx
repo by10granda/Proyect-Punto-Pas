@@ -40,7 +40,7 @@ const stores: Store[] = [
     id: 3,
     name: "SUCURSAL STIHL",
     address: "Llalda, Ecuador",
-    iframeSrc: "https://www.google.com/maps/embed?pb=!1m10!1m8!1m3!1d386.7728043080225!2d-78.83286854098245!3d1.2832387769916989!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8fd4bede2bd71849%3A0xf5fc5e870ef38310!2sAv.%20Jaime%20Hurtado%20Gonzales!5e0!3m2!1ses!2sec!4v1777560989594!5m2!1ses!2sec",
+    iframeSrc: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d997.2044253145921!2d-78.83360553045236!3d1.2832300999190542!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e2c85b214b2039%3A0xa4d5dcce5294ca82!2sDistribuidora%20PAS!5e0!3m2!1ses!2sec!4v17775613999134!5m2!1ses!2sec",
     phone: "+593 99 123 4567",
     hours: "8:00 AM - 8:00 PM",
     isOpen: true,
