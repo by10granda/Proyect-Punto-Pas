@@ -216,7 +216,7 @@ export const QuienesSomos = () => {
       </header>
 
         {/* Quiénes Somos, Misión y Visión - Cards */}
-        <section className="pt-16 pb-[100px] bg-[#ffbd2b] relative">
+        <section className="py-16 bg-[#ffbd2b] relative">
           <div className="max-w-6xl mx-auto px-4">
             <div className="grid gap-6">
               {/* Quiénes Somos */}
@@ -275,9 +275,9 @@ export const QuienesSomos = () => {
           </div>
 
           {/* Ola SVG inferior */}
-          <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-none translate-y-full" style={{ lineHeight: 0 }}>
+          <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-none" style={{ lineHeight: 0, zIndex: 1 }}>
             <svg viewBox="0 0 1440 100" preserveAspectRatio="none" className="w-full block" style={{ display: 'block' }}>
-              <path d="M0,0 C360,100 1080,0 1440,0 L1440,100 L0,100 Z" fill="#ffffff" />
+              <path d="M0,100 C360,0 1080,100 1440,100 L1440,100 L0,100 Z" fill="#ffffff" />
             </svg>
           </div>
         </section>
