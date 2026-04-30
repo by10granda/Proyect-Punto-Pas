@@ -8,7 +8,7 @@ interface FooterProps {
 
 export const Footer = ({ onCartClick }: FooterProps) => {
   return (
-    <footer id="contacto" className="bg-gray-900 text-white">
+    <footer id="contacto" className="bg-primary text-white">
       {/* Main footer content */}
       <div className="max-w-7xl mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
@@ -24,74 +24,73 @@ export const Footer = ({ onCartClick }: FooterProps) => {
               </div>
               <div>
                 <h3 className="text-2xl font-black tracking-tight">PUNTO PAS</h3>
-                <p className="text-xs text-gray-400 tracking-widest">ENCUENTRA TODO EN UN SOLO LUGAR</p>
+                <p className="text-xs text-white/80 font-medium tracking-wide">ENCUENTRA TODO EN UN SOLO LUGAR</p>
               </div>
             </div>
-            <p className="text-gray-400 text-sm leading-relaxed mb-6">
+            <p className="text-white/70 text-sm leading-relaxed mb-6">
               Tu ferretería de confianza en Ecuador. Calidad, variedad y los mejores precios del mercado.
             </p>
-            {/* Social Links */}
+            {/* Social Links - Minimalist */}
             <div className="flex items-center gap-3">
                <a
-                 href="https://www.facebook.com/p/Punto-Pas-100063756541859/"
-                 target="_blank"
-                 rel="noopener noreferrer"
-                 className="w-10 h-10 rounded-lg bg-gray-800 hover:bg-blue-600 flex items-center justify-center transition-all hover:scale-110"
-               >
-                 {/* Facebook icon - using external link instead */}
-                 <ExternalLink className="w-5 h-5" />
-               </a>
+                  href="https://www.facebook.com/p/Punto-Pas-100063756541859/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-10 h-10 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition-all hover:scale-110"
+                >
+                  <ExternalLink className="w-5 h-5" />
+                </a>
               <a
                 href="https://www.tiktok.com/@punto_pas"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 rounded-lg bg-gray-800 hover:bg-black flex items-center justify-center transition-all hover:scale-110 border border-gray-700"
+                className="w-10 h-10 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition-all hover:scale-110 border border-white/20"
               >
                 <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
-                  <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
+                  <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
                 </svg>
               </a>
               <a
                 href="https://wa.me/593959990999"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 rounded-lg bg-gray-800 hover:bg-green-600 flex items-center justify-center transition-all hover:scale-110"
+                className="w-10 h-10 rounded-lg bg-white/10 hover:bg-green-500 flex items-center justify-center transition-all hover:scale-110"
               >
                 <MessageCircle className="w-5 h-5" />
               </a>
             </div>
           </div>
-
-          {/* Services / Links */}
+          
+          {/* Navigation - Minimalist */}
           <div>
             <h4 className="text-base font-bold mb-5 flex items-center gap-2">
-              <span className="w-8 h-1 bg-primary rounded-full"></span>
+              <span className="w-8 h-1 bg-white/30 rounded-full"></span>
               Navegación
             </h4>
             <div className="space-y-3">
               <Link 
                 to="/" 
-                className="flex items-center gap-3 text-gray-400 hover:text-white transition-colors group"
+                className="flex items-center gap-3 text-white/70 hover:text-white transition-colors group"
               >
-                <div className="w-8 h-8 rounded-lg bg-gray-800 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center group-hover:bg-white/20 transition-colors">
                   <Home className="w-4 h-4" />
                 </div>
                 <span>Inicio</span>
               </Link>
               <Link 
                 to="/quienes-somos" 
-                className="flex items-center gap-3 text-gray-400 hover:text-white transition-colors group"
+                className="flex items-center gap-3 text-white/70 hover:text-white transition-colors group"
               >
-                <div className="w-8 h-8 rounded-lg bg-gray-800 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center group-hover:bg-white/20 transition-colors">
                   <Info className="w-4 h-4" />
                 </div>
                 <span>Quiénes Somos</span>
               </Link>
               <Link 
                 to="/sucursales" 
-                className="flex items-center gap-3 text-gray-400 hover:text-white transition-colors group"
+                className="flex items-center gap-3 text-white/70 hover:text-white transition-colors group"
               >
-                <div className="w-8 h-8 rounded-lg bg-gray-800 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center group-hover:bg-white/20 transition-colors">
                   <MapPinIcon className="w-4 h-4" />
                 </div>
                 <span>Sucursales</span>
@@ -99,9 +98,9 @@ export const Footer = ({ onCartClick }: FooterProps) => {
               {onCartClick ? (
                 <button 
                   onClick={onCartClick}
-                  className="flex items-center gap-3 text-gray-400 hover:text-white transition-colors group w-full"
+                  className="flex items-center gap-3 text-white/70 hover:text-white transition-colors group w-full"
                 >
-                  <div className="w-8 h-8 rounded-lg bg-gray-800 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                  <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center group-hover:bg-white/20 transition-colors">
                     <ShoppingCart className="w-4 h-4" />
                   </div>
                   <span>Carrito de compras</span>
@@ -109,9 +108,9 @@ export const Footer = ({ onCartClick }: FooterProps) => {
               ) : (
                 <Link 
                   to="/checkout" 
-                  className="flex items-center gap-3 text-gray-400 hover:text-white transition-colors group"
+                  className="flex items-center gap-3 text-white/70 hover:text-white transition-colors group"
                 >
-                  <div className="w-8 h-8 rounded-lg bg-gray-800 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                  <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center group-hover:bg-white/20 transition-colors">
                     <ShoppingCart className="w-4 h-4" />
                   </div>
                   <span>Carrito de compras</span>
@@ -119,59 +118,59 @@ export const Footer = ({ onCartClick }: FooterProps) => {
               )}
             </div>
           </div>
-
-          {/* Contact Info */}
+          
+          {/* Contact Info - Minimalist */}
           <div>
             <h4 className="text-base font-bold mb-5 flex items-center gap-2">
-              <span className="w-8 h-1 bg-primary rounded-full"></span>
+              <span className="w-8 h-1 bg-white/30 rounded-full"></span>
               Contáctanos
             </h4>
             <div className="space-y-4">
               <a 
                 href="tel:+593959990999" 
-                className="flex items-start gap-3 text-gray-400 hover:text-white transition-colors group"
+                className="flex items-start gap-3 text-white/70 hover:text-white transition-colors group"
               >
-                <div className="w-10 h-10 rounded-lg bg-gray-800 flex items-center justify-center group-hover:bg-primary/20 transition-colors flex-shrink-0">
+                <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center group-hover:bg-white/20 transition-colors flex-shrink-0">
                   <Phone className="w-5 h-5" />
                 </div>
                 <div>
-                  <p className="text-xs text-gray-500 mb-0.5">Teléfono</p>
+                  <p className="text-xs text-white/50 mb-0.5">Teléfono</p>
                   <p className="font-semibold">095 999 0999</p>
                 </div>
               </a>
-              
+             
               <a 
                 href="mailto:variedadespas2025@gmail.com" 
-                className="flex items-start gap-3 text-gray-400 hover:text-white transition-colors group"
+                className="flex items-start gap-3 text-white/70 hover:text-white transition-colors group"
               >
-                <div className="w-10 h-10 rounded-lg bg-gray-800 flex items-center justify-center group-hover:bg-primary/20 transition-colors flex-shrink-0">
+                <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center group-hover:bg-white/20 transition-colors flex-shrink-0">
                   <Mail className="w-5 h-5" />
                 </div>
                 <div>
-                  <p className="text-xs text-gray-500 mb-0.5">Email</p>
+                  <p className="text-xs text-white/50 mb-0.5">Email</p>
                   <p className="font-semibold">variedadespas2025@gmail.com</p>
                 </div>
               </a>
-
-              <div className="flex items-start gap-3 text-gray-400">
-                <div className="w-10 h-10 rounded-lg bg-gray-800 flex items-center justify-center flex-shrink-0">
+              
+              <div className="flex items-start gap-3 text-white/70">
+                <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center flex-shrink-0">
                   <Clock className="w-5 h-5" />
                 </div>
                 <div>
-                  <p className="text-xs text-gray-500 mb-0.5">Horario de atención</p>
+                  <p className="text-xs text-white/50 mb-0.5">Horario de atención</p>
                   <p className="font-semibold">Lun - Sáb: 8AM - 6PM</p>
                 </div>
               </div>
             </div>
           </div>
-
-          {/* Newsletter / WhatsApp CTA */}
+          
+          {/* WhatsApp CTA - Minimalist */}
           <div>
             <h4 className="text-base font-bold mb-5 flex items-center gap-2">
-              <span className="w-8 h-1 bg-primary rounded-full"></span>
+              <span className="w-8 h-1 bg-white/30 rounded-full"></span>
               ¿Necesitas ayuda?
             </h4>
-            <p className="text-gray-400 text-sm mb-4">
+            <p className="text-white/70 text-sm mb-4">
               Contáctanos directamente por WhatsApp para una atención personalizada.
             </p>
             <a
@@ -183,22 +182,22 @@ export const Footer = ({ onCartClick }: FooterProps) => {
               <MessageCircle className="w-5 h-5" />
               Chatear por WhatsApp
             </a>
-            <div className="flex items-center gap-2 text-sm text-gray-500">
+            <div className="flex items-center gap-2 text-sm text-white/50">
               <Shield className="w-4 h-4" />
               <span>Compra segura y protegida</span>
             </div>
           </div>
         </div>
       </div>
-
-       {/* Bottom bar */}
-       <div className="border-t border-gray-800">
-         <div className="max-w-7xl mx-auto px-4 py-5 flex flex-col md:flex-row items-center justify-between gap-4">
-           <p className="text-sm text-gray-500 text-center md:text-right">
-             © 2026 <span className="font-bold text-primary">Punto Pas</span>. Todos los derechos reservados.
-           </p>
-         </div>
-       </div>
+      
+      {/* Bottom bar - Minimalist */}
+      <div className="border-t border-white/10">
+        <div className="max-w-7xl mx-auto px-4 py-5">
+          <p className="text-sm text-white/50 text-center">
+            © 2026 <span className="font-bold text-white">Punto Pas</span>. Todos los derechos reservados.
+          </p>
+        </div>
+      </div>
     </footer>
   );
 };
