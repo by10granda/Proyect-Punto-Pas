@@ -38,8 +38,6 @@ const Index = () => {
   const [selectedBrand, setSelectedBrand] = useState("all");
   const [offersCategory, setOffersCategory] = useState("all");
   // Estados independientes para cada sección
-  const [brandsBannerBrand, setBrandsBannerBrand] = useState("all");
-  const [imageCollageBrand, setImageCollageBrand] = useState("all");
   const [carouselCategory, setCarouselCategory] = useState("LAVADORAS Y SECADORAS");
   // Estado independiente para WeeklyDeals
   const [weeklyDealsCategory, setWeeklyDealsCategory] = useState("all");
@@ -134,23 +132,7 @@ const Index = () => {
     
     return filtered;
   }, [selectedCategory, selectedBrand, activeTab, searchQuery, offersCategory, allProducts, apiStatus]);
-
-  // Productos filtrados para BrandsBanner (independiente)
-  const brandsBannerProducts = useMemo(() => {
-    if (brandsBannerBrand === "all") return allProducts;
-    return allProducts.filter(p => 
-      p.brand?.toUpperCase().trim() === brandsBannerBrand.toUpperCase().trim()
-    );
-  }, [brandsBannerBrand, allProducts]);
-
-  // Productos filtrados para ImageCollage (independiente)
-  const imageCollageProducts = useMemo(() => {
-    if (imageCollageBrand === "all") return allProducts;
-    return allProducts.filter(p => 
-      p.brand?.toUpperCase().trim() === imageCollageBrand.toUpperCase().trim()
-    );
-  }, [imageCollageBrand, allProducts]);
-
+  
   // Productos filtrados para WeeklyDeals (independiente)
   const weeklyDealsProducts = useMemo(() => {
     let dealsProducts = allProducts.filter(p => p.discount && p.discount > 0 && p.isActive);
@@ -477,26 +459,18 @@ const Index = () => {
              <BrandsBanner
                products={allProducts} 
                onBrandClick={(brand) => {
-                 setBrandsBannerBrand(brand.toUpperCase().trim());
+                 setSelectedBrand(brand.toUpperCase().trim());
                  setSelectedCategory("all");
                  setSearchQuery("");
+                 setActiveTab("home");
                  setTimeout(() => {
-                   const brandsSection = document.getElementById('brands-section');
-                   if (brandsSection) {
-                     brandsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                   const productsSection = document.getElementById('productos');
+                   if (productsSection) {
+                     productsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
                    }
                  }, 100);
                }}
              />
-             {/* ProductGrid independiente para BrandsBanner */}
-             <div className="max-w-7xl mx-auto px-4">
-               <ProductGrid 
-                 products={brandsBannerProducts}
-                 onAddToCart={handleAddToCart}
-                 onProductClick={handleProductClick}
-                 title="Productos de la marca seleccionada"
-               />
-             </div>
              </div>
 
              <div id="imagecollage-section">
@@ -512,27 +486,19 @@ const Index = () => {
                onImageClick={(index) => {
                  const brands = ["INDURAMA", "MABE", "TCL", "RCA", "HONOR", "PHILIPS"];
                  if (brands[index]) {
-                   setImageCollageBrand(brands[index]);
+                   setSelectedBrand(brands[index]);
                    setSelectedCategory("all");
                    setSearchQuery("");
+                   setActiveTab("home");
                    setTimeout(() => {
-                     const imageCollageSection = document.getElementById('imagecollage-section');
-                     if (imageCollageSection) {
-                       imageCollageSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                     const productsSection = document.getElementById('productos');
+                     if (productsSection) {
+                       productsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
                      }
                    }, 100);
                  }
                }}
              />
-             {/* ProductGrid independiente para ImageCollage */}
-             <div className="max-w-7xl mx-auto px-4">
-               <ProductGrid 
-                 products={imageCollageProducts}
-                 onAddToCart={handleAddToCart}
-                 onProductClick={handleProductClick}
-                 title="Productos de la imagen seleccionada"
-               />
-             </div>
              </div>
 
              <div id="weeklydeals-section">
