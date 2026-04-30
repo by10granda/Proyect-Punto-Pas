@@ -517,11 +517,13 @@ const Index = () => {
                  "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777429439/Descuento7_s.png",
                  "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777429448/Descuento8_s.png",
                ]}
-               products={weeklyDealsProducts}
+               products={allProducts}
                selectedCategory={weeklyDealsCategory}
                onCategoryChange={setWeeklyDealsCategory}
                onProductClick={(product) => {
                  setSelectedProduct(product);
+                 setSelectedCategory("all"); // Reset categoría
+                 setSelectedBrand("all"); // Reset marca
                  setIsProductModalOpen(true);
                }}
              />

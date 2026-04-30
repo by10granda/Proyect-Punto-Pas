@@ -23,7 +23,6 @@ export const WeeklyDeals = ({ images, products, onProductClick, selectedCategory
 
   // Obtener categorías únicas de los productos con descuento
   const categories = [
-    { id: "all", name: "Todos", icon: "🏷️" },
     { id: "HOGAR", name: "Hogar", icon: "🏠" },
     { id: "COCINA", name: "Cocina", icon: "🍳" },
     { id: "ELECTRODOMESTICO", name: "Electro", icon: "⚡" },
