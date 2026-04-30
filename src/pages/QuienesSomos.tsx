@@ -431,10 +431,7 @@ export const QuienesSomos = () => {
              Explorar catálogo
            </Link>
          </div>
-       </section>
-              ← Volver al catálogo
-            </Link>
-       </section>
+        </section>
       
       <CartDrawer
         isOpen={isCartOpen}
