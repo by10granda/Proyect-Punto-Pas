@@ -359,6 +359,7 @@ const Index = () => {
               products={allProducts}
               onSelectCategory={(cat) => {
                 setSelectedCategory(cat);
+                setSelectedBrand("all"); // Reset marca al seleccionar categoría
                 setTimeout(() => {
                   const productsSection = document.getElementById('productos');
                   if (productsSection) {
@@ -460,7 +461,7 @@ const Index = () => {
                products={allProducts} 
                onBrandClick={(brand) => {
                  setSelectedBrand(brand.toUpperCase().trim());
-                 setSelectedCategory("all");
+                 setSelectedCategory("all"); // Reset categoría al seleccionar marca
                  setSearchQuery("");
                  setActiveTab("home");
                  setTimeout(() => {
@@ -483,20 +484,20 @@ const Index = () => {
                  "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777413591/IMAGEN_5.png",
                  "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777301925/IMAGEN_6.png",
                ]}
-               onImageClick={(index) => {
-                 const brands = ["INDURAMA", "MABE", "TCL", "RCA", "HONOR", "PHILIPS"];
-                 if (brands[index]) {
-                   setSelectedBrand(brands[index]);
-                   setSelectedCategory("all");
-                   setSearchQuery("");
-                   setActiveTab("home");
-                   setTimeout(() => {
-                     const productsSection = document.getElementById('productos');
-                     if (productsSection) {
-                       productsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                     }
-                   }, 100);
-                 }
+              onImageClick={(index) => {
+                const brands = ["INDURAMA", "MABE", "TCL", "RCA", "HONOR", "PHILIPS"];
+                if (brands[index]) {
+                  setSelectedBrand(brands[index]);
+                  setSelectedCategory("all"); // Reset categoría al seleccionar marca
+                  setSearchQuery("");
+                  setActiveTab("home");
+                  setTimeout(() => {
+                    const productsSection = document.getElementById('productos');
+                    if (productsSection) {
+                      productsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                  }, 100);
+                }
                }}
              />
              </div>
