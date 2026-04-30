@@ -31,7 +31,7 @@ const stores: Store[] = [
     id: 2,
     name: "SUCURSAL SAN LORENZO",
     address: "San Lorenzo, Ecuador",
-    iframeSrc: "https://maps.app.goo.gl/aAGETCzmHSXArYTR9",
+    iframeSrc: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2966.4628546293825!2d-78.81832138320499!3d1.2789763541405592!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e2c85208bb6d559%3A0x1efbad64a4d44346!2sSan%20Lorenzo!5e0!3m2!1ses!2sec!4v1777559477880!5m2!1ses!2sec",
     phone: "+593 98 765 4321",
     hours: "8:00 AM - 8:00 PM",
     isOpen: true,
