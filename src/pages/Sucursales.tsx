@@ -61,7 +61,7 @@ const stores: Store[] = [
 const GOOGLE_MAPS_API_KEY = "YOUR_GOOGLE_MAPS_API_KEY_HERE";
 
 // Red pin SVG for custom marker
-const redPinSvg = `
+const redPinSvg = (storeNumber: number) => `
   <svg xmlns="http://www.w3.org/2000/svg" width="40" height="50" viewBox="0 0 40 50">
     <path d="M20 0C8.954 0 0 8.954 0 20c0 14.909 16.18 27.56 18.076 29.09a1.5 1.5 0 0 0 2.348 0C23.82 47.56 40 34.909 40 20 40 8.954 31.046 0 20 0z" fill="#DC2626"/>
     <circle cx="20" cy="20" r="10" fill="white"/>
@@ -199,7 +199,7 @@ const Sucursales = () => {
     markersRef.current = [];
 
     storesToShow.forEach((store, index) => {
-      const svgMarker = redPinSvg.replace('${storeNumber}', String(index + 1));
+      const svgMarker = redPinSvg(index + 1);
       const marker = new window.google.maps.Marker({
         position: { lat: store.lat, lng: store.lng },
         map,
