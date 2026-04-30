@@ -16,7 +16,7 @@ const milestones = [
     year: "2000",
     title: "Nuestros Inicios",
     description: "Punto Pas inicia sus actividades en el año 2000 bajo la dirección del Empresario Franco Becerra, dedicándose a la comercialización de madera. Gracias al esfuerzo, trabajo constante y compromiso con sus clientes, la empresa logra posicionarse como un proveedor confiable en su sector.",
-    image: "https://res.cloudinary.com/dbbkpdhze/image/upload/v1771535501/Historia_Imagen1_xesimt.png"
+     image: "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777489083/Madedera_Q.png"
   },
   {
     year: "2007",
