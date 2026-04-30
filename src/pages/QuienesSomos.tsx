@@ -378,13 +378,13 @@ export const QuienesSomos = () => {
               className="flex gap-6 overflow-x-auto snap-x snap-mandatory scrollbar-hide pb-4"
               style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
             >
-              {[
-                { id: '7627152226280244753', cite: 'https://www.tiktok.com/@punto_pas/video/7634170687552310536?is_from_webapp=1&sender_device=pc&web_id=7627152226280244753' },
-                { id: '7633990538231893256', cite: 'https://www.tiktok.com/@punto_pas/video/7633990538231893256' },
-                { id: '7622439772660698376', cite: 'https://www.tiktok.com/@punto_pas/video/7622439772660698376' },
-                { id: '7622438037452000530', cite: 'https://www.tiktok.com/@punto_pas/video/7622438037452000530' },
-                { id: '7600147557926341895', cite: 'https://www.tiktok.com/@punto_pas/video/7600147557926341895' },
-              ].map((video, index) => (
+               {[
+                 { id: '7634170687552310536', cite: 'https://www.tiktok.com/@punto_pas/video/7634170687552310536?is_from_webapp=1&sender_device=pc&web_id=7627152226280244753' },
+                 { id: '7633990538231893256', cite: 'https://www.tiktok.com/@punto_pas/video/7633990538231893256?is_from_webapp=1&sender_device=pc&web_id=7627152226280244753' },
+                 { id: '7622439772660698376', cite: 'https://www.tiktok.com/@punto_pas/video/7622439772660698376?is_from_webapp=1&sender_device=pc&web_id=7627152226280244753' },
+                 { id: '7600147557926341895', cite: 'https://www.tiktok.com/@punto_pas/video/7600147557926341895?is_from_webapp=1&sender_device=pc&web_id=7627152226280244753' },
+                 { id: '7597913602628144395', cite: 'https://www.tiktok.com/@punto_pas/video/7597913602628144395?is_from_webapp=1&sender_device=pc&web_id=7627152226280244753' },
+               ].map((video, index) => (
                 <div 
                   key={index} 
                   className="flex-none w-full md:w-[400px] snap-center"
