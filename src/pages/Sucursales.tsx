@@ -38,7 +38,7 @@ const stores: Store[] = [
   },
   {
     id: 3,
-    name: "CRECOS ESMERALDAS",
+    name: "CRECOS ES PUNTO PAS",
     address: "Esmeraldas, Ecuador",
     iframeSrc: "https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d3989.291562435662!2d-79.6723510837263!3d0.9310465181916957!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e2c85208bb6d559%3A0x1efbad64a4d44346!2sEsmeraldas!5e0!3m2!1ses!2sec!4v1777554687329!5m2!1ses!2sec",
     phone: "+593 97 654 3210",
