@@ -53,12 +53,15 @@ export const Footer = ({ onCartClick }: FooterProps) => {
                 </svg>
               </a>
               <a
-                href="https://wa.me/593959990999"
+                href="https://www.flaticon.es/iconos-gratis/whatsapp" 
                 target="_blank"
                 rel="noopener noreferrer"
+                title="whatsapp iconos"
                 className="w-10 h-10 rounded-lg bg-white/10 hover:bg-green-500 flex items-center justify-center transition-all hover:scale-110"
               >
-                <MessageCircle className="w-5 h-5 text-white" />
+                <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-white">
+                  <path d="M17.472 14.382c-.262-.139-1.55-.771-1.79-.86-.24-.09-.415-.139-.59.14-.174.279-.673.85-.826 1.026-.151.176-.241.195-.416.07-.78-.156-1.401-.49-2.378-1.55-3.579-3.827-4.957-6.963-1.186-2.003-.596-3.622-.298-4.822.298-1.201.596-2.008 1.32-2.675 2.218-.174.278-.313.416-.521.139-.208-.262-.174-.415-.139-.59-.337-.626-.673-1.55-.826-1.55-.208 0-1.201.298-2.008 1.32C2.515 4.175.827 7.244 3.167 10.313c.89 1.631 2.041 3.06 3.522 4.159 1.48 1.1 3.027 1.378 4.145 1.378.69 0 1.302-.09 1.897-.312.594-.222 1.55-.636 2.028-1.241.478-.605.834-1.241 1.106-1.866.278-.625.557-1.241.752-1.866.208-.625.415-1.131.278-1.55z"/>
+                </svg>
               </a>
             </div>
           </div>
@@ -176,12 +179,15 @@ export const Footer = ({ onCartClick }: FooterProps) => {
               Contáctanos directamente por WhatsApp para una atención personalizada.
             </p>
             <a
-              href="https://wa.me/593959990999?text=Hola,%20me%20gustaría%20obtener%20más%20información"
+              href="https://www.flaticon.es/iconos-gratis/whatsapp" 
               target="_blank"
               rel="noopener noreferrer"
+              title="whatsapp iconos"
               className="flex items-center justify-center gap-2 w-full py-3 px-4 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-lg transition-all hover:shadow-lg hover:scale-[1.02] mb-4"
             >
-              <MessageCircle className="w-5 h-5" />
+              <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-white">
+                <path d="M17.472 14.382c-.262-.139-1.55-.771-1.79-.86-.24-.09-.415-.139-.59.14-.174.279-.673.85-1.026 1.026-.151.176-.241.195-.416.07-.78-.156-1.401-.49-2.378-1.55-3.827-1.549-2.003-.596-4.822-.298-4.822-.298-1.321.589-1.973 1.32-1.973 1.32-.24.416-.096.59-.174.278 1.026-.278 2.159-.973 2.159-.973.04-.24.416-.078.59-.139.24-.09.415-.139.59-.14.174-.07.415-.156.59-.278.139-.09 1.026.278 1.55 1.026.524.278 1.131.278 1.32.07.278-.09.59-.139.415-.195.174-.09 1.026.278 1.55 1.026.524.278 1.131.278 1.32.07.278-.09.59-.139.415-.195.174-.09 1.026.278 1.55 1.026zm-3.472-6.382c-.24 0-.48-.02-.72-.04-3.28-.24-6.28 1.68-6.28 4.88 0 1.88.82 3.56 2.12 4.72.68.56 1.24.92 1.24.92s-1.24.56-1.24 1.68c0 1.12 1.24 2.04 1.24 2.04s-2.04 1.36-4.68 1.36c-1.44 0-2.76-.52-3.72-1.36-.96-.84-1.44-2.04-1.44-3.52 0-3.68 3.24-6.68 7.24-6.68z"/>
+              </svg>
               Chatear por WhatsApp
             </a>
             <div className="flex items-center gap-2 text-sm text-white/50">
