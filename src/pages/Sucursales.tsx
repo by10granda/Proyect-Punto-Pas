@@ -1,13 +1,73 @@
-import { useState, useMemo, useRef } from "react";
+import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { Header } from "@/components/Header";
 import { CartDrawer, CartItem } from "@/components/CartDrawer";
 import { Footer } from "@/components/Footer";
-import {
-  products,
-} from "@/data/products";
+import { products } from "@/data/products";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
-import { MapPin, Clock, Phone, Navigation } from "lucide-react";
+import { MapPin, Clock, Phone, Navigation, Search, X, ChevronRight, CheckCircle, XCircle } from "lucide-react";
+
+// Types
+interface Store {
+  id: number;
+  name: string;
+  address: string;
+  lat: number;
+  lng: number;
+  phone: string;
+  hours: string;
+  isOpen: boolean;
+  city: string;
+}
+
+// Store data with extracted coordinates
+const stores: Store[] = [
+  {
+    id: 1,
+    name: "CRECOS AMBATO",
+    address: "Ambato, Ecuador",
+    lat: 1.279163,
+    lng: -78.815915,
+    phone: "+593 99 123 4567",
+    hours: "8:00 AM - 8:00 PM",
+    isOpen: true,
+    city: "Ambato"
+  },
+  {
+    id: 2,
+    name: "CRECOS QUITO",
+    address: "Quito, Ecuador",
+    lat: 0.931167,
+    lng: -79.672967,
+    phone: "+593 98 765 4321",
+    hours: "8:00 AM - 8:00 PM",
+    isOpen: true,
+    city: "Quito"
+  },
+  {
+    id: 3,
+    name: "CRECOS GUAYAQUIL",
+    address: "Guayaquil, Ecuador",
+    lat: -2.168997,
+    lng: -79.922344,
+    phone: "+593 97 654 3210",
+    hours: "8:00 AM - 8:00 PM",
+    isOpen: true,
+    city: "Guayaquil"
+  }
+];
+
+// Google Maps API Key - REPLACE with your actual key
+const GOOGLE_MAPS_API_KEY = "YOUR_GOOGLE_MAPS_API_KEY_HERE";
+
+// Red pin SVG for custom marker
+const redPinSvg = `
+  <svg xmlns="http://www.w3.org/2000/svg" width="40" height="50" viewBox="0 0 40 50">
+    <path d="M20 0C8.954 0 0 8.954 0 20c0 14.909 16.18 27.56 18.076 29.09a1.5 1.5 0 0 0 2.348 0C23.82 47.56 40 34.909 40 20 40 8.954 31.046 0 20 0z" fill="#DC2626"/>
+    <circle cx="20" cy="20" r="10" fill="white"/>
+    <text x="20" y="25" text-anchor="middle" font-size="12" font-weight="bold" fill="#DC2626">${storeNumber}</text>
+  </svg>
+`;
 
 const Sucursales = () => {
   const navigate = useNavigate();
@@ -17,12 +77,12 @@ const Sucursales = () => {
   });
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-
-  // Persist cart to localStorage
-  const updateCart = (newCart: CartItem[]) => {
-    setCart(newCart);
-    localStorage.setItem("puntopas_cart", JSON.stringify(newCart));
-  };
+  const [selectedStore, setSelectedStore] = useState<Store | null>(null);
+  const [hoveredStore, setHoveredStore] = useState<number | null>(null);
+  const mapRef = useRef<HTMLDivElement>(null);
+  const mapInstanceRef = useRef<any>(null);
+  const markersRef = useRef<any[]>([]);
+  const [mapLoaded, setMapLoaded] = useState(false);
 
   const cartItemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
@@ -32,11 +92,9 @@ const Sucursales = () => {
         handleRemoveItem(id);
         return;
       }
-      
       const product = products.find(p => p.id === id);
       const maxQuantity = product ? product.stock : 999;
-      
-      const newCart = cart.map((item) => 
+      const newCart = cart.map((item) =>
         item.id === id ? { ...item, quantity: Math.min(quantity, maxQuantity) } : item
       );
       updateCart(newCart);
@@ -63,199 +121,329 @@ const Sucursales = () => {
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
-    // Navigate to home with search
     if (query) {
       navigate(`/?search=${encodeURIComponent(query)}`);
     }
   };
 
+  const updateCart = (newCart: CartItem[]) => {
+    setCart(newCart);
+    localStorage.setItem("puntopas_cart", JSON.stringify(newCart));
+  };
+
+  // Filter stores based on search
+  const filteredStores = useMemo(() => {
+    if (!searchQuery.trim()) return stores;
+    const query = searchQuery.toLowerCase();
+    return stores.filter(s =>
+      s.name.toLowerCase().includes(query) ||
+      s.address.toLowerCase().includes(query) ||
+      s.city.toLowerCase().includes(query)
+    );
+  }, [searchQuery]);
+
+  // Initialize Google Map
+  useEffect(() => {
+    if (!window.google && !document.querySelector('script[src*="maps.googleapis.com"]')) {
+      const script = document.createElement('script');
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&callback=initMap`;
+      script.async = true;
+      script.defer = true;
+      window.initMap = () => {
+        setMapLoaded(true);
+      };
+      document.head.appendChild(script);
+    } else if (window.google) {
+      setMapLoaded(true);
+    }
+  }, []);
+
+  // Create map instance
+  useEffect(() => {
+    if (!mapLoaded || !mapRef.current) return;
+
+    const map = new window.google.maps.Map(mapRef.current, {
+      center: { lat: -0.5, lng: -79.5 },
+      zoom: 7,
+      styles: [
+        { featureType: "poi", elementType: "labels", stylers: [{ visibility: "off" }] }
+      ],
+      mapTypeControl: false,
+      streetViewControl: false,
+      fullscreenControl: false,
+      zoomControl: true,
+      zoomControlOptions: { position: window.google.maps.ControlPosition.RIGHT_BOTTOM }
+    });
+
+    mapInstanceRef.current = map;
+    addMarkers(map, filteredStores);
+  }, [mapLoaded]);
+
+  // Update markers when filtered stores change
+  useEffect(() => {
+    if (!mapInstanceRef.current) return;
+    addMarkers(mapInstanceRef.current, filteredStores);
+  }, [filteredStores]);
+
+  // Center map on selected store
+  useEffect(() => {
+    if (selectedStore && mapInstanceRef.current) {
+      mapInstanceRef.current.panTo({ lat: selectedStore.lat, lng: selectedStore.lng });
+      mapInstanceRef.current.setZoom(15);
+    }
+  }, [selectedStore]);
+
+  const addMarkers = (map: any, storesToShow: Store[]) => {
+    // Clear existing markers
+    markersRef.current.forEach(marker => marker.setMap(null));
+    markersRef.current = [];
+
+    storesToShow.forEach((store, index) => {
+      const svgMarker = redPinSvg.replace('${storeNumber}', String(index + 1));
+      const marker = new window.google.maps.Marker({
+        position: { lat: store.lat, lng: store.lng },
+        map,
+        title: store.name,
+        icon: {
+          url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svgMarker)}`,
+          scaledSize: new window.google.maps.Size(40, 50),
+          anchor: new window.google.maps.Point(20, 50)
+        }
+      });
+
+      marker.addListener('click', () => {
+        setSelectedStore(store);
+        setHoveredStore(store.id);
+      });
+
+      marker.addListener('mouseover', () => {
+        setHoveredStore(store.id);
+      });
+
+      marker.addListener('mouseout', () => {
+        setHoveredStore(null);
+      });
+
+      markersRef.current.push(marker);
+    });
+  };
+
+  const handleFindNearest = () => {
+    if (!navigator.geolocation) {
+      toast.error("Geolocalización no soportada");
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const userLat = position.coords.latitude;
+        const userLng = position.coords.longitude;
+
+        let nearest = stores[0];
+        let minDist = getDistance(userLat, userLng, stores[0].lat, stores[0].lng);
+
+        stores.forEach(store => {
+          const dist = getDistance(userLat, userLng, store.lat, store.lng);
+          if (dist < minDist) {
+            minDist = dist;
+            nearest = store;
+          }
+        });
+
+        setSelectedStore(nearest);
+        if (mapInstanceRef.current) {
+          mapInstanceRef.current.panTo({ lat: nearest.lat, lng: nearest.lng });
+          mapInstanceRef.current.setZoom(15);
+        }
+        toast.success(`Tienda más cercana: ${nearest.name}`);
+      },
+      (error) => {
+        toast.error("No se pudo obtener tu ubicación");
+      }
+    );
+  };
+
+  const getDistance = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
+    const R = 6371; // Earth's radius in km
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+  };
+
   return (
-    <div className="min-h-screen bg-background">
-      <Header 
-        cartCount={cartItemCount} 
+    <div className="min-h-screen bg-gray-50">
+      <Header
+        cartCount={cartItemCount}
         onSearch={handleSearch}
         onCartClick={() => setIsCartOpen(true)}
       />
 
-      {/* Sucursales Content - Compacto */}
-      <div className="pt-1">
-        {/* Section Header - Reducido */}
-        <div className="bg-gradient-to-br from-cyan-50 via-blue-50 to-teal-50 dark:from-cyan-950 dark:via-blue-950 dark:to-teal-950 py-4 px-4">
-          <div className="max-w-6xl mx-auto">
-            <div className="text-center mb-6">
-              <h1 className="text-3xl md:text-4xl font-black text-gray-900 dark:text-white mb-2">
-                Nuestras Sucursales
-              </h1>
-              <p className="text-gray-600 dark:text-gray-300 text-base">
-                Visítanos en cualquiera de nuestras ubicaciones
-              </p>
-            </div>
-
-            {/* Maps Grid - Compacto */}
-            <div className="grid lg:grid-cols-2 gap-4 mb-4">
-              {/* Sucursal 1 */}
-              <div className="bg-white dark:bg-slate-800 rounded-2xl overflow-hidden shadow-lg border-2 border-cyan-100 dark:border-cyan-800">
-                <div className="bg-gradient-to-r from-cyan-600 to-blue-600 p-3">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
-                      <MapPin className="w-5 h-5 text-white" />
-                    </div>
-                    <div>
-                      <h2 className="font-bold text-white text-lg">Sucursal Principal</h2>
-                      <p className="text-white/80 text-sm">Disensa - Punto Pas</p>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="relative">
-                  <iframe
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d5321.005202825693!2d-78.81475189967422!3d1.2786868727469063!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e2c85208bb6d559%3A0x1efbad64a4d44346!2sDisensa!5e0!3m2!1ses!2sec!4v1770566419524!5m2!1ses!2sec"
-                    width="100%"
-                    height="140"
-                    className="w-full border-0"
-                    loading="lazy"
-                    title="Sucursal Principal"
-                  ></iframe>
-                </div>
-                
-                <div className="p-3 bg-cyan-50 dark:bg-cyan-900/30">
-                  <div className="flex flex-wrap gap-2 text-sm">
-                    <div className="flex items-center gap-1">
-                      <Clock className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
-                      <span className="text-gray-700 dark:text-gray-200">8:00 AM - 8:00 PM</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Phone className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
-                      <span className="text-gray-700 dark:text-gray-200">+593 XXX XXX XXXX</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Sucursal 2 */}
-              <div className="bg-white dark:bg-slate-800 rounded-2xl overflow-hidden shadow-lg border-2 border-teal-100 dark:border-teal-800">
-                <div className="bg-gradient-to-r from-teal-600 to-cyan-600 p-3">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
-                      <MapPin className="w-5 h-5 text-white" />
-                    </div>
-                    <div>
-                      <h2 className="font-bold text-white text-lg">Sucursal Centro</h2>
-                      <p className="text-white/80 text-sm">Ubicación Central</p>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="relative">
-                  <iframe
-                    src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d3989.2917084934197!2d-79.67238277042144!3d0.9309174275936912!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1ses!2sec!4v1770567372652!5m2!1ses!2sec"
-                    width="100%"
-                    height="140"
-                    className="w-full border-0"
-                    loading="lazy"
-                    title="Sucursal Centro"
-                  ></iframe>
-                </div>
-                
-                <div className="p-3 bg-teal-50 dark:bg-teal-900/30">
-                  <div className="flex flex-wrap gap-2 text-sm">
-                    <div className="flex items-center gap-1">
-                      <Clock className="w-4 h-4 text-teal-600 dark:text-teal-400" />
-                      <span className="text-gray-700 dark:text-gray-200">8:00 AM - 8:00 PM</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Phone className="w-4 h-4 text-teal-600 dark:text-teal-400" />
-                      <span className="text-gray-700 dark:text-gray-200">+593 XXX XXX XXXX</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Info Cards - Compactos */}
-            <div className="grid grid-cols-3 gap-3 mb-4">
-              <div className="bg-white dark:bg-slate-800 rounded-xl p-3 text-center shadow border border-cyan-100 dark:border-cyan-800">
-                <Clock className="w-6 h-6 text-cyan-500 mx-auto mb-1" />
-                <h3 className="text-gray-900 dark:text-white font-bold text-sm">Horario</h3>
-                <p className="text-gray-600 dark:text-gray-300 text-xs">8:00 AM - 8:00 PM</p>
-              </div>
-              <div className="bg-white dark:bg-slate-800 rounded-xl p-3 text-center shadow border border-teal-100 dark:border-teal-800">
-                <MapPin className="w-6 h-6 text-teal-500 mx-auto mb-1" />
-                <h3 className="text-gray-900 dark:text-white font-bold text-sm">Parqueo</h3>
-                <p className="text-gray-600 dark:text-gray-300 text-xs">Disponible</p>
-              </div>
-              <div className="bg-white dark:bg-slate-800 rounded-xl p-3 text-center shadow border border-blue-100 dark:border-blue-800">
-                <Phone className="w-6 h-6 text-blue-500 mx-auto mb-1" />
-                <h3 className="text-gray-900 dark:text-white font-bold text-sm">Atención</h3>
-                <p className="text-gray-600 dark:text-gray-300 text-xs">Personalizada</p>
-              </div>
-            </div>
-
-            {/* Advertising Space */}
-            <div className="rounded-xl overflow-hidden mb-4 shadow-lg">
-              <img 
-                src="https://res.cloudinary.com/dbbkpdhze/image/upload/v1771535149/muebles_lxrih1.jpg" 
-                alt="Promoción" 
-                className="w-full h-auto object-cover"
+      <div className="flex flex-col lg:flex-row" style={{ height: 'calc(100vh - 80px)' }}>
+        {/* Left Panel - Store List (30%) */}
+        <div className="w-full lg:w-[30%] bg-white border-r border-gray-200 flex flex-col">
+          {/* Search Bar */}
+          <div className="p-4 border-b border-gray-200">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Ciudad, provincia o tienda..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-10 pr-10 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none transition-all"
+                style={{ fontFamily: "'Poppins', sans-serif" }}
               />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery("")}
+                  className="absolute right-3 top-1/2 -translate-y-1/2"
+                >
+                  <X className="w-5 h-5 text-gray-400 hover:text-gray-600" />
+                </button>
+              )}
             </div>
 
-            {/* Sección de Contacto */}
-            <div id="contacto" className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl p-6 text-white">
-              <h2 className="text-2xl font-black text-center mb-6 flex items-center justify-center gap-2">
-                <Phone className="w-6 h-6 text-cyan-400" />
-                Contáctanos
-              </h2>
-              <div className="grid md:grid-cols-2 gap-4">
-                <div className="bg-white/10 rounded-xl p-4">
-                  <h3 className="font-bold text-cyan-400 mb-2">Sucursal Principal</h3>
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2">
-                      <Phone className="w-4 h-4 text-cyan-400" />
-                      <span>+593 98 765 4321</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Phone className="w-4 h-4 text-cyan-400" />
-                      <span>+593 99 123 4567</span>
-                    </div>
-                  </div>
+            {/* Store count */}
+            <p className="text-sm text-gray-500 mt-2">
+              {filteredStores.length} tiendas encontradas
+            </p>
+          </div>
+
+          {/* Store List with Scroll */}
+          <div className="flex-1 overflow-y-auto">
+            {filteredStores.map((store) => (
+              <div
+                key={store.id}
+                onClick={() => setSelectedStore(store)}
+                onMouseEnter={() => setHoveredStore(store.id)}
+                onMouseLeave={() => setHoveredStore(null)}
+                className={`p-4 border-b border-gray-100 cursor-pointer transition-all duration-300 hover:bg-red-50 ${
+                  selectedStore?.id === store.id || hoveredStore === store.id
+                    ? 'bg-red-50 border-l-4 border-l-red-600'
+                    : ''
+                }`}
+              >
+                <div className="flex items-start justify-between mb-2">
+                  <h3
+                    className="font-bold text-gray-900"
+                    style={{ fontFamily: "'Poppins', sans-serif" }}
+                  >
+                    {store.name}
+                  </h3>
+                  <span className={`flex items-center gap-1 text-xs px-2 py-1 rounded-full ${
+                    store.isOpen
+                      ? 'bg-green-100 text-green-700'
+                      : 'bg-red-100 text-red-700'
+                  }`}
+                  >
+                    {store.isOpen ? (
+                      <CheckCircle className="w-3 h-3" />
+                    ) : (
+                      <XCircle className="w-3 h-3" />
+                    )}
+                    {store.isOpen ? 'Abierto' : 'Cerrado'}
+                  </span>
                 </div>
-                <div className="bg-white/10 rounded-xl p-4">
-                  <h3 className="font-bold text-teal-400 mb-2">Sucursal Centro</h3>
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2">
-                      <Phone className="w-4 h-4 text-teal-400" />
-                      <span>+593 97 654 3210</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Phone className="w-4 h-4 text-teal-400" />
-                      <span>+593 96 543 2109</span>
-                    </div>
-                  </div>
+
+                <div className="flex items-center gap-2 text-sm text-gray-600 mb-1">
+                  <MapPin className="w-4 h-4 flex-shrink-0" />
+                  <span>{store.address}</span>
+                </div>
+
+                <div className="flex items-center gap-2 text-sm text-gray-600 mb-1">
+                  <Clock className="w-4 h-4 flex-shrink-0" />
+                  <span>{store.hours}</span>
+                </div>
+
+                <div className="flex items-center gap-2 text-sm text-gray-600 mb-3">
+                  <Phone className="w-4 h-4 flex-shrink-0" />
+                  <span>{store.phone}</span>
+                </div>
+
+                <div className="flex gap-2">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      window.open(`https://www.google.com/maps/dir/?api=1&destination=${store.lat},${store.lng}`, '_blank');
+                    }}
+                    className="flex-1 flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white py-2 px-3 rounded-lg text-sm font-medium transition-colors"
+                  >
+                    <Navigation className="w-4 h-4" />
+                    Cómo llegar
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedStore(store);
+                    }}
+                    className="flex-1 flex items-center justify-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 px-3 rounded-lg text-sm font-medium transition-colors"
+                  >
+                    <Clock className="w-4 h-4" />
+                    Horarios
+                  </button>
                 </div>
               </div>
-              <div className="mt-4 text-center">
-                <p className="text-slate-400 text-sm">
-                  Horario de atención: Lunes a Sábado de 8:00 AM - 8:00 PM
-                </p>
+            ))}
+
+            {filteredStores.length === 0 && (
+              <div className="p-8 text-center text-gray-400">
+                <MapPin className="w-12 h-12 mx-auto mb-3 text-gray-300" />
+                <p>No se encontraron tiendas</p>
+              </div>
+            )}
+          </div>
+
+          {/* Find Nearest Button */}
+          <div className="p-4 border-t border-gray-200">
+            <button
+              onClick={handleFindNearest}
+              className="w-full flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white py-3 rounded-xl font-medium transition-colors shadow-lg hover:shadow-xl"
+            >
+              <Navigation className="w-5 h-5" />
+              Más cercanas
+            </button>
+          </div>
+        </div>
+
+        {/* Right Panel - Google Map (70%) */}
+        <div className="w-full lg:w-[70%] relative">
+          {!mapLoaded && (
+            <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
+              <div className="text-center">
+                <div className="w-16 h-16 border-4 border-red-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                <p className="text-gray-600">Cargando mapa...</p>
+                {GOOGLE_MAPS_API_KEY === "YOUR_GOOGLE_MAPS_API_KEY_HERE" && (
+                  <p className="text-sm text-red-500 mt-2">
+                    Reemplaza YOUR_GOOGLE_MAPS_API_KEY_HERE con tu API key
+                  </p>
+                )}
               </div>
             </div>
-          </div>
+          )}
+          <div
+            ref={mapRef}
+            className="w-full h-full"
+            style={{ minHeight: '500px' }}
+          />
         </div>
       </div>
 
       <Footer />
 
-       <CartDrawer
-         isOpen={isCartOpen}
-         onClose={() => setIsCartOpen(false)}
-         items={cart}
-         products={products}
-         onUpdateQuantity={handleUpdateQuantity}
-         onRemoveItem={handleRemoveItem}
-         onClearCart={handleClearCart}
-         onCheckout={handleCheckout}
-       />
+      <CartDrawer
+        isOpen={isCartOpen}
+        onClose={() => setIsCartOpen(false)}
+        items={cart}
+        products={products}
+        onUpdateQuantity={handleUpdateQuantity}
+        onRemoveItem={handleRemoveItem}
+        onClearCart={handleClearCart}
+        onCheckout={handleCheckout}
+      />
     </div>
   );
 };
