@@ -191,22 +191,14 @@ export const Footer = ({ onCartClick }: FooterProps) => {
         </div>
       </div>
 
-      {/* Bottom bar */}
-      <div className="border-t border-gray-800">
-        <div className="max-w-7xl mx-auto px-4 py-5 flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-6">
-            <Link to="/privacidad" className="text-sm text-gray-500 hover:text-white transition-colors">
-              Política de Privacidad
-            </Link>
-            <Link to="/quienes-somos" className="text-sm text-gray-500 hover:text-white transition-colors">
-              Términos y Condiciones
-            </Link>
-          </div>
-          <p className="text-sm text-gray-500 text-center md:text-right">
-            © 2024 <span className="font-bold text-primary">Punto Pas</span>. Todos los derechos reservados.
-          </p>
-        </div>
-      </div>
+       {/* Bottom bar */}
+       <div className="border-t border-gray-800">
+         <div className="max-w-7xl mx-auto px-4 py-5 flex flex-col md:flex-row items-center justify-between gap-4">
+           <p className="text-sm text-gray-500 text-center md:text-right">
+             © 2026 <span className="font-bold text-primary">Punto Pas</span>. Todos los derechos reservados.
+           </p>
+         </div>
+       </div>
     </footer>
   );
 };
