@@ -22,7 +22,7 @@ const milestones = [
     year: "2007",
     title: "Primer Local Stihl",
     description: "Con el valioso apoyo y respaldo incondicional de su esposa Marlene Ambuldi, El empresario Franco Becerra materializa una visión empresarial estratégica al fundar el primer local Stihl, marcando así el inicio de una alianza comercial con una de las marcas más prestigiosas del sector de maquinaria y equipos de exterior.",
-    image: "https://res.cloudinary.com/dbbkpdhze/image/upload/v1771619722/Stihl_Historia2007_exyqd0.jpg"
+     image: "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777489094/Stihl_Q.png"
   },
   {
     year: "2008",
