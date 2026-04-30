@@ -34,7 +34,7 @@ export const CategoryBar = ({ selectedCategory, onSelectCategory, products = [] 
     "CONGELADORES Y NEVERAS"
   ];
   
-  const allTypes = [...new Set([
+   const allTypes = [...new Set([
     ...products.map(p => p.type).filter(Boolean),
     ...products.map(p => p.category).filter(Boolean)
   ])].sort();
@@ -43,19 +43,13 @@ export const CategoryBar = ({ selectedCategory, onSelectCategory, products = [] 
     cat === "all" || allTypes.includes(cat)
   );
   
-  // Debug: log mismatches
-  console.log('All types from products:', allTypes.slice(0, 10));
-  console.log('Priority categories:', PRIORITY_CATEGORIES);
-  
   const getProductCount = (type: string) => {
     if (type === "all") return products.filter(p => p.isActive).length;
     const typeUpper = type.toUpperCase().trim();
-    const count = products.filter(p => p.isActive && (
+    return products.filter(p => p.isActive && (
       p.type?.toUpperCase().trim() === typeUpper || 
       p.category?.toUpperCase().trim() === typeUpper
     )).length;
-    console.log(`Products for "${type}" (uppercase: "${typeUpper}"):`, count);
-    return count;
   };
 
   const updateScrollButtons = () => {

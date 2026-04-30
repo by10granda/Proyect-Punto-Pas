@@ -100,15 +100,13 @@ const Index = () => {
     
     if (searchQuery) {
       const lowerQuery = searchQuery.toLowerCase();
-      const results = sourceProducts.filter(p => 
+      return sourceProducts.filter(p => 
         p.isActive && (
           p.name.toLowerCase().includes(lowerQuery) ||
           p.brand?.toLowerCase().includes(lowerQuery) ||
           p.description?.toLowerCase().includes(lowerQuery)
         )
       );
-      console.log(`Search "${searchQuery}":`, results.length, 'results');
-      return results;
     }
     
     if (activeTab === "offers") {
@@ -120,20 +118,14 @@ const Index = () => {
     }
     
     if (selectedCategory === "all") {
-      console.log('Showing all products, count:', sourceProducts.filter(p => p.isActive).length);
       return sourceProducts.filter(p => p.isActive);
     }
     
     const selectedUpper = selectedCategory.toUpperCase().trim();
-    const filtered = sourceProducts.filter(p => p.isActive && (
+    return sourceProducts.filter(p => p.isActive && (
       p.category?.toUpperCase().trim() === selectedUpper || 
       p.type?.toUpperCase().trim() === selectedUpper
     ));
-    console.log(`Filtering by category: "${selectedCategory}" (uppercase: "${selectedUpper}")`);
-    console.log('Sample product category:', sourceProducts[0]?.category);
-    console.log('Sample product type:', sourceProducts[0]?.type);
-    console.log('Filtered count:', filtered.length);
-    return filtered;
   }, [selectedCategory, activeTab, searchQuery, offersCategory, allProducts, apiStatus]);
 
   const displayedProducts = useMemo(() => {
@@ -318,7 +310,8 @@ const Index = () => {
               }}
               onCategoryClick={(category) => {
                 setActiveTab("home");
-                setSearchQuery(category);
+                setSelectedCategory(category);
+                setSearchQuery("");
                 setTimeout(() => {
                   const productsSection = document.getElementById('productos');
                   if (productsSection) {
