@@ -48,14 +48,15 @@ export const Footer = ({ onCartClick }: FooterProps) => {
               >
                 <img src="/tik-tok.png" alt="TikTok" className="w-5 h-5 object-contain" />
               </a>
-              <a
-                href="https://wa.me/593959990999"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-10 h-10 rounded-lg bg-white/10 hover:bg-green-500 flex items-center justify-center transition-all hover:scale-110"
-              >
-                <img src="/whatsapp.png" alt="WhatsApp" className="w-5 h-5 object-contain" />
-              </a>
+            <a
+              href="https://wa.me/593959990999?text=Hola,%20me%20gustaría%20obtener%20más%20información"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-2 w-full py-3 px-4 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-lg transition-all hover:shadow-lg hover:scale-[1.02] mb-4"
+            >
+              <img src="/whatsapp.png" alt="WhatsApp" className="w-5 h-5 object-contain" />
+              Chatear por WhatsApp
+            </a>
             </div>
           </div>
           
