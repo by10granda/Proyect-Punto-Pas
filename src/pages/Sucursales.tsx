@@ -113,7 +113,7 @@ const Sucursales = () => {
       <div className="pt-20">
         {/* Section Header */}
         <div className="max-w-7xl mx-auto px-4 py-8">
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900" style={{ fontFamily: "'Josefin Sans', sans-serif" }}>
+          <h1 className="text-3xl md:text-4xl font-bold text-red-600" style={{ fontFamily: "'Josefin Sans', sans-serif" }}>
               Nuestras Sucursales
             </h1>
           <p className="text-gray-500 mt-2">
@@ -155,7 +155,7 @@ const Sucursales = () => {
 
                 {/* Store Info */}
                 <div className="p-5">
-                  <h2 className="text-xl font-bold text-gray-900 mb-3" style={{ fontFamily: "'Josefin Sans', sans-serif" }}>
+                  <h2 className="text-xl font-bold text-red-600 mb-3" style={{ fontFamily: "'Josefin Sans', sans-serif" }}>
                     {store.name}
                   </h2>
 
