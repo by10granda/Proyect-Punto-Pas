@@ -85,7 +85,7 @@ export const ProductCarouselSection = ({
                     <div key={product.id} className="flex-shrink-0 w-[250px]">
                       <ProductCard
                         product={product}
-                        onAddToCart={(p) => onAddToCart(p, 1)}
+                        onAddToCart={onAddToCart}
                         onProductClick={onProductClick}
                       />
                     </div>
