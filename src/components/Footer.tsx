@@ -43,9 +43,10 @@ export const Footer = ({ onCartClick }: FooterProps) => {
                   <ExternalLink className="w-5 h-5 text-white" />
                 </a>
               <a
-                href="https://www.tiktok.com/@punto_pas"
+                href="https://www.flaticon.es/iconos-gratis/tik-tok" 
                 target="_blank"
                 rel="noopener noreferrer"
+                title="tik tok iconos"
                 className="w-10 h-10 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition-all hover:scale-110 border border-white/20"
               >
                 <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-white">
