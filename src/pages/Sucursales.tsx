@@ -38,9 +38,9 @@ const stores: Store[] = [
   },
   {
     id: 3,
-    name: "CRECOS GUAYAQUIL",
-    address: "Guayaquil, Ecuador",
-    iframeSrc: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d898.9692251825021!2d-79.67296662321924!3d-2.168997!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e2c3a33d8b5a31%3A0x4fc5328b3e0bdbcf!2sGuayaquil!5e0!3m2!1ses!2sec!4v1770564507718!5m2!1ses!2sec",
+    name: "CRECOS ESMERALDAS",
+    address: "Esmeraldas, Ecuador",
+    iframeSrc: "https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d3989.291562435662!2d-79.6723510837263!3d0.9310465181916957!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e2c85208bb6d559%3A0x1efbad64a4d44346!2sEsmeraldas!5e0!3m2!1ses!2sec!4v1777554687329!5m2!1ses!2sec",
     phone: "+593 97 654 3210",
     hours: "8:00 AM - 8:00 PM",
     isOpen: true,
