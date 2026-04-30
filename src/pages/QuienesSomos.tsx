@@ -280,88 +280,74 @@ export const QuienesSomos = () => {
           </div>
         </section>
 
-       {/* Timeline - Historia */}
-       <section className="px-4 py-20 bg-[#ffbd2b] relative">
-         {/* Ola SVG superior */}
-         <div className="absolute top-0 left-0 w-full overflow-hidden leading-none -translate-y-full">
-           <svg viewBox="0 0 1200 60" preserveAspectRatio="none" className="w-full h-[60px]">
-             <path d="M0,30 C200,0 400,60 600,30 C800,0 1000,60 1200,30 L1200,0 L0,0 Z" fill="#ffffff" />
-           </svg>
-         </div>
+        {/* Timeline - Historia */}
+        <section className="px-4 py-20 bg-gradient-to-b from-muted/50 to-background">
+          <div className="max-w-5xl mx-auto">
+            <div className="text-left mb-16">
+              <span className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-semibold mb-4">
+                <Clock className="w-4 h-4" />
+                Nuestra Historia
+              </span>
+              <h2 className="text-left text-3xl md:text-4xl font-bold text-[#FB0548] mt-4" style={{fontFamily: "'Josefin Sans', sans-serif"}}>
+                 25 Años de Trayectoria
+              </h2>
+              <p className="text-muted-foreground max-w-2xl mt-2">
+                Un recorrido de esfuerzo, dedicación y compromiso con nuestros clientes
+              </p>
+            </div>
 
-         <div className="max-w-5xl mx-auto">
-           <div className="text-left mb-16">
-             <span className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-semibold mb-4">
-               <Clock className="w-4 h-4" />
-               Nuestra Historia
-             </span>
-             <h2 className="text-left text-3xl md:text-4xl font-bold text-[#FB0548] mt-4" style={{fontFamily: "'Josefin Sans', sans-serif"}}>
-                25 Años de Trayectoria
-             </h2>
-             <p className="text-muted-foreground max-w-2xl mt-2">
-               Un recorrido de esfuerzo, dedicación y compromiso con nuestros clientes
-             </p>
-           </div>
+            {/* Timeline Vertical */}
+            <div className="relative">
+              {/* Línea central vertical */}
+              <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-primary via-primary/50 to-transparent transform md:-translate-x-1/2" />
 
-           {/* Timeline Vertical */}
-           <div className="relative">
-             {/* Línea central vertical */}
-             <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-primary via-primary/50 to-transparent transform md:-translate-x-1/2" />
+              {milestones.map((milestone, index) => (
+                <div
+                  key={milestone.year}
+                  className={`relative flex flex-col md:flex-row items-start md:items-center gap-6 mb-16 last:mb-0 ${
+                    index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'
+                  }`}
+                >
+                  {/* Círculo con año */}
+                  <div className="absolute left-4 md:left-1/2 transform md:-translate-x-1/2 z-10">
+                    <div className="w-20 h-20 bg-primary rounded-full flex items-center justify-center shadow-xl shadow-primary/30 border-4 border-background">
+                      <span className="text-primary-foreground font-black text-sm text-center leading-tight">
+                        {milestone.year}
+                      </span>
+                    </div>
+                  </div>
 
-             {milestones.map((milestone, index) => (
-               <div
-                 key={milestone.year}
-                 className={`relative flex flex-col md:flex-row items-start md:items-center gap-6 mb-16 last:mb-0 ${
-                   index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'
-                 }`}
-               >
-                 {/* Círculo con año */}
-                 <div className="absolute left-4 md:left-1/2 transform md:-translate-x-1/2 z-10">
-                   <div className="w-20 h-20 bg-primary rounded-full flex items-center justify-center shadow-xl shadow-primary/30 border-4 border-background">
-                     <span className="text-primary-foreground font-black text-sm text-center leading-tight">
-                       {milestone.year}
-                     </span>
-                   </div>
-                 </div>
+                  {/* Contenido - Izquierda */}
+                  <div className={`flex-1 pl-16 md:pl-0 ${index % 2 === 0 ? 'md:pr-24 md:text-right' : 'md:pl-24 md:text-left'}`}>
+                    <div className={`bg-card rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500 border border-border group ${index % 2 === 0 ? 'md:ml-auto' : 'md:mr-auto'} max-w-md`}>
+                      {/* Imagen */}
+                      <div className="aspect-[16/10] overflow-hidden relative">
+                        <img
+                          src={milestone.image}
+                          alt={milestone.title}
+                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                        <div className="absolute bottom-3 left-3 right-3">
+                          <h3 className="text-white font-bold text-lg drop-shadow-lg">{milestone.title}</h3>
+                        </div>
+                      </div>
+                      {/* Descripción */}
+                      <div className="p-5">
+                        <p className="text-muted-foreground text-sm leading-relaxed">
+                          {milestone.description}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
 
-                 {/* Contenido - Izquierda */}
-                 <div className={`flex-1 pl-16 md:pl-0 ${index % 2 === 0 ? 'md:pr-24 md:text-right' : 'md:pl-24 md:text-left'}`}>
-                   <div className={`bg-card rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500 border border-border group ${index % 2 === 0 ? 'md:ml-auto' : 'md:mr-auto'} max-w-md`}>
-                     {/* Imagen */}
-                     <div className="aspect-[16/10] overflow-hidden relative">
-                       <img
-                         src={milestone.image}
-                         alt={milestone.title}
-                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                       />
-                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                       <div className="absolute bottom-3 left-3 right-3">
-                         <h3 className="text-white font-bold text-lg drop-shadow-lg">{milestone.title}</h3>
-                       </div>
-                     </div>
-                     {/* Descripción */}
-                     <div className="p-5">
-                       <p className="text-muted-foreground text-sm leading-relaxed">
-                         {milestone.description}
-                       </p>
-                     </div>
-                   </div>
-                 </div>
-
-                 {/* Espacio vacío para el otro lado */}
-                 <div className="hidden md:block flex-1" />
-               </div>
-             ))}
-           </div>
-         </div>
-
-         {/* Ola SVG inferior */}
-         <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-none translate-y-full">
-           <svg viewBox="0 0 1200 60" preserveAspectRatio="none" className="w-full h-[60px]">
-             <path d="M0,30 C200,60 400,0 600,30 C800,60 1000,0 1200,30 L1200,60 L0,60 Z" fill="#ffffff" />
-           </svg>
-         </div>
-       </section>
+                  {/* Espacio vacío para el otro lado */}
+                  <div className="hidden md:block flex-1" />
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
 
       {/* Sección de Videos - Carrusel */}
       <section className="py-16 bg-white">
