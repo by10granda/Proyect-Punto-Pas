@@ -325,12 +325,15 @@ const Index = () => {
                 const product = sourceProducts.find(p => p.code === code);
                 if (product) {
                   setSelectedProduct(product);
+                  setSelectedCategory("all"); // Reset categoría
+                  setSelectedBrand("all"); // Reset marca
                   setIsProductModalOpen(true);
                 }
               }}
               onCategoryClick={(category) => {
                 setActiveTab("home");
                 setSelectedCategory(category);
+                setSelectedBrand("all"); // Reset marca al seleccionar desde HeroCarousel
                 setSearchQuery("");
                 setTimeout(() => {
                   const productsSection = document.getElementById('productos');
