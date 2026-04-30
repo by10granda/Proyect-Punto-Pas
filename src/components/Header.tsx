@@ -209,6 +209,17 @@ export const Header = ({ cartCount, onSearch, onCartClick, onGoToHome, products 
           <div className="relative" ref={menuRef}>
             <button
               onClick={toggleMenu}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  toggleMenu();
+                }
+                if (e.key === 'Escape' && isMenuOpen) {
+                  setIsMenuOpen(false);
+                }
+              }}
+              tabIndex={0}
+              aria-label="Abrir menú de opciones"
               className={`relative text-primary-foreground p-2.5 flex-shrink-0 rounded-xl transition-all duration-300 transform hover:scale-110 ${
                 isMenuOpen 
                   ? "bg-white/30 rotate-45 shadow-lg" 
@@ -248,6 +259,17 @@ export const Header = ({ cartCount, onSearch, onCartClick, onGoToHome, products 
                 {/* Radio Option - Abre solo el widget */}
                 <button
                   onClick={openRadioWidget}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      openRadioWidget();
+                    }
+                    if (e.key === 'Escape') {
+                      setIsMenuOpen(false);
+                    }
+                  }}
+                  tabIndex={0}
+                  aria-label="Abrir Radio Punto Pas"
                   className="w-full flex items-center gap-3 p-3 rounded-lg bg-gradient-to-r from-red-50 to-red-50 hover:from-red-100 hover:to-red-100 border border-red-100 hover:border-red-300 transition-all duration-300 group"
                 >
                   <div className="w-10 h-10 bg-gradient-to-br from-red-500 to-red-500 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
@@ -260,11 +282,22 @@ export const Header = ({ cartCount, onSearch, onCartClick, onGoToHome, products 
                   <Radio className="w-4 h-4 text-red-400 group-hover:text-red-600 transition-colors" />
                 </button>
                 
-                {/* Maps Option - Navega a la página completa */}
-                 <button
-                  onClick={openSucursales}
-                  className="w-full flex items-center gap-3 p-3 rounded-lg bg-gradient-to-r from-cyan-50 to-teal-50 hover:from-cyan-100 hover:to-teal-100 border border-cyan-100 hover:border-cyan-300 transition-all duration-300 group"
-                >
+                 {/* Maps Option - Navega a la página completa */}
+                  <button
+                    onClick={openSucursales}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        openSucursales();
+                      }
+                      if (e.key === 'Escape') {
+                        setIsMenuOpen(false);
+                      }
+                    }}
+                    tabIndex={0}
+                    aria-label="Ir a Nuestras Sucursales"
+                    className="w-full flex items-center gap-3 p-3 rounded-lg bg-gradient-to-r from-cyan-50 to-teal-50 hover:from-cyan-100 hover:to-teal-100 border border-cyan-100 hover:border-cyan-300 transition-all duration-300 group"
+                  >
                   <div className="w-10 h-10 bg-gradient-to-br from-cyan-500 to-teal-500 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
                     <MapPin className="w-5 h-5 text-white" />
                   </div>
@@ -278,6 +311,17 @@ export const Header = ({ cartCount, onSearch, onCartClick, onGoToHome, products 
                 {/* Privacy Policy Option - Navega a la página de privacidad */}
                 <button
                   onClick={openPrivacyPolicy}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      openPrivacyPolicy();
+                    }
+                    if (e.key === 'Escape') {
+                      setIsMenuOpen(false);
+                    }
+                  }}
+                  tabIndex={0}
+                  aria-label="Ir a Política de Privacidad"
                   className="w-full flex items-center gap-3 p-3 rounded-lg bg-gradient-to-r from-slate-50 to-gray-50 hover:from-slate-100 hover:to-gray-100 border border-slate-200 hover:border-slate-400 transition-all duration-300 group"
                 >
                   <div className="w-10 h-10 bg-gradient-to-br from-slate-600 to-gray-600 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
@@ -296,6 +340,14 @@ export const Header = ({ cartCount, onSearch, onCartClick, onGoToHome, products 
           {/* Cart */}
           <button 
             onClick={onCartClick} 
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                onCartClick();
+              }
+            }}
+            tabIndex={0}
+            aria-label={`Carrito de compras, ${cartCount} productos`}
             className="relative text-primary-foreground p-2.5 flex-shrink-0 bg-white/10 rounded-xl hover:bg-white/20 transition-colors"
           >
             <ShoppingCart className="w-6 h-6" />
@@ -312,6 +364,15 @@ export const Header = ({ cartCount, onSearch, onCartClick, onGoToHome, products 
           <Link 
             to="/quienes-somos"
             onClick={scrollToTop}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                navigate('/quienes-somos');
+                scrollToTop();
+              }
+            }}
+            tabIndex={0}
+            aria-label="Ir a Quiénes Somos"
             className="text-primary-foreground text-xs font-semibold hover:text-primary-foreground/80 transition-colors pt-2"
           >
             Quiénes Somos
@@ -320,12 +381,23 @@ export const Header = ({ cartCount, onSearch, onCartClick, onGoToHome, products 
             <button 
               onClick={() => {
                 scrollToTop();
-                // Buscar sección contacto en inicio o sucursales
-                setTimeout(() => {
-                  const element = document.getElementById("contacto");
-                  if (element) element.scrollIntoView({ behavior: "smooth" });
-                }, 100);
+                const contactSection = document.getElementById('contacto');
+                if (contactSection) {
+                  contactSection.scrollIntoView({ behavior: 'smooth' });
+                }
               }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  scrollToTop();
+                  const contactSection = document.getElementById('contacto');
+                  if (contactSection) {
+                    contactSection.scrollIntoView({ behavior: 'smooth' });
+                  }
+                }
+              }}
+              tabIndex={0}
+              aria-label="Ir a Contacto"
               className="text-primary-foreground text-xs font-semibold hover:text-primary-foreground/80 transition-colors pt-2"
             >
               Contacto
