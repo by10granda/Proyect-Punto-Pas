@@ -481,7 +481,7 @@ const Index = () => {
                   }
                   return;
                 }
-                const brands = ["INDURAMA", "MABE", "TCL", "PHILIPS", "HONOR", "RCA"];
+                const brands = ["INDURAMA", "MABE", "TCL", "RCA", "HONOR", "PHILIPS"];
                 if (brands[index]) {
                   setActiveTab("home");
                   setSearchQuery(brands[index]);
