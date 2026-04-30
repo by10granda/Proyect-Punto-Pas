@@ -136,12 +136,12 @@ export const Footer = ({ onCartClick }: FooterProps) => {
                 </div>
                 <div>
                   <p className="text-xs text-gray-500 mb-0.5">Teléfono</p>
-                  <p className="font-semibold">+593 99 208 5931</p>
+                  <p className="font-semibold">095 999 0999</p>
                 </div>
               </a>
-
+              
               <a 
-                href="mailto:contacto@puntopas.com" 
+                href="mailto:variedadespas2025@gmail.com" 
                 className="flex items-start gap-3 text-gray-400 hover:text-white transition-colors group"
               >
                 <div className="w-10 h-10 rounded-lg bg-gray-800 flex items-center justify-center group-hover:bg-primary/20 transition-colors flex-shrink-0">
@@ -149,7 +149,7 @@ export const Footer = ({ onCartClick }: FooterProps) => {
                 </div>
                 <div>
                   <p className="text-xs text-gray-500 mb-0.5">Email</p>
-                  <p className="font-semibold">contacto@puntopas.com</p>
+                  <p className="font-semibold">variedadespas2025@gmail.com</p>
                 </div>
               </a>
 
