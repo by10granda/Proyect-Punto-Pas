@@ -33,35 +33,36 @@ export const Footer = ({ onCartClick }: FooterProps) => {
             {/* Social Links - Minimalist */}
             <div className="flex items-center gap-3">
                <a
-                  href="https://www.flaticon.es/iconos-gratis/facebook" 
+                  href="https://www.facebook.com/p/Punto-Pas-100063756541859/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  title="facebook iconos"
-                  className="w-10 h-10 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition-all hover:scale-110"
+                  className="w-10 h-10 rounded-lg bg-white/10 hover:bg-[#1877F2] flex items-center justify-center transition-all hover:scale-110"
                 >
-                  {/* Facebook icon - using external link instead */}
-                  <ExternalLink className="w-5 h-5 text-white" />
+                  {/* Facebook SVG */}
+                  <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.387H7.078v-3.467h3.047V9.542c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.236 2.686.236v2.953H15.83c-1.491 0-1.956.925-1.956 1.875v2.25h3.328l-.532 3.467h-2.796v8.387C19.612 23.027 24 18.062 24 12.073z"/>
+                  </svg>
                 </a>
               <a
-                href="https://www.flaticon.es/iconos-gratis/tik-tok" 
+                href="https://www.tiktok.com/@punto_pas"
                 target="_blank"
                 rel="noopener noreferrer"
-                title="tik tok iconos"
-                className="w-10 h-10 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition-all hover:scale-110 border border-white/20"
+                className="w-10 h-10 rounded-lg bg-white/10 hover:bg-black flex items-center justify-center transition-all hover:scale-110 border border-white/20"
               >
-                <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-white">
-                  <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
+                {/* TikTok SVG */}
+                <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12.525.02c.1 0 .2 0 .3-.02h.02zM12.474 0c-.1 0-.2 0-.3.02h-.02zm6.118 9.122a6.29 6.29 0 0 1-1.443-.224 6.367 6.367 0 0 1-3.28-2.327 6.402 6.402 0 0 1-.534-.794v7.956a6.446 6.446 0 1-4.14 1.531c-3.568 0-6.47-2.904-6.47-6.47s2.902-6.47 6.47-6.47c.16 0 .33.01.49.02a6.505 6.505 0 0 1 3.78 1.97V.08c.37-.12.77-.19 1.19-.19h.08c.33 0 .66.05.98.13.59.12 1.16.31 1.72.59.35.16.69.35 1.03.57a6.505 6.505 0 0 1 3.78 1.97z"/>
                 </svg>
               </a>
               <a
-                href="https://www.flaticon.es/iconos-gratis/whatsapp" 
+                href="https://wa.me/593959990999"
                 target="_blank"
                 rel="noopener noreferrer"
-                title="whatsapp iconos"
                 className="w-10 h-10 rounded-lg bg-white/10 hover:bg-green-500 flex items-center justify-center transition-all hover:scale-110"
               >
-                <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-white">
-                  <path d="M17.472 14.382c-.262-.139-1.55-.771-1.79-.86-.24-.09-.415-.139-.59.14-.174.279-.673.85-.826 1.026-.151.176-.241.195-.416.07-.78-.156-1.401-.49-2.378-1.55-3.579-3.827-4.957-6.963-1.186-2.003-.596-3.622-.298-4.822.298-1.201.596-2.008 1.32-2.675 2.218-.174.278-.313.416-.521.139-.208-.262-.174-.415-.139-.59-.337-.626-.673-1.55-.826-1.55-.208 0-1.201.298-2.008 1.32C2.515 4.175.827 7.244 3.167 10.313c.89 1.631 2.041 3.06 3.522 4.159 1.48 1.1 3.027 1.378 4.145 1.378.69 0 1.302-.09 1.897-.312.594-.222 1.55-.636 2.028-1.241.478-.605.834-1.241 1.106-1.866.278-.625.557-1.241.752-1.866.208-.625.415-1.131.278-1.55z"/>
+                {/* WhatsApp SVG */}
+                <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M17.472 14.382c-.262-.139-1.55-.771-1.79-.86-.24-.09-.415-.139-.59.14-.174.279-.673.85-1.026 1.026-.34.174-.71.201-1.31.07-.59-.174-1.124-.536-1.635-1.026-.511-.49-1.026-.98-1.55-1.55-.526-.526-1.026-.85-1.55-1.026-.284-.09-.566-.126-.85-.07-.59.07-1.026.34-1.31.85-.284.51-.536 1.026-1.026 1.55-.49.511-.85 1.026-1.026.59-.07-.284-.105-.566-.07-.85.07-.49.49-.85 1.026-1.026 1.55-.526.511-1.026.85-1.026 1.31.07.284.105.566.07.85-.07.59-.284 1.026-.49 1.55-.85.526.526.85.85 1.026 1.026.284.09.566.126.85.07.59-.07 1.026-.34 1.31-.85.284-.51.536-1.026 1.026-1.55.49-.511.85-1.026 1.026-.59.07.284.105.566.07.85-.07.59.284-1.026.49-1.55.85-.526.511-1.026.85-1.026 1.31-.07.284-.105.566-.07.85.07.49-.49.85-1.026 1.026-1.55.526-.511 1.026-.85 1.026-1.31-.07-.284-.105-.566-.07-.85.07-.59.07-1.026.34-1.31.85-.284.51-.536 1.026-1.026 1.55-.49.511-.85 1.026-1.026.59-.07.284.105.566.07.85-.07zm-3.472-6.382c-.24 0-.48-.02-.72-.04-3.28-.24-6.28 1.68-6.28 4.88 0 1.88.82 3.56 2.12 4.72.68.4 1.24.68 2.04.68s1.36-.28 2.04-.68c1.36-1.16 2.12-2.84 2.12-4.72 0-3.2-2.98-4.8-6.28-4.8z"/>
                 </svg>
               </a>
             </div>
