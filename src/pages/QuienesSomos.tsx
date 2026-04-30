@@ -40,7 +40,7 @@ const milestones = [
     year: "Presente",
     title: "Visión de Futuro",
     description: "Gracias a su trayectoria, visión empresarial y compromiso con la calidad, Punto Pas se proyecta como una empresa sólida y en constante crecimiento, orientada a satisfacer las necesidades de sus clientes y a fortalecer su presencia en el mercado regional.",
-    image: "https://res.cloudinary.com/dbbkpdhze/image/upload/v1771536434/Historia_2025_qzxzic.png"
+     image: "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777491547/Futuro_Q.png"
   }
 ];
 
