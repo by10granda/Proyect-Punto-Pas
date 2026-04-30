@@ -199,14 +199,14 @@ const Sucursales = () => {
                 <img 
                   src="https://res.cloudinary.com/dbbkpdhze/image/upload/v1777562416/CAMPO_SANTO.png" 
                   alt="Campo Santo" 
-                  className="w-full h-auto"
+                  className="w-full h-80 object-cover"
                 />
               </div>
               <div className="rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
                 <img 
                   src="https://res.cloudinary.com/dbbkpdhze/image/upload/v1777562412/Rincon_del_pac%C3%ADfico.png" 
                   alt="Rincón del Pacífico" 
-                  className="w-full h-auto"
+                  className="w-full h-80 object-cover"
                 />
               </div>
             </div>
