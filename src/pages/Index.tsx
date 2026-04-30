@@ -37,6 +37,10 @@ const Index = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedBrand, setSelectedBrand] = useState("all");
   const [offersCategory, setOffersCategory] = useState("all");
+  // Estados independientes para cada sección
+  const [brandsBannerBrand, setBrandsBannerBrand] = useState("all");
+  const [imageCollageBrand, setImageCollageBrand] = useState("all");
+  const [carouselCategory, setCarouselCategory] = useState("LAVADORAS Y SECADORAS");
   const [cart, setCart] = useState<CartItem[]>(() => {
     const saved = localStorage.getItem("puntopas_cart");
     return saved ? JSON.parse(saved) : [];
@@ -97,26 +101,7 @@ const Index = () => {
   }, []);
 
   const filteredProducts = useMemo(() => {
-    const sourceProducts = apiStatus === 'success' ? allProducts : products;
-    
-    if (searchQuery) {
-      const lowerQuery = searchQuery.toLowerCase();
-      return sourceProducts.filter(p => 
-        p.isActive && (
-          p.name.toLowerCase().includes(lowerQuery) ||
-          p.brand?.toLowerCase().includes(lowerQuery) ||
-          p.description?.toLowerCase().includes(lowerQuery)
-        )
-      );
-    }
-    
-    if (activeTab === "offers") {
-      const allOffers = sourceProducts.filter(p => p.isActive && p.discount && p.discount > 0);
-      if (offersCategory === "all") {
-        return allOffers;
-      }
-      return allOffers.filter(p => p.category === offersCategory || p.type === offersCategory);
-    }
+    const sourceProducts = apiStatus === 'success' && allProducts.length > 0 ? allProducts : products;
     
     let filtered = sourceProducts.filter(p => p.isActive);
     
@@ -134,8 +119,35 @@ const Index = () => {
       );
     }
     
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase().trim();
+      filtered = filtered.filter(p =>
+        p.name.toLowerCase().includes(query) ||
+        p.code.toLowerCase().includes(query) ||
+        p.brand?.toLowerCase().includes(query) ||
+        p.category?.toLowerCase().includes(query) ||
+        p.type?.toLowerCase().includes(query)
+      );
+    }
+    
     return filtered;
   }, [selectedCategory, selectedBrand, activeTab, searchQuery, offersCategory, allProducts, apiStatus]);
+
+  // Productos filtrados para BrandsBanner (independiente)
+  const brandsBannerProducts = useMemo(() => {
+    if (brandsBannerBrand === "all") return allProducts;
+    return allProducts.filter(p => 
+      p.brand?.toUpperCase().trim() === brandsBannerBrand.toUpperCase().trim()
+    );
+  }, [brandsBannerBrand, allProducts]);
+
+  // Productos filtrados para ImageCollage (independiente)
+  const imageCollageProducts = useMemo(() => {
+    if (imageCollageBrand === "all") return allProducts;
+    return allProducts.filter(p => 
+      p.brand?.toUpperCase().trim() === imageCollageBrand.toUpperCase().trim()
+    );
+  }, [imageCollageBrand, allProducts]);
 
   const displayedProducts = useMemo(() => {
     return filteredProducts;
@@ -444,22 +456,25 @@ const Index = () => {
               onAddToCart={(product) => handleAddToCart(product, 1)}
             />
 
+            <div id="brands-section">
             <BrandsBanner
               products={allProducts} 
               onBrandClick={(brand) => {
-                setSelectedBrand(brand.toUpperCase().trim());
+                setBrandsBannerBrand(brand.toUpperCase().trim());
                 setSelectedCategory("all");
                 setSearchQuery("");
                 setTimeout(() => {
-                  const productsSection = document.getElementById('productos');
-                  if (productsSection) {
-                    productsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  const brandsSection = document.getElementById('brands-section');
+                  if (brandsSection) {
+                    brandsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
                   }
                 }, 100);
               }}
             />
+            </div>
 
-            <ImageCollage
+            <div id="imagecollage-section">
+             <ImageCollage
               images={[
                 "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777305703/IMAGEN_1.png",
                 "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777305710/IMAGEN_2.png",
@@ -471,21 +486,21 @@ const Index = () => {
               onImageClick={(index) => {
                 const brands = ["INDURAMA", "MABE", "TCL", "RCA", "HONOR", "PHILIPS"];
                 if (brands[index]) {
-                  setSelectedBrand(brands[index]);
+                  setImageCollageBrand(brands[index]);
                   setSelectedCategory("all");
                   setSearchQuery("");
-                  setActiveTab("home");
                   setTimeout(() => {
-                    const productsSection = document.getElementById('productos');
-                    if (productsSection) {
-                      productsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    const imageCollageSection = document.getElementById('imagecollage-section');
+                    if (imageCollageSection) {
+                      imageCollageSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
                     }
                   }, 100);
                 }
-              }}
-            />
+               }}
+             />
+             </div>
 
-            <WeeklyDeals
+             <WeeklyDeals
               images={[
                 "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777429427/Descuento1_s.png",
                 "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777429432/Descuento2_s.png",
