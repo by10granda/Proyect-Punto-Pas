@@ -180,7 +180,7 @@ const Sucursales = () => {
                       e.stopPropagation();
                       window.open(`https://www.google.com/maps/dir/?api=1&destination=${store.address}`, '_blank');
                     }}
-                    className="w-full flex items-center justify-center gap-2 bg-red-500 hover:bg-red-600 text-white py-2.5 px-4 rounded-xl text-sm font-medium transition-colors"
+                    className="w-full flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white py-2.5 px-4 rounded-xl text-sm font-medium transition-colors"
                   >
                     <Navigation className="w-4 h-4" />
                     Cómo llegar
