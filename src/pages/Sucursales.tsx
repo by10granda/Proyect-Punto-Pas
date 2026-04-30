@@ -22,7 +22,7 @@ const stores: Store[] = [
     id: 1,
     name: "SUCURSAL ESMERALDAS",
     address: "Esmeraldas, Ecuador",
-    iframeSrc: "https://maps.app.goo.gl/5sSyaHzzvRcooRhg9",
+    iframeSrc: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1498.075847241075!2d-79.67334195107533!3d0.930918438537899!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8fd4bede2bd71849%3A0xf5fc5e870ef38310!2sAv.%20Jaime%20Hurtado%20Gonzales!5e0!3m2!1ses!2sec!4v1777559611828!5m2!1ses!2sec",
     phone: "+593 97 654 3210",
     hours: "8:00 AM - 8:00 PM",
     isOpen: true,
