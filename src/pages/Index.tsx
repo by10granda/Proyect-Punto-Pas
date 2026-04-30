@@ -469,22 +469,12 @@ const Index = () => {
                 "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777301925/IMAGEN_6.png",
               ]}
               onImageClick={(index) => {
-                if (index === 0) {
-                  const sourceProducts = apiStatus === 'success' ? allProducts : products;
-                  const product = sourceProducts.find(p => p.code === "00000467");
-                  console.log("Looking for 00000467 in", sourceProducts.length, "products, found:", !!product);
-                  if (product) {
-                    setSelectedProduct(product);
-                    setIsProductModalOpen(true);
-                  } else {
-                    console.log("Product 00000467 not found");
-                  }
-                  return;
-                }
                 const brands = ["INDURAMA", "MABE", "TCL", "RCA", "HONOR", "PHILIPS"];
                 if (brands[index]) {
+                  setSelectedBrand(brands[index]);
+                  setSelectedCategory("all");
+                  setSearchQuery("");
                   setActiveTab("home");
-                  setSearchQuery(brands[index]);
                   setTimeout(() => {
                     const productsSection = document.getElementById('productos');
                     if (productsSection) {
