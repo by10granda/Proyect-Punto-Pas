@@ -415,37 +415,27 @@ export const QuienesSomos = () => {
         </div>
       </section>
 
-      {/* Footer CTA */}
-      <section className="px-4 py-16 bg-slate-950 text-center border-t border-slate-800">
-        <div className="max-w-2xl mx-auto">
-          <div className="mb-8">
-            <h3 className="text-2xl font-black text-white mb-4">
-              ¿Listo para comenzar tu proyecto?
-            </h3>
-            <p className="text-slate-400 mb-6">
-              Encuentra todo lo que necesitas en Punto Pas. Calidad, confianza y el mejor servicio.
-            </p>
-            <Link 
-              to="/"
-              className="inline-flex items-center gap-2 bg-cyan-600 hover:bg-cyan-500 text-white px-8 py-4 rounded-xl font-bold transition-all duration-200 shadow-xl hover:shadow-cyan-500/25 text-lg"
-            >
-              Explorar catálogo
-            </Link>
-          </div>
-          <div className="pt-8 border-t border-slate-800">
-            <p className="text-slate-500 mb-4">
-              © 2024 <span className="font-bold text-cyan-400">Punto Pas</span>. Todos los derechos reservados.
-            </p>
-            <Link 
-              to="/"
-              className="text-cyan-400 font-medium hover:text-cyan-300 transition-colors"
-            >
+       {/* Footer CTA */}
+       <section className="px-4 py-12 bg-slate-950 text-center">
+         <div className="max-w-2xl mx-auto">
+           <h3 className="text-2xl font-bold text-white mb-4" style={{fontFamily: "'Josefin Sans', sans-serif"}}>
+             ¿Listo para comenzar tu proyecto?
+           </h3>
+           <p className="text-slate-400 mb-8">
+             Encuentra todo lo que necesitas en Punto Pas.
+           </p>
+           <Link 
+             to="/"
+             className="inline-flex items-center gap-2 bg-[#FB0548] hover:bg-[#d9043f] text-white px-8 py-3 rounded-lg font-semibold transition-colors"
+           >
+             Explorar catálogo
+           </Link>
+         </div>
+       </section>
               ← Volver al catálogo
             </Link>
-          </div>
-        </div>
-      </section>
-
+       </section>
+      
       <CartDrawer
         isOpen={isCartOpen}
         onClose={() => setIsCartOpen(false)}
