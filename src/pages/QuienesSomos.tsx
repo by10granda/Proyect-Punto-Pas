@@ -216,58 +216,60 @@ export const QuienesSomos = () => {
       </header>
 
         {/* Quiénes Somos, Misión y Visión - Cards */}
-        <section className="px-4 py-16 max-w-6xl mx-auto bg-[#ffbd2b] relative">
-          <div className="grid gap-6">
-            {/* Quiénes Somos */}
-            <div className="bg-white border-2 border-border rounded-xl p-8 shadow-lg hover:shadow-xl transition-shadow">
-              <div className="mb-4">
-                 <h2 className="text-2xl md:text-3xl font-black" style={{fontFamily: "'Josefin Sans', sans-serif", color: '#ffbd2b'}}>
-                   ¿Quiénés somos?
-                 </h2>
+        <section className="py-16 bg-[#ffbd2b] relative">
+          <div className="max-w-6xl mx-auto px-4">
+            <div className="grid gap-6">
+              {/* Quiénes Somos */}
+              <div className="bg-white border-2 border-border rounded-xl p-8 shadow-lg hover:shadow-xl transition-shadow">
+                <div className="mb-4">
+                   <h2 className="text-2xl md:text-3xl font-black" style={{fontFamily: "'Josefin Sans', sans-serif", color: '#ffbd2b'}}>
+                     ¿Quiénés somos?
+                   </h2>
+                 </div>
+                 <p className="text-muted-foreground leading-relaxed text-justify">
+                   En <strong className="text-foreground">Punto-Pas</strong> somos una empresa
+                   dedicada a la comercialización de una amplia variedad de productos para el hogar,
+                   la construcción y el uso diario. Ofrecemos desde artículos de ferretería y materiales
+                   de construcción hasta electrodomésticos, brindando a nuestros clientes soluciones
+                   completas en un solo lugar.
+                 </p>
+                 <p className="text-muted-foreground leading-relaxed mt-4 text-justify">
+                   Nos caracterizamos por la <strong className="text-primary">calidad de nuestros productos</strong>,
+                   la atención personalizada y el compromiso con la satisfacción de quienes
+                   confían en nosotros.
+                 </p>
                </div>
-               <p className="text-muted-foreground leading-relaxed text-justify">
-                 En <strong className="text-foreground">Punto-Pas</strong> somos una empresa
-                 dedicada a la comercialización de una amplia variedad de productos para el hogar,
-                 la construcción y el uso diario. Ofrecemos desde artículos de ferretería y materiales
-                 de construcción hasta electrodomésticos, brindando a nuestros clientes soluciones
-                 completas en un solo lugar.
-               </p>
-               <p className="text-muted-foreground leading-relaxed mt-4 text-justify">
-                 Nos caracterizamos por la <strong className="text-primary">calidad de nuestros productos</strong>,
-                 la atención personalizada y el compromiso con la satisfacción de quienes
-                 confían en nosotros.
-               </p>
-             </div>
 
-            {/* Misión y Visión en grid */}
-            <div className="grid md:grid-cols-2 gap-6">
-              {/* Misión */}
-              <div className="bg-white border-2 border-border rounded-xl p-8 shadow-lg hover:shadow-xl transition-shadow">
-                <div className="mb-4">
-                  <h2 className="text-left text-xl md:text-2xl font-bold" style={{fontFamily: "'Josefin Sans', sans-serif", color: '#FB0548'}}>
-                    Misión
-                  </h2>
+              {/* Misión y Visión en grid */}
+              <div className="grid md:grid-cols-2 gap-6">
+                {/* Misión */}
+                <div className="bg-white border-2 border-border rounded-xl p-8 shadow-lg hover:shadow-xl transition-shadow">
+                  <div className="mb-4">
+                    <h2 className="text-left text-xl md:text-2xl font-bold" style={{fontFamily: "'Josefin Sans', sans-serif", color: '#FB0548'}}>
+                      Misión
+                    </h2>
+                  </div>
+                  <p className="text-muted-foreground leading-relaxed text-justify">
+                    Satisfacer las necesidades de nuestros clientes ofreciendo productos variados,
+                    confiables y a precios competitivos, acompañados de un servicio responsable y
+                    cercano, que garantice una experiencia de compra segura y eficiente.
+                  </p>
                 </div>
-                <p className="text-muted-foreground leading-relaxed text-justify">
-                  Satisfacer las necesidades de nuestros clientes ofreciendo productos variados,
-                  confiables y a precios competitivos, acompañados de un servicio responsable y
-                  cercano, que garantice una experiencia de compra segura y eficiente.
-                </p>
-              </div>
 
-              {/* Visión */}
-              <div className="bg-white border-2 border-border rounded-xl p-8 shadow-lg hover:shadow-xl transition-shadow">
-                <div className="mb-4">
-                  <h2 className="text-left text-xl md:text-2xl font-bold" style={{fontFamily: "'Josefin Sans', sans-serif", color: '#FB0548'}}>
-                    Visión
-                  </h2>
+                {/* Visión */}
+                <div className="bg-white border-2 border-border rounded-xl p-8 shadow-lg hover:shadow-xl transition-shadow">
+                  <div className="mb-4">
+                    <h2 className="text-left text-xl md:text-2xl font-bold" style={{fontFamily: "'Josefin Sans', sans-serif", color: '#FB0548'}}>
+                      Visión
+                    </h2>
+                  </div>
+                  <p className="text-muted-foreground leading-relaxed text-justify">
+                    Ser una empresa referente en la comercialización de productos para el hogar,
+                    la construcción y el comercio en general, reconocida por su variedad,
+                    calidad y excelencia en el servicio, consolidándonos como una opción confiable
+                    y preferida por nuestros clientes.
+                  </p>
                 </div>
-                <p className="text-muted-foreground leading-relaxed text-justify">
-                  Ser una empresa referente en la comercialización de productos para el hogar,
-                  la construcción y el comercio en general, reconocida por su variedad,
-                  calidad y excelencia en el servicio, consolidándonos como una opción confiable
-                  y preferida por nuestros clientes.
-                </p>
               </div>
             </div>
           </div>
