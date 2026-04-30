@@ -190,6 +190,32 @@ const Sucursales = () => {
             ))}
           </div>
 
+          {/* Contact Section */}
+          <div id="contacto" className="mt-8 bg-gray-900 rounded-2xl p-8 text-white">
+            <h2 className="text-2xl font-bold text-center mb-6 flex items-center justify-center gap-2">
+              <Phone className="w-6 h-6 text-red-400" />
+              Contáctanos
+            </h2>
+            <div className="grid md:grid-cols-3 gap-4">
+              {stores.map((store) => (
+                <div key={store.id} className="bg-white/10 rounded-xl p-4">
+                  <h3 className="font-bold text-red-400 mb-2">{store.name}</h3>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex items-center gap-2">
+                      <Phone className="w-4 h-4 text-red-400" />
+                      <span>{store.phone}</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="mt-4 text-center">
+              <p className="text-gray-400 text-sm">
+                Horario de atención: Lunes a Sábado de 8:00 AM - 8:00 PM
+              </p>
+            </div>
+          </div>
+
           {/* Otras Sucursales - Advertising Section */}
           <div className="mt-12">
             <h2 className="text-2xl md:text-3xl font-bold text-red-600 mb-6" style={{ fontFamily: "'Josefin Sans', sans-serif" }}>
@@ -219,50 +245,6 @@ const Sucursales = () => {
             </div>
           </div>
 
-          {/* Info Cards */}
-          <div className="grid grid-cols-3 gap-4 mt-8">
-            <div className="bg-gray-50 rounded-xl p-4 text-center">
-              <Clock className="w-6 h-6 text-red-500 mx-auto mb-2" />
-              <h3 className="text-gray-900 font-bold text-sm">Horario</h3>
-              <p className="text-gray-500 text-xs mt-1">8:00 AM - 8:00 PM</p>
-            </div>
-            <div className="bg-gray-50 rounded-xl p-4 text-center">
-              <MapPin className="w-6 h-6 text-red-500 mx-auto mb-2" />
-              <h3 className="text-gray-900 font-bold text-sm">Parqueo</h3>
-              <p className="text-gray-500 text-xs mt-1">Disponible</p>
-            </div>
-            <div className="bg-gray-50 rounded-xl p-4 text-center">
-              <Phone className="w-6 h-6 text-red-500 mx-auto mb-2" />
-              <h3 className="text-gray-900 font-bold text-sm">Atención</h3>
-              <p className="text-gray-500 text-xs mt-1">Personalizada</p>
-            </div>
-          </div>
-
-          {/* Contact Section */}
-          <div id="contacto" className="mt-8 bg-gray-900 rounded-2xl p-8 text-white">
-            <h2 className="text-2xl font-bold text-center mb-6 flex items-center justify-center gap-2">
-              <Phone className="w-6 h-6 text-red-400" />
-              Contáctanos
-            </h2>
-            <div className="grid md:grid-cols-3 gap-4">
-              {stores.map((store) => (
-                <div key={store.id} className="bg-white/10 rounded-xl p-4">
-                  <h3 className="font-bold text-red-400 mb-2">{store.name}</h3>
-                  <div className="space-y-2 text-sm">
-                    <div className="flex items-center gap-2">
-                      <Phone className="w-4 h-4 text-red-400" />
-                      <span>{store.phone}</span>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div className="mt-4 text-center">
-              <p className="text-gray-400 text-sm">
-                Horario de atención: Lunes a Sábado de 8:00 AM - 8:00 PM
-              </p>
-            </div>
-          </div>
         </div>
       </div>
 
