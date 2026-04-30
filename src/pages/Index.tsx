@@ -446,75 +446,93 @@ const Index = () => {
           </div>
         )}
         
-        <ProductGrid 
-          products={displayedProducts}
-          onAddToCart={handleAddToCart}
-          onProductClick={handleProductClick}
-          title={getTitle()}
-        />
+         <ProductGrid 
+           products={displayedProducts}
+           onAddToCart={handleAddToCart}
+           onProductClick={handleProductClick}
+           title={getTitle()}
+         />
 
-        {activeTab === "home" && !searchQuery && (
-          <>
-            <ProductCarouselSection
-              products={allProducts}
-              category="LAVADORAS Y SECADORAS"
-              bannerImage="https://res.cloudinary.com/dbbkpdhze/image/upload/v1777411113/IMAGEN_SECCION_LAVADORAS.png"
-              onBannerClick={() => {
-                setActiveTab("home");
-                setSearchQuery("lavadora");
-                setTimeout(() => {
-                  const productsSection = document.getElementById('productos');
-                  if (productsSection) {
-                    productsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                  }
-                }, 100);
-              }}
-              onProductClick={handleProductClick}
-              onAddToCart={(product) => handleAddToCart(product, 1)}
-            />
+         {activeTab === "home" && !searchQuery && (
+           <>
+             <ProductCarouselSection
+               products={allProducts}
+               category="LAVADORAS Y SECADORAS"
+               bannerImage="https://res.cloudinary.com/dbbkpdhze/image/upload/v1777411113/IMAGEN_SECCION_LAVADORAS.png"
+               onBannerClick={() => {
+                 setActiveTab("home");
+                 setSearchQuery("lavadora");
+                 setTimeout(() => {
+                   const productsSection = document.getElementById('productos');
+                   if (productsSection) {
+                     productsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                   }
+                 }, 100);
+               }}
+               onProductClick={handleProductClick}
+               onAddToCart={(product) => handleAddToCart(product, 1)}
+             />
 
-            <div id="brands-section">
-            <BrandsBanner
-              products={allProducts} 
-              onBrandClick={(brand) => {
-                setBrandsBannerBrand(brand.toUpperCase().trim());
-                setSelectedCategory("all");
-                setSearchQuery("");
-                setTimeout(() => {
-                  const brandsSection = document.getElementById('brands-section');
-                  if (brandsSection) {
-                    brandsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                  }
-                }, 100);
-              }}
-            />
-            </div>
-
-            <div id="imagecollage-section">
-             <ImageCollage
-              images={[
-                "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777305703/IMAGEN_1.png",
-                "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777305710/IMAGEN_2.png",
-                "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777306355/IMAGEN_3.png",
-                "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777301931/IMAGEN_4.png",
-                "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777413591/IMAGEN_5.png",
-                "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777301925/IMAGEN_6.png",
-              ]}
-              onImageClick={(index) => {
-                const brands = ["INDURAMA", "MABE", "TCL", "RCA", "HONOR", "PHILIPS"];
-                if (brands[index]) {
-                  setImageCollageBrand(brands[index]);
-                  setSelectedCategory("all");
-                  setSearchQuery("");
-                  setTimeout(() => {
-                    const imageCollageSection = document.getElementById('imagecollage-section');
-                    if (imageCollageSection) {
-                      imageCollageSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    }
-                  }, 100);
-                }
+             <div id="brands-section">
+             <BrandsBanner
+               products={allProducts} 
+               onBrandClick={(brand) => {
+                 setBrandsBannerBrand(brand.toUpperCase().trim());
+                 setSelectedCategory("all");
+                 setSearchQuery("");
+                 setTimeout(() => {
+                   const brandsSection = document.getElementById('brands-section');
+                   if (brandsSection) {
+                     brandsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                   }
+                 }, 100);
                }}
              />
+             {/* ProductGrid independiente para BrandsBanner */}
+             <div className="max-w-7xl mx-auto px-4">
+               <ProductGrid 
+                 products={brandsBannerProducts}
+                 onAddToCart={handleAddToCart}
+                 onProductClick={handleProductClick}
+                 title="Productos de la marca seleccionada"
+               />
+             </div>
+             </div>
+
+             <div id="imagecollage-section">
+              <ImageCollage
+               images={[
+                 "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777305703/IMAGEN_1.png",
+                 "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777305710/IMAGEN_2.png",
+                 "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777306355/IMAGEN_3.png",
+                 "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777301931/IMAGEN_4.png",
+                 "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777413591/IMAGEN_5.png",
+                 "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777301925/IMAGEN_6.png",
+               ]}
+               onImageClick={(index) => {
+                 const brands = ["INDURAMA", "MABE", "TCL", "RCA", "HONOR", "PHILIPS"];
+                 if (brands[index]) {
+                   setImageCollageBrand(brands[index]);
+                   setSelectedCategory("all");
+                   setSearchQuery("");
+                   setTimeout(() => {
+                     const imageCollageSection = document.getElementById('imagecollage-section');
+                     if (imageCollageSection) {
+                       imageCollageSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                     }
+                   }, 100);
+                 }
+               }}
+             />
+             {/* ProductGrid independiente para ImageCollage */}
+             <div className="max-w-7xl mx-auto px-4">
+               <ProductGrid 
+                 products={imageCollageProducts}
+                 onAddToCart={handleAddToCart}
+                 onProductClick={handleProductClick}
+                 title="Productos de la imagen seleccionada"
+               />
+             </div>
              </div>
 
              <div id="weeklydeals-section">
@@ -538,8 +556,8 @@ const Index = () => {
                }}
              />
              </div>
-          </>
-        )}
+           </>
+         )}
       </div>
 
       <Footer />
