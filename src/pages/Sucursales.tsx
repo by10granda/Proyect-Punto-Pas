@@ -1,73 +1,51 @@
-import { useState, useRef, useEffect, useCallback, useMemo } from "react";
+import { useState, useRef } from "react";
 import { Header } from "@/components/Header";
 import { CartDrawer, CartItem } from "@/components/CartDrawer";
 import { Footer } from "@/components/Footer";
 import { products } from "@/data/products";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
-import { MapPin, Clock, Phone, Navigation, Search, X, ChevronRight, CheckCircle, XCircle } from "lucide-react";
+import { MapPin, Clock, Phone, Navigation } from "lucide-react";
 
-// Types
 interface Store {
   id: number;
   name: string;
   address: string;
-  lat: number;
-  lng: number;
+  iframeSrc: string;
   phone: string;
   hours: string;
   isOpen: boolean;
-  city: string;
 }
 
-// Store data with extracted coordinates
 const stores: Store[] = [
   {
     id: 1,
     name: "CRECOS AMBATO",
     address: "Ambato, Ecuador",
-    lat: 1.279163,
-    lng: -78.815915,
+    iframeSrc: "https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d31910.592269724737!2d-78.815914!3d-1.2791638727469063!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e2c85208bb6d559%3A0x1efbad64a4d44346!2sDisensa!5e0!3m2!1ses!2sec!4v177056419524!5m2!1ses!2sec",
     phone: "+593 99 123 4567",
     hours: "8:00 AM - 8:00 PM",
     isOpen: true,
-    city: "Ambato"
   },
   {
     id: 2,
     name: "CRECOS QUITO",
     address: "Quito, Ecuador",
-    lat: 0.931167,
-    lng: -79.672967,
+    iframeSrc: "https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d3989.291562435662!2d-79.67238277042144!3d0.9309174275936912!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e2c3a33d8b5a31%3A0x4fc5328b3e0bdbcf!2sCentro!5e0!3m2!1ses!2sec!4v1770567372652!5m2!1ses!2sec",
     phone: "+593 98 765 4321",
     hours: "8:00 AM - 8:00 PM",
     isOpen: true,
-    city: "Quito"
   },
   {
     id: 3,
     name: "CRECOS GUAYAQUIL",
     address: "Guayaquil, Ecuador",
-    lat: -2.168997,
-    lng: -79.922344,
+    iframeSrc: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d898.9692251825021!2d-79.67296662321924!3d-2.168997!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e2c3a33d8b5a31%3A0x4fc5328b3e0bdbcf!2sGuayaquil!5e0!3m2!1ses!2sec!4v1770564507718!5m2!1ses!2sec",
     phone: "+593 97 654 3210",
     hours: "8:00 AM - 8:00 PM",
     isOpen: true,
-    city: "Guayaquil"
-  }
+  },
 ];
-
-// Google Maps API Key - REPLACE with your actual key
-const GOOGLE_MAPS_API_KEY = "YOUR_GOOGLE_MAPS_API_KEY_HERE";
-
-// Red pin SVG for custom marker
-const redPinSvg = (storeNumber: number) => `
-  <svg xmlns="http://www.w3.org/2000/svg" width="40" height="50" viewBox="0 0 40 50">
-    <path d="M20 0C8.954 0 0 8.954 0 20c0 14.909 16.18 27.56 18.076 29.09a1.5 1.5 0 0 0 2.348 0C23.82 47.56 40 34.909 40 20 40 8.954 31.046 0 20 0z" fill="#DC2626"/>
-    <circle cx="20" cy="20" r="10" fill="white"/>
-    <text x="20" y="25" text-anchor="middle" font-size="12" font-weight="bold" fill="#DC2626">${storeNumber}</text>
-  </svg>
-`;
 
 const Sucursales = () => {
   const navigate = useNavigate();
@@ -76,13 +54,7 @@ const Sucursales = () => {
     return saved ? JSON.parse(saved) : [];
   });
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
   const [selectedStore, setSelectedStore] = useState<Store | null>(null);
-  const [hoveredStore, setHoveredStore] = useState<number | null>(null);
-  const mapRef = useRef<HTMLDivElement>(null);
-  const mapInstanceRef = useRef<any>(null);
-  const markersRef = useRef<any[]>([]);
-  const [mapLoaded, setMapLoaded] = useState(false);
 
   const cartItemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
@@ -120,7 +92,6 @@ const Sucursales = () => {
   };
 
   const handleSearch = (query: string) => {
-    setSearchQuery(query);
     if (query) {
       navigate(`/?search=${encodeURIComponent(query)}`);
     }
@@ -131,149 +102,6 @@ const Sucursales = () => {
     localStorage.setItem("puntopas_cart", JSON.stringify(newCart));
   };
 
-  // Filter stores based on search
-  const filteredStores = useMemo(() => {
-    if (!searchQuery.trim()) return stores;
-    const query = searchQuery.toLowerCase();
-    return stores.filter(s =>
-      s.name.toLowerCase().includes(query) ||
-      s.address.toLowerCase().includes(query) ||
-      s.city.toLowerCase().includes(query)
-    );
-  }, [searchQuery]);
-
-  // Initialize Google Map
-  useEffect(() => {
-    if (!window.google && !document.querySelector('script[src*="maps.googleapis.com"]')) {
-      const script = document.createElement('script');
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&callback=initMap`;
-      script.async = true;
-      script.defer = true;
-      window.initMap = () => {
-        setMapLoaded(true);
-      };
-      document.head.appendChild(script);
-    } else if (window.google) {
-      setMapLoaded(true);
-    }
-  }, []);
-
-  // Create map instance
-  useEffect(() => {
-    if (!mapLoaded || !mapRef.current) return;
-
-    const map = new window.google.maps.Map(mapRef.current, {
-      center: { lat: -0.5, lng: -79.5 },
-      zoom: 7,
-      styles: [
-        { featureType: "poi", elementType: "labels", stylers: [{ visibility: "off" }] }
-      ],
-      mapTypeControl: false,
-      streetViewControl: false,
-      fullscreenControl: false,
-      zoomControl: true,
-      zoomControlOptions: { position: window.google.maps.ControlPosition.RIGHT_BOTTOM }
-    });
-
-    mapInstanceRef.current = map;
-    addMarkers(map, filteredStores);
-  }, [mapLoaded]);
-
-  // Update markers when filtered stores change
-  useEffect(() => {
-    if (!mapInstanceRef.current) return;
-    addMarkers(mapInstanceRef.current, filteredStores);
-  }, [filteredStores]);
-
-  // Center map on selected store
-  useEffect(() => {
-    if (selectedStore && mapInstanceRef.current) {
-      mapInstanceRef.current.panTo({ lat: selectedStore.lat, lng: selectedStore.lng });
-      mapInstanceRef.current.setZoom(15);
-    }
-  }, [selectedStore]);
-
-  const addMarkers = (map: any, storesToShow: Store[]) => {
-    // Clear existing markers
-    markersRef.current.forEach(marker => marker.setMap(null));
-    markersRef.current = [];
-
-    storesToShow.forEach((store, index) => {
-      const svgMarker = redPinSvg(index + 1);
-      const marker = new window.google.maps.Marker({
-        position: { lat: store.lat, lng: store.lng },
-        map,
-        title: store.name,
-        icon: {
-          url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svgMarker)}`,
-          scaledSize: new window.google.maps.Size(40, 50),
-          anchor: new window.google.maps.Point(20, 50)
-        }
-      });
-
-      marker.addListener('click', () => {
-        setSelectedStore(store);
-        setHoveredStore(store.id);
-      });
-
-      marker.addListener('mouseover', () => {
-        setHoveredStore(store.id);
-      });
-
-      marker.addListener('mouseout', () => {
-        setHoveredStore(null);
-      });
-
-      markersRef.current.push(marker);
-    });
-  };
-
-  const handleFindNearest = () => {
-    if (!navigator.geolocation) {
-      toast.error("Geolocalización no soportada");
-      return;
-    }
-
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const userLat = position.coords.latitude;
-        const userLng = position.coords.longitude;
-
-        let nearest = stores[0];
-        let minDist = getDistance(userLat, userLng, stores[0].lat, stores[0].lng);
-
-        stores.forEach(store => {
-          const dist = getDistance(userLat, userLng, store.lat, store.lng);
-          if (dist < minDist) {
-            minDist = dist;
-            nearest = store;
-          }
-        });
-
-        setSelectedStore(nearest);
-        if (mapInstanceRef.current) {
-          mapInstanceRef.current.panTo({ lat: nearest.lat, lng: nearest.lng });
-          mapInstanceRef.current.setZoom(15);
-        }
-        toast.success(`Tienda más cercana: ${nearest.name}`);
-      },
-      (error) => {
-        toast.error("No se pudo obtener tu ubicación");
-      }
-    );
-  };
-
-  const getDistance = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
-    const R = 6371; // Earth's radius in km
-    const dLat = (lat2 - lat1) * Math.PI / 180;
-    const dLon = (lon2 - lon1) * Math.PI / 180;
-    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-      Math.sin(dLon / 2) * Math.sin(dLon / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    return R * c;
-  };
-
   return (
     <div className="min-h-screen bg-gray-50">
       <Header
@@ -282,153 +110,138 @@ const Sucursales = () => {
         onCartClick={() => setIsCartOpen(true)}
       />
 
-      <div className="flex flex-col lg:flex-row" style={{ height: 'calc(100vh - 80px)' }}>
-        {/* Left Panel - Store List (30%) */}
-        <div className="w-full lg:w-[30%] bg-white border-r border-gray-200 flex flex-col">
-          {/* Search Bar */}
-          <div className="p-4 border-b border-gray-200">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Ciudad, provincia o tienda..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-10 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none transition-all"
-                style={{ fontFamily: "'Poppins', sans-serif" }}
-              />
-              {searchQuery && (
-                <button
-                  onClick={() => setSearchQuery("")}
-                  className="absolute right-3 top-1/2 -translate-y-1/2"
-                >
-                  <X className="w-5 h-5 text-gray-400 hover:text-gray-600" />
-                </button>
-              )}
-            </div>
-
-            {/* Store count */}
-            <p className="text-sm text-gray-500 mt-2">
-              {filteredStores.length} tiendas encontradas
+      <div className="pt-20">
+        {/* Section Header */}
+        <div className="bg-white border-b border-gray-200">
+          <div className="max-w-7xl mx-auto px-4 py-6">
+            <h1 className="text-3xl md:text-4xl font-bold text-gray-900" style={{ fontFamily: "'Poppins', sans-serif" }}>
+              Nuestras Sucursales
+            </h1>
+            <p className="text-gray-600 mt-2">
+              Visítanos en cualquiera de nuestras ubicaciones
             </p>
           </div>
+        </div>
 
-          {/* Store List with Scroll */}
-          <div className="flex-1 overflow-y-auto">
-            {filteredStores.map((store) => (
+        {/* Stores Grid */}
+        <div className="max-w-7xl mx-auto px-4 py-8">
+          <div className="grid lg:grid-cols-3 gap-6 mb-8">
+            {stores.map((store) => (
               <div
                 key={store.id}
                 onClick={() => setSelectedStore(store)}
-                onMouseEnter={() => setHoveredStore(store.id)}
-                onMouseLeave={() => setHoveredStore(null)}
-                className={`p-4 border-b border-gray-100 cursor-pointer transition-all duration-300 hover:bg-red-50 ${
-                  selectedStore?.id === store.id || hoveredStore === store.id
-                    ? 'bg-red-50 border-l-4 border-l-red-600'
-                    : ''
+                className={`bg-white rounded-2xl overflow-hidden shadow-lg border-2 transition-all duration-300 cursor-pointer hover:shadow-xl ${
+                  selectedStore?.id === store.id
+                    ? 'border-red-500 ring-2 ring-red-200'
+                    : 'border-gray-100 hover:border-red-200'
                 }`}
               >
-                <div className="flex items-start justify-between mb-2">
-                  <h3
-                    className="font-bold text-gray-900"
-                    style={{ fontFamily: "'Poppins', sans-serif" }}
-                  >
+                {/* Map Preview */}
+                <div className="relative">
+                  <iframe
+                    src={store.iframeSrc}
+                    width="100%"
+                    height="200"
+                    className="w-full border-0"
+                    loading="lazy"
+                    title={store.name}
+                  ></iframe>
+                  <div className={`absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1 ${
+                    store.isOpen ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
+                  }`}>
+                    {store.isOpen ? '● Abierto' : '○ Cerrado'}
+                  </div>
+                </div>
+
+                {/* Store Info */}
+                <div className="p-5">
+                  <h2 className="text-xl font-bold text-gray-900 mb-3" style={{ fontFamily: "'Poppins', sans-serif" }}>
                     {store.name}
-                  </h3>
-                  <span className={`flex items-center gap-1 text-xs px-2 py-1 rounded-full ${
-                    store.isOpen
-                      ? 'bg-green-100 text-green-700'
-                      : 'bg-red-100 text-red-700'
-                  }`}
-                  >
-                    {store.isOpen ? (
-                      <CheckCircle className="w-3 h-3" />
-                    ) : (
-                      <XCircle className="w-3 h-3" />
-                    )}
-                    {store.isOpen ? 'Abierto' : 'Cerrado'}
-                  </span>
-                </div>
+                  </h2>
 
-                <div className="flex items-center gap-2 text-sm text-gray-600 mb-1">
-                  <MapPin className="w-4 h-4 flex-shrink-0" />
-                  <span>{store.address}</span>
-                </div>
+                  <div className="space-y-2 text-sm text-gray-600 mb-4">
+                    <div className="flex items-center gap-2">
+                      <MapPin className="w-4 h-4 text-red-500 flex-shrink-0" />
+                      <span>{store.address}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Clock className="w-4 h-4 text-red-500 flex-shrink-0" />
+                      <span>{store.hours}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Phone className="w-4 h-4 text-red-500 flex-shrink-0" />
+                      <span>{store.phone}</span>
+                    </div>
+                  </div>
 
-                <div className="flex items-center gap-2 text-sm text-gray-600 mb-1">
-                  <Clock className="w-4 h-4 flex-shrink-0" />
-                  <span>{store.hours}</span>
-                </div>
-
-                <div className="flex items-center gap-2 text-sm text-gray-600 mb-3">
-                  <Phone className="w-4 h-4 flex-shrink-0" />
-                  <span>{store.phone}</span>
-                </div>
-
-                <div className="flex gap-2">
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      window.open(`https://www.google.com/maps/dir/?api=1&destination=${store.lat},${store.lng}`, '_blank');
+                      window.open(`https://www.google.com/maps/dir/?api=1&destination=${store.address}`, '_blank');
                     }}
-                    className="flex-1 flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white py-2 px-3 rounded-lg text-sm font-medium transition-colors"
+                    className="w-full flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white py-3 rounded-xl font-medium transition-colors"
                   >
                     <Navigation className="w-4 h-4" />
                     Cómo llegar
                   </button>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setSelectedStore(store);
-                    }}
-                    className="flex-1 flex items-center justify-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 px-3 rounded-lg text-sm font-medium transition-colors"
-                  >
-                    <Clock className="w-4 h-4" />
-                    Horarios
-                  </button>
                 </div>
               </div>
             ))}
-
-            {filteredStores.length === 0 && (
-              <div className="p-8 text-center text-gray-400">
-                <MapPin className="w-12 h-12 mx-auto mb-3 text-gray-300" />
-                <p>No se encontraron tiendas</p>
-              </div>
-            )}
           </div>
 
-          {/* Find Nearest Button */}
-          <div className="p-4 border-t border-gray-200">
-            <button
-              onClick={handleFindNearest}
-              className="w-full flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white py-3 rounded-xl font-medium transition-colors shadow-lg hover:shadow-xl"
-            >
-              <Navigation className="w-5 h-5" />
-              Más cercanas
-            </button>
-          </div>
-        </div>
-
-        {/* Right Panel - Google Map (70%) */}
-        <div className="w-full lg:w-[70%] relative">
-          {!mapLoaded && (
-            <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
-              <div className="text-center">
-                <div className="w-16 h-16 border-4 border-red-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                <p className="text-gray-600">Cargando mapa...</p>
-                {GOOGLE_MAPS_API_KEY === "YOUR_GOOGLE_MAPS_API_KEY_HERE" && (
-                  <p className="text-sm text-red-500 mt-2">
-                    Reemplaza YOUR_GOOGLE_MAPS_API_KEY_HERE con tu API key
-                  </p>
-                )}
-              </div>
+          {/* Info Cards */}
+          <div className="grid grid-cols-3 gap-4 mb-8">
+            <div className="bg-white rounded-xl p-4 text-center shadow border border-gray-100">
+              <Clock className="w-6 h-6 text-red-500 mx-auto mb-2" />
+              <h3 className="text-gray-900 font-bold text-sm">Horario</h3>
+              <p className="text-gray-600 text-xs mt-1">8:00 AM - 8:00 PM</p>
             </div>
-          )}
-          <div
-            ref={mapRef}
-            className="w-full h-full"
-            style={{ minHeight: '500px' }}
-          />
+            <div className="bg-white rounded-xl p-4 text-center shadow border border-gray-100">
+              <MapPin className="w-6 h-6 text-red-500 mx-auto mb-2" />
+              <h3 className="text-gray-900 font-bold text-sm">Parqueo</h3>
+              <p className="text-gray-600 text-xs mt-1">Disponible</p>
+            </div>
+            <div className="bg-white rounded-xl p-4 text-center shadow border border-gray-100">
+              <Phone className="w-6 h-6 text-red-500 mx-auto mb-2" />
+              <h3 className="text-gray-900 font-bold text-sm">Atención</h3>
+              <p className="text-gray-600 text-xs mt-1">Personalizada</p>
+            </div>
+          </div>
+
+          {/* Advertising Space */}
+          <div className="rounded-2xl overflow-hidden shadow-lg mb-8">
+            <img
+              src="https://res.cloudinary.com/dbbkpdhze/image/upload/v1771535149/muebles_lxrih1.jpg"
+              alt="Promoción"
+              className="w-full h-auto object-cover"
+            />
+          </div>
+
+          {/* Contact Section */}
+          <div id="contacto" className="bg-slate-900 rounded-2xl p-8 text-white">
+            <h2 className="text-2xl font-bold text-center mb-6 flex items-center justify-center gap-2">
+              <Phone className="w-6 h-6 text-cyan-400" />
+              Contáctanos
+            </h2>
+            <div className="grid md:grid-cols-2 gap-4">
+              {stores.map((store) => (
+                <div key={store.id} className="bg-white/10 rounded-xl p-4">
+                  <h3 className="font-bold text-cyan-400 mb-2">{store.name}</h3>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex items-center gap-2">
+                      <Phone className="w-4 h-4 text-cyan-400" />
+                      <span>{store.phone}</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="mt-4 text-center">
+              <p className="text-slate-400 text-sm">
+                Horario de atención: Lunes a Sábado de 8:00 AM - 8:00 PM
+              </p>
+            </div>
+          </div>
         </div>
       </div>
 
