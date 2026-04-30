@@ -189,6 +189,29 @@ const Sucursales = () => {
             ))}
           </div>
 
+          {/* Otras Sucursales - Advertising Section */}
+          <div className="mt-12">
+            <h2 className="text-2xl md:text-3xl font-bold text-red-600 mb-6" style={{ fontFamily: "'Josefin Sans', sans-serif" }}>
+              OTRAS SUCURSALES
+            </h2>
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+                <img 
+                  src="https://res.cloudinary.com/dbbkpdhze/image/upload/v1777562416/CAMPO_SANTO.png" 
+                  alt="Campo Santo" 
+                  className="w-full h-auto"
+                />
+              </div>
+              <div className="rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+                <img 
+                  src="https://res.cloudinary.com/dbbkpdhze/image/upload/v1777562412/Rincon_del_pac%C3%ADfico.png" 
+                  alt="Rincón del Pacífico" 
+                  className="w-full h-auto"
+                />
+              </div>
+            </div>
+          </div>
+
           {/* Info Cards */}
           <div className="grid grid-cols-3 gap-4 mt-8">
             <div className="bg-gray-50 rounded-xl p-4 text-center">
