@@ -216,7 +216,7 @@ export const QuienesSomos = () => {
       </header>
 
         {/* Quiénes Somos, Misión y Visión - Cards */}
-        <section className="py-16 bg-[#ffbd2b] relative">
+        <section className="py-32 bg-[#ffbd2b] relative">
           <div className="max-w-6xl mx-auto px-4">
             <div className="grid gap-6">
               {/* Quiénes Somos */}
