@@ -20,7 +20,15 @@ export const WhatsAppButton = () => {
         src="/whatsapp.png" 
         alt="WhatsApp"
         className="w-7 h-7"
+        onError={(e) => {
+          const target = e.target as HTMLImageElement;
+          target.style.display = 'none';
+          if (target.nextElementSibling) {
+            (target.nextElementSibling as HTMLElement).style.display = 'block';
+          }
+        }}
       />
+      <MessageCircle className="w-7 h-7 text-white" style={{ display: 'none' }} />
       
       {/* Pulse effect */}
       <span className="absolute w-full h-full rounded-full bg-green-500 animate-ping opacity-30" />

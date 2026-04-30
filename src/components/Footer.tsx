@@ -54,7 +54,18 @@ export const Footer = ({ onCartClick }: FooterProps) => {
               rel="noopener noreferrer"
               className="flex items-center justify-center gap-2 w-full py-3 px-4 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-lg transition-all hover:shadow-lg hover:scale-[1.02] mb-4"
             >
-              <img src="/whatsapp.png" alt="WhatsApp" className="w-5 h-5 object-contain" />
+              <img 
+                src="/whatsapp.png" 
+                alt="WhatsApp" 
+                className="w-5 h-5 object-contain"
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.style.display = 'none';
+                  const fallback = target.nextElementSibling as HTMLElement;
+                  if (fallback) fallback.style.display = 'block';
+                }}
+              />
+              <MessageCircle className="w-5 h-5 text-white" style={{ display: 'none' }} />
               Chatear por WhatsApp
             </a>
             </div>
