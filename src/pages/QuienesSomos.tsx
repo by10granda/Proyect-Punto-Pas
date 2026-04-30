@@ -275,15 +275,15 @@ export const QuienesSomos = () => {
           </div>
 
           {/* Ola SVG inferior */}
-          <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-none translate-y-full">
-            <svg viewBox="0 0 1200 100" preserveAspectRatio="none" className="w-full h-[100px]">
-              <path d="M0,50 C200,100 400,0 600,50 C800,100 1000,0 1200,50 L1200,100 L0,100 Z" fill="#ffffff" />
+          <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-none" style={{ lineHeight: 0 }}>
+            <svg viewBox="0 0 1200 100" preserveAspectRatio="none" className="w-full block" style={{ display: 'block' }}>
+              <path d="M0,0 C200,100 400,0 600,100 C800,0 1000,100 1200,0 L1200,100 L0,100 Z" fill="#ffffff" />
             </svg>
           </div>
         </section>
 
         {/* Timeline - Historia */}
-        <section className="px-4 py-20 bg-gradient-to-b from-muted/50 to-background">
+        <section className="px-4 pt-20 pb-20 bg-gradient-to-b from-muted/50 to-background">
           <div className="max-w-5xl mx-auto">
             <div className="text-left mb-16">
               <span className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-semibold mb-4">
