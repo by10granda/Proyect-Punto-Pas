@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { Header } from "@/components/Header";
 import { CartDrawer, CartItem } from "@/components/CartDrawer";
 import { Footer } from "@/components/Footer";
@@ -31,8 +31,17 @@ const stores: Store[] = [
     id: 2,
     name: "SUCURSAL SAN LORENZO",
     address: "San Lorenzo, Ecuador",
-    iframeSrc: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2966.4628546293825!2d-78.81832138320499!3d1.2789763541405592!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e2c85208bb6d559%3A0x1efbad64a4d44346!2sSan%20Lorenzo!5e0!3m2!1ses!2sec!4v1777559477880!5m2!1ses!2sec",
+    iframeSrc: "https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d785.5407135357892!2d-78.8326373431258!3d1.2834431525215!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1ses!2sec!4v1777559999134!5m2!1ses!2sec",
     phone: "+593 98 765 4321",
+    hours: "8:00 AM - 8:00 PM",
+    isOpen: true,
+  },
+  {
+    id: 3,
+    name: "SUCURSAL STIHL",
+    address: "Llalda, Ecuador",
+    iframeSrc: "https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d785.5407135357892!2d-78.8326373431258!3d1.2834431525215!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sAv.%20Jaime%20Hurtado%20Gonzales!5e0!3m2!1ses!2sec!4v1777559999134!5m2!1ses!2sec",
+    phone: "+593 99 123 4567",
     hours: "8:00 AM - 8:00 PM",
     isOpen: true,
   },
@@ -94,7 +103,7 @@ const Sucursales = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-white">
       <Header
         cartCount={cartItemCount}
         onSearch={handleSearch}
@@ -103,31 +112,29 @@ const Sucursales = () => {
 
       <div className="pt-20">
         {/* Section Header */}
-        <div className="bg-white border-b border-gray-200">
-          <div className="max-w-7xl mx-auto px-4 py-6">
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-900" style={{ fontFamily: "'Poppins', sans-serif" }}>
-              Nuestras Sucursales
-            </h1>
-            <p className="text-gray-600 mt-2">
-              Visítanos en cualquiera de nuestras ubicaciones
-            </p>
-          </div>
+        <div className="max-w-7xl mx-auto px-4 py-8">
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-900" style={{ fontFamily: "'Poppins', sans-serif" }}>
+            Nuestras Sucursales
+          </h1>
+          <p className="text-gray-500 mt-2">
+            Visítanos en cualquiera de nuestras ubicaciones
+          </p>
         </div>
 
-        {/* Stores Grid */}
-        <div className="max-w-7xl mx-auto px-4 py-8">
-          <div className="grid lg:grid-cols-3 gap-6 mb-8">
+        {/* Stores Grid - Minimalist Design */}
+        <div className="max-w-7xl mx-auto px-4 pb-8">
+          <div className="grid md:grid-cols-3 gap-6">
             {stores.map((store) => (
               <div
                 key={store.id}
                 onClick={() => setSelectedStore(store)}
-                className={`bg-white rounded-2xl overflow-hidden shadow-lg border-2 transition-all duration-300 cursor-pointer hover:shadow-xl ${
+                className={`bg-white border-2 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer ${
                   selectedStore?.id === store.id
-                    ? 'border-red-500 ring-2 ring-red-200'
-                    : 'border-gray-100 hover:border-red-200'
+                    ? 'border-red-500 ring-2 ring-red-100'
+                    : 'border-gray-100 hover:border-gray-200'
                 }`}
               >
-                {/* Map Preview */}
+                {/* Map */}
                 <div className="relative">
                   <iframe
                     src={store.iframeSrc}
@@ -138,7 +145,9 @@ const Sucursales = () => {
                     title={store.name}
                   ></iframe>
                   <div className={`absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1 ${
-                    store.isOpen ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
+                    store.isOpen
+                      ? 'bg-green-500 text-white'
+                      : 'bg-red-500 text-white'
                   }`}>
                     {store.isOpen ? '● Abierto' : '○ Cerrado'}
                   </div>
@@ -170,7 +179,7 @@ const Sucursales = () => {
                       e.stopPropagation();
                       window.open(`https://www.google.com/maps/dir/?api=1&destination=${store.address}`, '_blank');
                     }}
-                    className="w-full flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white py-3 rounded-xl font-medium transition-colors"
+                    className="w-full flex items-center justify-center gap-2 bg-red-500 hover:bg-red-600 text-white py-2.5 px-4 rounded-xl text-sm font-medium transition-colors"
                   >
                     <Navigation className="w-4 h-4" />
                     Cómo llegar
@@ -181,46 +190,37 @@ const Sucursales = () => {
           </div>
 
           {/* Info Cards */}
-          <div className="grid grid-cols-3 gap-4 mb-8">
-            <div className="bg-white rounded-xl p-4 text-center shadow border border-gray-100">
+          <div className="grid grid-cols-3 gap-4 mt-8">
+            <div className="bg-gray-50 rounded-xl p-4 text-center">
               <Clock className="w-6 h-6 text-red-500 mx-auto mb-2" />
               <h3 className="text-gray-900 font-bold text-sm">Horario</h3>
-              <p className="text-gray-600 text-xs mt-1">8:00 AM - 8:00 PM</p>
+              <p className="text-gray-500 text-xs mt-1">8:00 AM - 8:00 PM</p>
             </div>
-            <div className="bg-white rounded-xl p-4 text-center shadow border border-gray-100">
+            <div className="bg-gray-50 rounded-xl p-4 text-center">
               <MapPin className="w-6 h-6 text-red-500 mx-auto mb-2" />
               <h3 className="text-gray-900 font-bold text-sm">Parqueo</h3>
-              <p className="text-gray-600 text-xs mt-1">Disponible</p>
+              <p className="text-gray-500 text-xs mt-1">Disponible</p>
             </div>
-            <div className="bg-white rounded-xl p-4 text-center shadow border border-gray-100">
+            <div className="bg-gray-50 rounded-xl p-4 text-center">
               <Phone className="w-6 h-6 text-red-500 mx-auto mb-2" />
               <h3 className="text-gray-900 font-bold text-sm">Atención</h3>
-              <p className="text-gray-600 text-xs mt-1">Personalizada</p>
+              <p className="text-gray-500 text-xs mt-1">Personalizada</p>
             </div>
-          </div>
-
-          {/* Advertising Space */}
-          <div className="rounded-2xl overflow-hidden shadow-lg mb-8">
-            <img
-              src="https://res.cloudinary.com/dbbkpdhze/image/upload/v1771535149/muebles_lxrih1.jpg"
-              alt="Promoción"
-              className="w-full h-auto object-cover"
-            />
           </div>
 
           {/* Contact Section */}
-          <div id="contacto" className="bg-slate-900 rounded-2xl p-8 text-white">
+          <div id="contacto" className="mt-8 bg-gray-900 rounded-2xl p-8 text-white">
             <h2 className="text-2xl font-bold text-center mb-6 flex items-center justify-center gap-2">
-              <Phone className="w-6 h-6 text-cyan-400" />
+              <Phone className="w-6 h-6 text-red-400" />
               Contáctanos
             </h2>
-            <div className="grid md:grid-cols-2 gap-4">
+            <div className="grid md:grid-cols-3 gap-4">
               {stores.map((store) => (
                 <div key={store.id} className="bg-white/10 rounded-xl p-4">
-                  <h3 className="font-bold text-cyan-400 mb-2">{store.name}</h3>
+                  <h3 className="font-bold text-red-400 mb-2">{store.name}</h3>
                   <div className="space-y-2 text-sm">
                     <div className="flex items-center gap-2">
-                      <Phone className="w-4 h-4 text-cyan-400" />
+                      <Phone className="w-4 h-4 text-red-400" />
                       <span>{store.phone}</span>
                     </div>
                   </div>
@@ -228,7 +228,7 @@ const Sucursales = () => {
               ))}
             </div>
             <div className="mt-4 text-center">
-              <p className="text-slate-400 text-sm">
+              <p className="text-gray-400 text-sm">
                 Horario de atención: Lunes a Sábado de 8:00 AM - 8:00 PM
               </p>
             </div>
