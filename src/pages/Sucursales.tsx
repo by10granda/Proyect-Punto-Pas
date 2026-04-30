@@ -246,15 +246,16 @@ const Sucursales = () => {
 
       <Footer />
 
-      <CartDrawer
-        isOpen={isCartOpen}
-        onClose={() => setIsCartOpen(false)}
-        items={cart}
-        onUpdateQuantity={handleUpdateQuantity}
-        onRemoveItem={handleRemoveItem}
-        onClearCart={handleClearCart}
-        onCheckout={handleCheckout}
-      />
+       <CartDrawer
+         isOpen={isCartOpen}
+         onClose={() => setIsCartOpen(false)}
+         items={cart}
+         products={products}
+         onUpdateQuantity={handleUpdateQuantity}
+         onRemoveItem={handleRemoveItem}
+         onClearCart={handleClearCart}
+         onCheckout={handleCheckout}
+       />
     </div>
   );
 };
