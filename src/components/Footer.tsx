@@ -33,11 +33,13 @@ export const Footer = ({ onCartClick }: FooterProps) => {
             {/* Social Links - Minimalist */}
             <div className="flex items-center gap-3">
                <a
-                  href="https://www.facebook.com/p/Punto-Pas-100063756541859/"
+                  href="https://www.flaticon.es/iconos-gratis/facebook" 
                   target="_blank"
                   rel="noopener noreferrer"
+                  title="facebook iconos"
                   className="w-10 h-10 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition-all hover:scale-110"
                 >
+                  {/* Facebook icon - using external link instead */}
                   <ExternalLink className="w-5 h-5 text-white" />
                 </a>
               <a
