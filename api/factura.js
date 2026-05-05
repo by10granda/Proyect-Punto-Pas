@@ -1,0 +1,17 @@
+const { proxyToSiape } = require("./_lib/siapeProxy");
+
+module.exports = async function handler(req, res) {
+  if (req.method !== "POST") {
+    res.status(405).json({ error: "Method not allowed" });
+    return;
+  }
+
+  try {
+    await proxyToSiape(req, res, "/factura", { method: "POST", query: {} });
+  } catch (error) {
+    res.status(500).json({
+      error: "Proxy SIAPE no disponible",
+      details: error instanceof Error ? error.message : "Error desconocido",
+    });
+  }
+};
