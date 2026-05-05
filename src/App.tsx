@@ -8,6 +8,9 @@ import Index from "./pages/Index";
 import ProductPage from "./pages/ProductPage";
 import QuienesSomos from "./pages/QuienesSomos";
 import Checkout from "./pages/Checkout";
+import CheckoutPayment from "./pages/CheckoutPayment";
+import CheckoutPaymentResult from "./pages/CheckoutPaymentResult";
+import OrderReview from "./pages/OrderReview";
 import Sucursales from "./pages/Sucursales";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import NotFound from "./pages/NotFound";
@@ -26,6 +29,9 @@ const App = () => (
             <Route path="/product/:id" element={<ProductPage />} />
             <Route path="/quienes-somos" element={<QuienesSomos />} />
             <Route path="/checkout" element={<Checkout />} />
+            <Route path="/checkout/pago" element={<CheckoutPayment />} />
+            <Route path="/checkout/pago/resultado" element={<CheckoutPaymentResult />} />
+            <Route path="/compra" element={<OrderReview />} />
             <Route path="/sucursales" element={<Sucursales />} />
             <Route path="/privacidad" element={<PrivacyPolicy />} />
             <Route path="*" element={<NotFound />} />

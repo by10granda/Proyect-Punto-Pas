@@ -1,5 +1,5 @@
 import { Product } from "@/data/products";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const ProductCardGrid = ({ product, onAddToCart, onProductClick }: {
   product: Product;
@@ -27,7 +27,7 @@ const ProductCardGrid = ({ product, onAddToCart, onProductClick }: {
 
   return (
     <div 
-      className="group bg-white rounded-xl overflow-hidden cursor-pointer h-full flex flex-col transition-all duration-200 hover:shadow-lg hover:-translate-y-1"
+      className="group bg-white rounded-xl overflow-hidden cursor-pointer h-full flex flex-col transition-all duration-200 sm:hover:shadow-lg sm:hover:-translate-y-1"
       style={{ border: '1px solid #f1f1f1', boxShadow: '0 2px 8px rgba(0,0,0,0.02)' }}
       onClick={() => onProductClick(product)}
     >
@@ -44,7 +44,7 @@ const ProductCardGrid = ({ product, onAddToCart, onProductClick }: {
             </span>
           </div>
         )}
-        <div className="w-full h-full flex items-center justify-center p-4">
+        <div className="w-full h-full flex items-center justify-center p-3 sm:p-4">
           {imageError ? (
             <span className="text-4xl">📦</span>
           ) : (
@@ -52,13 +52,13 @@ const ProductCardGrid = ({ product, onAddToCart, onProductClick }: {
           )}
         </div>
       </div>
-      <div className="p-3 flex flex-col flex-grow">
-        <span className="text-xs uppercase tracking-wider text-gray-500">{product.brand || 'General'}</span>
-        <h3 className="text-sm font-semibold text-gray-900 line-clamp-2 mb-2 font-manrope">{product.name}</h3>
+      <div className="p-2.5 sm:p-3 flex flex-col flex-grow">
+        <span className="text-[10px] sm:text-xs uppercase tracking-wider text-gray-500 truncate">{product.brand || 'General'}</span>
+        <h3 className="text-xs sm:text-sm font-semibold text-gray-900 line-clamp-2 mb-2 font-manrope leading-snug">{product.name}</h3>
         <div className="mt-auto">
-          <div className="flex items-center justify-between gap-2 mb-2">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-2">
             <div className="flex flex-col">
-              <span className="text-lg font-bold font-manrope" style={{ color: '#FA003F' }}>
+              <span className="text-base sm:text-lg font-bold font-manrope" style={{ color: '#FA003F' }}>
                 ${(hasPvpAndPuntoPas ? product.puntoPasPrice : product.price)?.toFixed(2)}
               </span>
               {hasPvpAndPuntoPas && (
@@ -72,11 +72,11 @@ const ProductCardGrid = ({ product, onAddToCart, onProductClick }: {
                 </span>
               )}
             </div>
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1 justify-between sm:justify-start">
               <button
                 onClick={(e) => { e.stopPropagation(); setQuantity(q => Math.max(1, q - 1)); }}
                 disabled={product.stock === 0 || quantity <= 1}
-                className="w-6 h-6 rounded flex items-center justify-center text-sm font-bold disabled:opacity-30"
+                className="w-7 h-7 sm:w-6 sm:h-6 rounded flex items-center justify-center text-sm font-bold disabled:opacity-30"
                 style={{ backgroundColor: '#f3f4f6', color: '#374151' }}
               >
                 -
@@ -92,13 +92,13 @@ const ProductCardGrid = ({ product, onAddToCart, onProductClick }: {
                   setQuantity(Math.max(1, Math.min(val, product.stock || 999)));
                 }}
                 onClick={(e) => e.stopPropagation()}
-                className="w-8 h-6 rounded text-center text-xs font-medium border"
+                className="w-10 sm:w-8 h-7 sm:h-6 rounded text-center text-xs font-medium border"
                 style={{ borderColor: '#e5e7eb' }}
               />
               <button
                 onClick={(e) => { e.stopPropagation(); setQuantity(q => Math.min(product.stock || 999, q + 1)); }}
                 disabled={product.stock === 0 || quantity >= (product.stock || 999)}
-                className="w-6 h-6 rounded flex items-center justify-center text-sm font-bold disabled:opacity-30"
+                className="w-7 h-7 sm:w-6 sm:h-6 rounded flex items-center justify-center text-sm font-bold disabled:opacity-30"
                 style={{ backgroundColor: '#f3f4f6', color: '#374151' }}
               >
                 +
@@ -109,7 +109,7 @@ const ProductCardGrid = ({ product, onAddToCart, onProductClick }: {
           <button
             onClick={handleAdd}
             disabled={product.stock === 0}
-            className="w-full py-2 rounded-lg text-sm font-semibold disabled:opacity-40 font-manrope"
+            className="w-full py-2 rounded-lg text-xs sm:text-sm font-semibold disabled:opacity-40 font-manrope"
             style={{ backgroundColor: '#FA003F', color: 'white' }}
           >
             {product.stock === 0 ? 'Sin stock' : 'Agregar'}
@@ -129,6 +129,11 @@ export const ProductGrid = ({ products, onAddToCart, onProductClick, title }: {
   title?: string;
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
+
+  // Reset page to 1 when products change (search, filters, etc.)
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [products]);
 
   const totalPages = Math.ceil(products.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
@@ -177,17 +182,17 @@ export const ProductGrid = ({ products, onAddToCart, onProductClick, title }: {
   };
 
   return (
-    <div className="px-4 pb-12 bg-white">
-      <div className="flex items-center justify-between mb-4 pt-4">
-        <h2 className="text-xl font-bold" style={{ color: '#FA003F', fontFamily: 'Manrope, sans-serif' }}>
+    <div className="px-3 sm:px-4 pb-10 sm:pb-12 bg-white">
+      <div className="flex items-start sm:items-center justify-between gap-3 mb-4 pt-4">
+        <h2 className="text-lg sm:text-xl font-bold leading-tight" style={{ color: '#FA003F', fontFamily: 'Manrope, sans-serif' }}>
           {title}
         </h2>
-        <span className="text-sm text-gray-500 font-manrope">
+        <span className="text-xs sm:text-sm text-gray-500 font-manrope whitespace-nowrap pt-1 sm:pt-0">
           {products.length} {products.length === 1 ? 'producto' : 'productos'}
         </span>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2.5 sm:gap-4">
         {visibleProducts.map((product) => (
           <ProductCardGrid
             key={product.id}
@@ -199,7 +204,7 @@ export const ProductGrid = ({ products, onAddToCart, onProductClick, title }: {
       </div>
 
       {totalPages > 1 && (
-        <div className="flex items-center justify-center gap-2 mt-8">
+        <div className="flex items-center justify-center gap-1.5 sm:gap-2 mt-8 overflow-x-auto pb-1">
           <button
             onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
             disabled={currentPage === 1}

@@ -24,7 +24,7 @@ const stores: Store[] = [
     address: "Esmeraldas, Ecuador",
     iframeSrc: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1498.075847241075!2d-79.67334195107533!3d0.930918438537899!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8fd4bede2bd71849%3A0xf5fc5e870ef38310!2sAv.%20Jaime%20Hurtado%20Gonzales!5e0!3m2!1ses!2sec!4v1777559611828!5m2!1ses!2sec",
     phone: "095 9990 999",
-    hours: "8:00 AM - 8:00 PM",
+    hours: "8:00 AM - 6:00 PM",
     isOpen: true,
   },
   {
@@ -33,16 +33,16 @@ const stores: Store[] = [
     address: "San Lorenzo, Ecuador",
     iframeSrc: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.824033251242!2d-78.8184891252755!3d1.2791632987086834!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e2c85208bb6d559%3A0x1efbad64a4d44346!2sDisensa!5e0!3m2!1ses!2sec!4v1777561070279!5m2!1ses!2sec",
     phone: "095 9990 999",
-    hours: "8:00 AM - 8:00 PM",
+    hours: "8:00 AM - 6:00 PM",
     isOpen: true,
   },
   {
     id: 3,
     name: "SUCURSAL STIHL",
-    address: "Llalda, Ecuador",
+    address: "San-Lorenzo, Ecuador",
     iframeSrc: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d997.2044253145921!2d-78.83360553045236!3d1.2832300999190542!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e2c85b214b2039%3A0xa4d5dcce5294ca82!2sDistribuidora%20PAS!5e0!3m2!1ses!2sec!4v17775613999134!5m2!1ses!2sec",
     phone: "095 9990 999",
-    hours: "8:00 AM - 8:00 PM",
+    hours: "8:00 AM - 6:00 PM",
     isOpen: true,
   },
 ];

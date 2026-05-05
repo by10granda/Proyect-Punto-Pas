@@ -3,27 +3,34 @@ import { useRef, useEffect, useState, useCallback } from "react";
 const slides = [
   {
     id: 1,
+    type: "image" as const,
+    src: "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777751131/PORTADA_1-1.png",
+    action: "none" as const,
+    value: "",
+  },
+  {
+    id: 2,
     type: "video" as const,
     src: "https://res.cloudinary.com/dbbkpdhze/video/upload/v1776308811/PORTADA_1.mp4",
     action: "productCode" as const,
     value: "00000467",
   },
   {
-    id: 2,
+    id: 3,
     type: "image" as const,
     src: "https://res.cloudinary.com/dbbkpdhze/image/upload/v1776338344/PORTADA_2.png",
     action: "category" as const,
     value: "TELEVISORES",
   },
   {
-    id: 3,
+    id: 4,
     type: "image" as const,
     src: "https://res.cloudinary.com/dbbkpdhze/image/upload/v1776346058/PORTADA_3.png",
     action: "category" as const,
     value: "COLCHONES",
   },
   {
-    id: 4,
+    id: 5,
     type: "image" as const,
     src: "https://res.cloudinary.com/dbbkpdhze/image/upload/v1776786143/PORTADA_4.png",
     action: "category" as const,

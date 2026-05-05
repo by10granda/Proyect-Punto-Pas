@@ -18,6 +18,7 @@ export interface CartItem {
   originalPrice?: number;
   discount?: number;
   image: string;
+  stock?: number;
   quantity: number;
 }
 
@@ -154,7 +155,7 @@ export const CartDrawer = ({
                 onClick={onCheckout}
                 className="w-full bg-red-500 text-white py-4 rounded-full font-light text-sm tracking-widest hover:bg-red-600 transition-colors"
               >
-                CHECKOUT
+                IR A LA COMPRA
               </button>
             </div>
           </>

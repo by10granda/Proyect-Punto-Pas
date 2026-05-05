@@ -14,11 +14,11 @@ export const WeeklyDeals = ({ images, products, onProductClick, selectedCategory
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const scrollLeft = () => {
-    scrollRef.current?.scrollBy({ left: -300, behavior: 'auto' });
+    scrollRef.current?.scrollBy({ left: -360, behavior: 'smooth' });
   };
 
   const scrollRight = () => {
-    scrollRef.current?.scrollBy({ left: 300, behavior: 'auto' });
+    scrollRef.current?.scrollBy({ left: 360, behavior: 'smooth' });
   };
 
   // Obtener categorías únicas de los productos con descuento
@@ -30,19 +30,19 @@ export const WeeklyDeals = ({ images, products, onProductClick, selectedCategory
   ];
 
  return (
-    <section className="py-12 relative bg-white">
-      <div className="max-w-[98vw] mx-auto px-4">
+    <section className="py-10 relative bg-white">
+      <div className="max-w-[99vw] mx-auto px-3 md:px-4">
         <h2 
           className="text-2xl md:text-3xl font-black uppercase tracking-wide" 
           style={{ color: '#FA003F', fontFamily: 'Nunito, sans-serif' }}
         >
           Imperdibles de la semana
         </h2>
-        <p className="text-sm text-gray-500 mb-4">productos con descuento</p>
+        <p className="text-sm text-gray-500 mb-5">productos con descuento</p>
 
         {/* Filtro de categorías independiente */}
         {onCategoryChange && (
-          <div className="flex flex-wrap gap-2 mb-6">
+          <div className="flex flex-wrap gap-2 mb-5">
             {categories.map((cat) => {
               const count = cat.id === "all" 
                 ? products?.length || 0
@@ -57,7 +57,7 @@ export const WeeklyDeals = ({ images, products, onProductClick, selectedCategory
                   className={`flex items-center gap-1.5 px-3 py-2 rounded-full text-sm font-semibold transition-all duration-200 ${
                     selectedCategory === cat.id
                       ? "bg-[#FA003F] text-white shadow-md"
-                      : "bg-gray-100 hover:bg-gray-200 text-gray-700"
+                      : "bg-white hover:bg-gray-100 text-gray-700 border border-gray-200"
                   }`}
                 >
                   <span>{cat.icon}</span>
@@ -78,15 +78,15 @@ export const WeeklyDeals = ({ images, products, onProductClick, selectedCategory
         <div className="relative">
           <button
             onClick={scrollLeft}
-            className="absolute left-0 top-1/2 -translate-y-1/2 z-30 w-12 h-12 rounded-full flex items-center justify-center"
+            className="absolute -left-2 md:-left-3 top-1/2 -translate-y-1/2 z-30 w-11 h-11 rounded-full flex items-center justify-center shadow-lg"
             style={{ backgroundColor: '#FA003F' }}
           >
-            <ChevronLeft className="w-8 h-8 text-white" />
+            <ChevronLeft className="w-6 h-6 text-white" />
           </button>
           
           <div 
             ref={scrollRef}
-            className="flex gap-4 overflow-x-auto scrollbar-hide px-10"
+            className="flex gap-3 md:gap-4 overflow-x-auto scrollbar-hide px-8 md:px-10 snap-x snap-mandatory"
             style={{ scrollbarWidth: 'none' }}
           >
             {images.map((img, idx) => {
@@ -97,7 +97,7 @@ export const WeeklyDeals = ({ images, products, onProductClick, selectedCategory
               return (
                 <div 
                   key={idx}
-                  className="flex-shrink-0 w-[280px] md:w-[320px]"
+                  className="group flex-shrink-0 w-[280px] md:w-[315px] snap-start"
                   style={{ aspectRatio: '4/5' }}
                   onClick={() => {
                     if (matchedProduct && onProductClick) {
@@ -105,11 +105,13 @@ export const WeeklyDeals = ({ images, products, onProductClick, selectedCategory
                     }
                   }}
                 >
-                  <img
-                    src={img}
-                    alt={`Descuento ${idx + 1}`}
-                    className="w-full h-full object-contain rounded-3xl"
-                  />
+                  <div className="w-full h-full rounded-[26px] overflow-hidden bg-white border border-gray-200 shadow-sm group-hover:shadow-md transition-shadow">
+                    <img
+                      src={img}
+                      alt={`Descuento ${idx + 1}`}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
                 </div>
               );
             })}
@@ -117,10 +119,10 @@ export const WeeklyDeals = ({ images, products, onProductClick, selectedCategory
           
           <button
             onClick={scrollRight}
-            className="absolute right-0 top-1/2 -translate-y-1/2 z-30 w-12 h-12 rounded-full flex items-center justify-center"
+            className="absolute -right-2 md:-right-3 top-1/2 -translate-y-1/2 z-30 w-11 h-11 rounded-full flex items-center justify-center shadow-lg"
             style={{ backgroundColor: '#FA003F' }}
           >
-            <ChevronRight className="w-8 h-8 text-white" />
+            <ChevronRight className="w-6 h-6 text-white" />
           </button>
         </div>
       </div>

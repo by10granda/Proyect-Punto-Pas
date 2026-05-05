@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Product } from "@/data/products";
 
@@ -9,6 +9,7 @@ interface CategoryBarProps {
 }
 
 const CLOUDINARY_VERSION = 'v1775785362';
+const ITEM_WIDTH = 350;
 
 export const CategoryBar = ({ selectedCategory, onSelectCategory, products = [] }: CategoryBarProps) => {
   const [showAllCategories, setShowAllCategories] = useState(false);
@@ -64,16 +65,20 @@ export const CategoryBar = ({ selectedCategory, onSelectCategory, products = [] 
     const el = scrollRef.current;
     if (!el) return;
     
-    const current = Math.round(el.scrollLeft / itemWidth);
+    const current = Math.round(el.scrollLeft / ITEM_WIDTH);
     
     if (dir === "left" && current > 0) {
-      el.scrollTo({ left: (current - 1) * itemWidth, behavior: "smooth" });
+      el.scrollTo({ left: (current - 1) * ITEM_WIDTH, behavior: "smooth" });
     } else if (dir === "right" && current < displayTypes.length - 1) {
-      el.scrollTo({ left: (current + 1) * itemWidth, behavior: "smooth" });
+      el.scrollTo({ left: (current + 1) * ITEM_WIDTH, behavior: "smooth" });
     }
     
     setTimeout(updateScrollButtons, 350);
   };
+
+  useEffect(() => {
+    updateScrollButtons();
+  }, [displayTypes.length]);
 
   return (
     <section className="py-8 bg-white">
@@ -102,11 +107,12 @@ export const CategoryBar = ({ selectedCategory, onSelectCategory, products = [] 
           </button>
 
           <div className="overflow-hidden px-2">
-            <div 
-              ref={scrollRef} 
-              className="flex justify-start overflow-x-auto scroll-smooth hide-scrollbar py-4"
-              style={{ scrollbarWidth: 'none' }}
-            >
+              <div 
+                ref={scrollRef} 
+                onScroll={updateScrollButtons}
+                className="flex justify-start overflow-x-auto scroll-smooth hide-scrollbar py-4"
+                style={{ scrollbarWidth: 'none' }}
+              >
               {displayTypes.map((type) => {
                 const isSelected = selectedCategory === type;
                 const count = getProductCount(type);

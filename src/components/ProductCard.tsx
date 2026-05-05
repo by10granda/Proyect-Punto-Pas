@@ -21,7 +21,7 @@ export const ProductCard = memo(({ product, onAddToCart, onProductClick }: Produ
 
   return (
     <div 
-      className="group bg-white rounded-xl overflow-hidden cursor-pointer h-full flex flex-col transition-all duration-200 hover:shadow-lg hover:-translate-y-1"
+      className="group bg-white rounded-xl overflow-hidden cursor-pointer h-full flex flex-col transition-all duration-200 sm:hover:shadow-lg sm:hover:-translate-y-1"
       style={{ 
         border: '1px solid #f1f1f1',
         boxShadow: '0 2px 8px rgba(0,0,0,0.02)'
@@ -48,7 +48,7 @@ export const ProductCard = memo(({ product, onAddToCart, onProductClick }: Produ
           </div>
         )}
 
-        <div className="w-full h-full flex items-center justify-center p-4">
+        <div className="w-full h-full flex items-center justify-center p-3 sm:p-4">
           {imageError ? (
             <div className="flex flex-col items-center justify-center text-gray-400">
               <span className="text-4xl mb-2">📦</span>
@@ -58,7 +58,7 @@ export const ProductCard = memo(({ product, onAddToCart, onProductClick }: Produ
             <img
               src={product.image}
               alt={product.name}
-              className="max-w-full max-h-full object-contain transition-transform duration-300 group-hover:scale-105"
+              className="max-w-full max-h-full object-contain transition-transform duration-300 sm:group-hover:scale-105"
               onError={handleImageError}
               loading="lazy"
             />
@@ -66,20 +66,20 @@ export const ProductCard = memo(({ product, onAddToCart, onProductClick }: Produ
         </div>
       </div>
 
-      <div className="p-4 flex flex-col flex-grow">
+      <div className="p-3 sm:p-4 flex flex-col flex-grow">
         <div className="mb-1">
-          <span className="text-xs uppercase tracking-wider text-gray-500">
+          <span className="text-[10px] sm:text-xs uppercase tracking-wider text-gray-500 truncate block">
             {product.brand || 'General'}
           </span>
         </div>
 
-        <h3 className="text-sm font-semibold text-gray-900 line-clamp-2 mb-3 leading-snug font-manrope">
+        <h3 className="text-xs sm:text-sm font-semibold text-gray-900 line-clamp-2 mb-2 sm:mb-3 leading-snug font-manrope">
           {product.name}
         </h3>
 
         <div className="mt-auto">
-          <div className="flex items-baseline gap-2 mb-3">
-            <span className="text-xl font-bold text-gray-900 font-manrope">
+          <div className="flex flex-wrap items-baseline gap-1.5 sm:gap-2 mb-2 sm:mb-3">
+            <span className="text-base sm:text-xl font-bold text-gray-900 font-manrope">
               ${product.price?.toFixed(2)}
             </span>
             {hasDiscount && (
@@ -95,7 +95,7 @@ export const ProductCard = memo(({ product, onAddToCart, onProductClick }: Produ
               onAddToCart(product);
             }}
             disabled={product.stock === 0}
-            className="w-full py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed disabled:border-none font-manrope"
+            className="w-full py-2 sm:py-2.5 rounded-lg text-xs sm:text-sm font-semibold transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed disabled:border-none font-manrope"
             style={{ 
               backgroundColor: '#FA003F', 
               color: 'white',

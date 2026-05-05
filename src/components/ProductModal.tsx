@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+﻿import { useState, useEffect, useRef } from "react";
 import { X, Minus, Plus, ShoppingCart, Check } from "lucide-react";
 import { Product } from "@/data/products";
 
@@ -16,6 +16,26 @@ export const ProductModal = ({ product, isOpen, onClose, onAddToCart }: ProductM
   const [errorImages, setErrorImages] = useState<Set<number>>(new Set());
   const [isZooming, setIsZooming] = useState(false);
   const [zoomPosition, setZoomPosition] = useState({ x: 50, y: 50 });
+  const [viewingCount, setViewingCount] = useState(() => Math.floor(Math.random() * 10) + 1);
+const lastViewingCount = useRef(viewingCount);
+
+  useEffect(() => {
+    if (!isOpen || !product) return;
+    const interval = setInterval(() => {
+      setViewingCount(prev => {
+        let newVal;
+        do {
+          const change = Math.random() > 0.5 ? 1 : -1;
+          newVal = prev + change;
+          if (newVal < 1) newVal = 1;
+          if (newVal > 10) newVal = 10;
+        } while (newVal === lastViewingCount.current);
+        lastViewingCount.current = newVal;
+        return newVal;
+      });
+    }, 8000);
+    return () => clearInterval(interval);
+  }, [isOpen, product]);
   const imageContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -30,7 +50,7 @@ export const ProductModal = ({ product, isOpen, onClose, onAddToCart }: ProductM
     return () => {
       document.body.style.overflow = '';
     };
-  }, [isOpen, product?.id]);
+  }, [isOpen, product]);
 
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
@@ -165,7 +185,7 @@ export const ProductModal = ({ product, isOpen, onClose, onAddToCart }: ProductM
                 {product.brand || 'General'}
               </span>
               <span className="text-xs text-gray-400">|</span>
-              <span className="text-xs text-gray-500">Código: {product.code}</span>
+              <span className="text-xs text-gray-500">CODIGO: {product.code}</span>
             </div>
             
             <h2 className="text-lg lg:text-xl font-semibold text-gray-900 mb-3 lg:mb-4 leading-snug">
@@ -193,15 +213,20 @@ export const ProductModal = ({ product, isOpen, onClose, onAddToCart }: ProductM
               )}
             </div>
 
-            <div className="mb-6">
-              <span className="text-sm text-gray-600 mb-2 block">
-                {product.stock === 0 ? (
-                  <span className="text-red-600 font-medium">Sin stock</span>
-                ) : (
-                  `${product.stock} unidades disponibles`
-                )}
-              </span>
-            </div>
+              <div className="mb-6">
+                <span className="text-sm text-gray-600 mb-2 block">
+                  {product.stock === 0 ? (
+                    <span className="text-red-600 font-medium">Sin stock</span>
+                  ) : (
+                    <span className="text-green-600 font-medium">{product.stock} unidades disponibles</span>
+                  )}
+                </span>
+                <div className="mt-3">
+                  <span className="text-sm font-bold text-blue-700">
+                    {viewingCount} personas estan viendo este producto ahora mismo
+                  </span>
+                </div>
+              </div>
 
             <div className="mb-6">
               <span className="text-sm font-medium text-gray-700 mb-2 block">Cantidad</span>

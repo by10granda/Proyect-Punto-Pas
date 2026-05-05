@@ -1,26 +1,9 @@
-import { productService } from '@/services/api';
+import { ApiClassificationItem, ApiInventoryItem, ApiProductItem, productService } from '@/services/api';
+import { ClassificationItem, Level2Category, Product } from '@/domain/product';
+import { buildClassificationMap } from '@/infrastructure/mappers/classificationMapper';
+import { mapApiProductsToDomain } from '@/infrastructure/mappers/productMapper';
 
-export interface Product {
-  id: string;
-  code: string;
-  name: string;
-  description?: string;
-  brand: string;
-  unit: string;
-  stock: number;
-  price: number;
-  originalPrice?: number;
-  discount?: number;
-  category: string;
-  type: string;
-  image: string;
-  images?: string[];
-  video?: string;
-  isActive: boolean;
-  sold?: number;
-  pvpPrice?: number;
-  puntoPasPrice?: number;
-}
+export type { Product, Level2Category, ClassificationItem } from '@/domain/product';
 
 const CLOUDINARY_BASE_URL = 'https://res.cloudinary.com/dbbkpdhze/image/upload/';
 const CLOUDINARY_VERSION = 'v1774530743';
@@ -31,17 +14,46 @@ const CACHE_EXPIRY = 1000 * 60 * 5;
 
 let classificationsList: string[] = [];
 const classificationsHierarchy: Map<number, { name: string; level: number; parentId: number | null }> = new Map();
-let level2Categories: { id: number; name: string }[] = [];
+let level2Categories: Level2Category[] = [];
 const level3ByParent: Map<number, string[]> = new Map();
 const level2ByName: Map<string, number> = new Map();
 
+const applyClassificationState = (items: ClassificationItem[]) => {
+  const mapped = buildClassificationMap(items);
+  classificationsHierarchy.clear();
+  mapped.hierarchy.forEach((value, key) => classificationsHierarchy.set(key, value));
+  level2Categories = mapped.level2Categories;
+  level3ByParent.clear();
+  mapped.level3ByParent.forEach((value, key) => level3ByParent.set(key, value));
+  level2ByName.clear();
+  mapped.level2ByName.forEach((value, key) => level2ByName.set(key, value));
+  return mapped;
+};
+
 export const getClassifications = () => classificationsList;
 export const getLevel2Categories = () => level2Categories;
+export const getLevel3ByParent = () => level3ByParent;
+export const loadClassificationsFromAPI = async (): Promise<void> => {
+  try {
+    const clasificaciones = await productService.getClasificacionItem();
+    
+    if (!Array.isArray(clasificaciones) || clasificaciones.length === 0) return;
+
+    applyClassificationState(clasificaciones as ClassificationItem[]);
+  } catch (error) {
+    console.error('Error loading classifications:', error);
+  }
+};
+export const getLevel3TypesByParentId = (parentId: number): string[] => {
+  return level3ByParent.get(parentId) || [];
+};
 export const getLevel3TypesByCategoryName = (categoryName: string) => {
   const parentId = level2ByName.get(categoryName.toUpperCase().trim());
   if (parentId === undefined) return [];
   return level3ByParent.get(parentId) || [];
 };
+
+
 
 const categoryMap: Record<string, { name: string; icon: string }> = {
   'DEPORTES Y MOVILIDAD': { name: 'Deportes y Movilidad', icon: '🏃' },
@@ -242,13 +254,21 @@ const updateProductsStock = () => {
 
 export const refreshInventario = async (): Promise<void> => {
   try {
-    const inventario = await productService.getInventario();
+    const [inventario, clasificaciones] = await Promise.all([
+      productService.getInventario(),
+      productService.getClasificacionItem()
+    ]);
+    
     if (inventario && Array.isArray(inventario)) {
-      inventario.forEach((item: any) => {
-        const key = String(item.idItem);
-        inventarioMap[key] = Number(item.cantidadExistencia || 0);
+      inventario.forEach((item: ApiInventoryItem) => {
+        const key = String(item.codigo);
+        inventarioMap[key] = Number(item.disponible || 0);
       });
       updateProductsStock();
+    }
+    
+    if (clasificaciones && Array.isArray(clasificaciones) && clasificaciones.length > 0) {
+      applyClassificationState(clasificaciones as ClassificationItem[]);
     }
   } catch (error) {
     console.error('Error refreshing inventory:', error);
@@ -284,51 +304,19 @@ export const loadProductsFromAPI = async (): Promise<Product[]> => {
     ]);
 
     if (inventario && Array.isArray(inventario) && inventario.length > 0) {
-      console.log('Inventario received:', inventario.length, 'items');
-      console.log('First inventario item fields:', Object.keys(inventario[0]));
-      console.log('First inventario values:', inventario[0]);
-      
-      inventario.forEach((item: any) => {
+      inventario.forEach((item: ApiInventoryItem) => {
         const key = String(item.codigo);
-        const disponible = Number(item.disponible || item.cantidadExistencia || item.stock || 0);
+        const disponible = Number(item.disponible || 0);
         inventarioMap[key] = disponible;
       });
-      console.log('InventarioMap sample:', Object.entries(inventarioMap).slice(0, 5));
-    } else {
-      console.log('Inventario vacio o no es array:', inventario);
     }
     
     let uniqueCategories: string[] = [];
     
     if (clasificaciones && Array.isArray(clasificaciones) && clasificaciones.length > 0) {
-      // Construir jerarquía
-      classificationsHierarchy.clear();
-      level2Categories = [];
-      level3ByParent.clear();
-      level2ByName.clear();
-      
-      clasificaciones.forEach((item: any) => {
-        const id = item.idClasificacionitem;
-        const name = item.txDescripcionClasificacionItem.toUpperCase().trim();
-        const level = item.nivel;
-        const parentId = item.idClasificacionitemPadre;
-        
-        classificationsHierarchy.set(id, { name, level, parentId });
-        
-        if (level === 2) {
-          level2Categories.push({ id, name });
-          level2ByName.set(name, id);
-          level3ByParent.set(id, []);
-        } else if (level === 3 && parentId) {
-          const types = level3ByParent.get(parentId) || [];
-          if (!types.includes(name)) {
-            types.push(name);
-            level3ByParent.set(parentId, types);
-          }
-        }
-      });
-      
-      uniqueCategories = [...new Set(clasificaciones.map((item: any) => item.txDescripcionClasificacionItem).filter(Boolean))];
+      const mapped = applyClassificationState(clasificaciones as ClassificationItem[]);
+
+      uniqueCategories = mapped.classificationsList;
       
       // Filter out similar categories (e.g., "HOGAR" when "HOGAR INTERIORES" exists)
       uniqueCategories = uniqueCategories.filter((cat, index) => {
@@ -360,7 +348,7 @@ export const loadProductsFromAPI = async (): Promise<Product[]> => {
       ];
       setCachedCategories(categoriesList);
     } else {
-      const categoriesFromProducts = [...new Set(data.map((item: any) => item.descripcionCategoria || 'OTROS'))];
+      const categoriesFromProducts = [...new Set(data.map((item: ApiProductItem) => item.descripcionCategoria || 'OTROS'))];
       
       // Filter out similar categories
       const filteredCategories = categoriesFromProducts.filter((cat, index) => {
@@ -391,134 +379,18 @@ export const loadProductsFromAPI = async (): Promise<Product[]> => {
       setCachedCategories(categoriesList);
     }
     
-    const IMAGE_VERSION = 'v1776289862'; // Cambiar esta versión para actualizar imágenes
-    
-    const getProductImages = (codigo: string): string[] => {
-      const paddedCode = codigo.padStart(8, '0').substring(0, 8);
-      const images: string[] = [];
-      // Generar hasta 10 imágenes (_E, _E2, _E3, ... _E10)
-      for (let i = 1; i <= 10; i++) {
-        const suffix = i === 1 ? '_E' : `_E${i}`;
-        images.push(`https://res.cloudinary.com/dbbkpdhze/image/upload/${IMAGE_VERSION}/${paddedCode}${suffix}.png`);
-      }
-      return images;
-    };
-    
-console.log('Productos API: total=', data.length, 'first3 codigos:', data.slice(0, 3).map((i: any) => i.codigo));
-    console.log('First producto fields:', Object.keys(data[0]));
-    
-    const rawProducts = data.map((item: any, index: number) => {
-      console.log('Producto mapping:', item.descripcionItem?.substring(0, 20), 'categoria:', item.descripcionCategoria);
-      const categoria = item.descripcionCategoria || 'OTROS';
-      const itemId = String(item.codigo || index + 1);
-      const codigoInterno = String(item.codigo || '');
-      
-      const customImages = customProductImages[codigoInterno];
-      let productImage: string;
-      let productImages: string[] = [];
-      
-      if (customImages) {
-        productImage = customImages[0];
-        productImages = customImages;
-      } else if (codigoInterno) {
-        const paddedCode = codigoInterno.padStart(8, '0').substring(0, 8);
-        productImage = `https://res.cloudinary.com/dbbkpdhze/image/upload/${IMAGE_VERSION}/${paddedCode}_E.png`;
-        productImages = getProductImages(paddedCode);
-      } else {
-        productImage = `https://placehold.co/400x400?text=${encodeURIComponent(item.descripcionItem || codigoInterno)}`;
-        productImages = [productImage];
-      }
-      
-      const pvpPriceRaw = item.precioVentaSinImpuestos;
-      const puntoPasPriceRaw = item.precioVentaConImpuestos;
-      
-      const pvpPrice = pvpPriceRaw ? Number(pvpPriceRaw) : undefined;
-      const puntoPasPrice = puntoPasPriceRaw ? Number(puntoPasPriceRaw) : undefined;
-      
-      const hasBothPrices = pvpPrice && puntoPasPrice && pvpPrice > 0 && puntoPasPrice > 0;
-      const hasDiscount = hasBothPrices;
-      const discount = hasDiscount ? Math.round((1 - puntoPasPrice! / pvpPrice!) * 100) : undefined;
-      
-      const finalPrice = puntoPasPrice || pvpPrice || 0;
-      
-      return {
-        id: itemId,
-        code: codigoInterno,
-        name: item.descripcionItem || '',
-        description: item.descripcionItem || '',
-        brand: item.descripcionMarca || '',
-        unit: item.descripcionUnidadInventario || 'UNIDAD',
-        stock: inventarioMap[codigoInterno] || 0,
-        price: finalPrice,
-        originalPrice: hasDiscount ? pvpPrice : undefined,
-        discount: discount,
-        category: getFriendlyCategory(categoria),
-        type: item.tipo || item.descripcionTipo || categoria || 'OTROS',
-        image: productImage,
-        images: productImages,
-        isActive: item.estado === 'A',
-        sold: 0,
-        pvpPrice,
-        puntoPasPrice,
-      };
-    });
+    const IMAGE_VERSION = 'v1776289862';
 
-    const productMap = new Map<string, any>();
-    rawProducts.forEach((product: any) => {
-      const existing = productMap.get(product.code);
-      if (!existing) {
-        productMap.set(product.code, product);
-      } else {
-        const merged = { ...existing };
-        if (product.pvpPrice && product.pvpPrice > 0 && !merged.pvpPrice) merged.pvpPrice = product.pvpPrice;
-        if (product.puntoPasPrice && product.puntoPasPrice > 0 && !merged.puntoPasPrice) merged.puntoPasPrice = product.puntoPasPrice;
-        if (product.price > 0 && merged.price === 0) merged.price = product.price;
-        
-        const hasBothPrices = merged.pvpPrice && merged.puntoPasPrice && merged.pvpPrice > 0 && merged.puntoPasPrice > 0;
-        const hasDiscount = hasBothPrices && merged.pvpPrice > merged.puntoPasPrice;
-        
-        if (hasBothPrices) {
-          merged.price = merged.puntoPasPrice;
-          merged.originalPrice = merged.pvpPrice;
-          merged.discount = hasDiscount ? Math.round((1 - merged.puntoPasPrice / merged.pvpPrice) * 100) : undefined;
-        } else if (merged.puntoPasPrice && merged.puntoPasPrice > 0) {
-          merged.price = merged.puntoPasPrice;
-          merged.originalPrice = undefined;
-          merged.discount = undefined;
-        } else if (merged.pvpPrice && merged.pvpPrice > 0) {
-          merged.price = merged.pvpPrice;
-          merged.originalPrice = undefined;
-          merged.discount = undefined;
-        }
-        
-        productMap.set(product.code, merged);
-      }
+    apiProducts = mapApiProductsToDomain(data, {
+      imageVersion: IMAGE_VERSION,
+      customProductImages,
+      inventarioMap,
+      getFriendlyCategory,
     });
-    
-    apiProducts = Array.from(productMap.values()).map((p: any) => ({
-      id: p.id,
-      code: p.code,
-      name: p.name,
-      description: p.description,
-      brand: p.brand,
-      unit: p.unit,
-      stock: p.stock,
-      price: p.price,
-      originalPrice: p.originalPrice,
-      discount: p.discount,
-      category: p.category,
-      type: p.type,
-      image: p.image,
-      images: p.images,
-      isActive: p.isActive,
-      sold: p.sold,
-      pvpPrice: p.pvpPrice,
-      puntoPasPrice: p.puntoPasPrice,
-    }));
 
     setCachedProducts(apiProducts);
     return apiProducts;
-  } catch (error: any) {
+  } catch (_error: unknown) {
     const cached = getCachedProducts();
     if (cached) {
       apiProducts = cached;

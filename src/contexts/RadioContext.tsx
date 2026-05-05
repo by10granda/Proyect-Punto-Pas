@@ -15,20 +15,37 @@ const RadioContext = createContext<RadioContextType | undefined>(undefined);
 
 const RADIO_STREAM_URL = 'https://panel.marcelotorres.live/listen/puntopas/radio.mp3';
 const API_URL = 'https://panel.marcelotorres.live/api/nowplaying/puntopas';
+const INITIAL_VOLUME = 0.8;
 
 export function RadioProvider({ children }: { children: ReactNode }) {
   const [isPlaying, setIsPlaying] = useState(false);
-  const [volume, setVolumeState] = useState(0.8);
+  const [volume, setVolumeState] = useState(INITIAL_VOLUME);
   const [currentSong, setCurrentSong] = useState('Radio Punto Pas - En Vivo');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const metadataIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
+  const fetchMetadata = useCallback(async () => {
+    try {
+      const response = await fetch(API_URL);
+      const data = await response.json();
+      
+      if (data.now_playing?.song) {
+        const { artist, title } = data.now_playing.song;
+        if (artist && title) {
+          setCurrentSong(`${artist} — ${title}`);
+        }
+      }
+    } catch {
+      // Silently fail - metadata not critical
+    }
+  }, []);
+
   useEffect(() => {
     // Crear elemento de audio
     const audio = new Audio(RADIO_STREAM_URL);
-    audio.volume = volume;
+    audio.volume = INITIAL_VOLUME;
     audio.preload = 'none';
     audio.crossOrigin = 'anonymous';
     
@@ -74,7 +91,7 @@ export function RadioProvider({ children }: { children: ReactNode }) {
         clearInterval(metadataIntervalRef.current);
       }
     };
-  }, []);
+  }, [fetchMetadata]);
   
   // Actualizar volumen cuando cambie
   useEffect(() => {
@@ -82,22 +99,6 @@ export function RadioProvider({ children }: { children: ReactNode }) {
       audioRef.current.volume = volume;
     }
   }, [volume]);
-
-  const fetchMetadata = async () => {
-    try {
-      const response = await fetch(API_URL);
-      const data = await response.json();
-      
-      if (data.now_playing?.song) {
-        const { artist, title } = data.now_playing.song;
-        if (artist && title) {
-          setCurrentSong(`${artist} — ${title}`);
-        }
-      }
-    } catch {
-      // Silently fail - metadata not critical
-    }
-  };
 
   const toggleRadio = useCallback(async () => {
     if (!audioRef.current) {
@@ -126,9 +127,10 @@ export function RadioProvider({ children }: { children: ReactNode }) {
         // Actualizar metadata inmediatamente
         fetchMetadata();
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Radio error:', err);
-      if (err.name === 'NotAllowedError' || err.name === 'AbortError') {
+      const errorName = err instanceof Error ? err.name : '';
+      if (errorName === 'NotAllowedError' || errorName === 'AbortError') {
         setError('Haz clic en la página primero, luego en Play');
       } else {
         setError('Radio no disponible');
@@ -137,7 +139,7 @@ export function RadioProvider({ children }: { children: ReactNode }) {
       setIsPlaying(false);
       setIsLoading(false);
     }
-  }, [isPlaying]);
+  }, [fetchMetadata, isPlaying]);
 
   const setVolume = useCallback((newVolume: number) => {
     setVolumeState(newVolume);

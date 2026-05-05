@@ -7,6 +7,9 @@ interface ProductCarouselSectionProps {
   products: Product[];
   category: string;
   bannerImage: string;
+  layout?: 'default' | 'fridge';
+  sectionTitle?: string;
+  topTitle?: string;
   onBannerClick?: () => void;
   onProductClick: (product: Product) => void;
   onAddToCart: (product: Product) => void;
@@ -16,25 +19,21 @@ export const ProductCarouselSection = ({
   products, 
   category, 
   bannerImage,
+  layout = 'default',
+  sectionTitle,
+  topTitle,
   onBannerClick,
   onProductClick, 
   onAddToCart 
 }: ProductCarouselSectionProps) => {
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  const categoryProducts = products.filter(p => 
-    p.category === category || 
-    p.category === category.toUpperCase() ||
-    p.type === category ||
-    p.type === category.toUpperCase()
-  );
-
   const scrollLeft = () => {
-    scrollRef.current?.scrollBy({ left: -260, behavior: 'auto' });
+    scrollRef.current?.scrollBy({ left: -280, behavior: 'smooth' });
   };
 
   const scrollRight = () => {
-    scrollRef.current?.scrollBy({ left: 260, behavior: 'auto' });
+    scrollRef.current?.scrollBy({ left: 280, behavior: 'smooth' });
   };
 
   const handleBannerClick = () => {
@@ -46,43 +45,103 @@ export const ProductCarouselSection = ({
     }
   };
 
-  if (categoryProducts.length === 0) return null;
+  if (layout === 'fridge') {
+    return (
+      <section className="relative bg-white py-5 md:py-6">
+        <div className="max-w-[98vw] mx-auto px-3 md:px-4">
+          <h2
+            className="text-lg md:text-2xl font-black uppercase tracking-wide mb-4 md:mb-5"
+            style={{ color: '#FA003F', fontFamily: 'Nunito, sans-serif' }}
+          >
+            {(topTitle || category).replace(/-/g, ' ')}
+          </h2>
+
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 md:gap-5 items-stretch" style={{ minHeight: 'auto' }}>
+            <div className="lg:col-span-2 h-full" onClick={handleBannerClick}>
+              <img
+                src={bannerImage}
+                alt={category}
+                className="w-full h-auto lg:h-full object-cover rounded-lg cursor-pointer"
+              />
+            </div>
+
+            <div className="lg:col-span-3 h-full flex flex-col">
+              <div className="h-12 md:h-14 rounded-lg border border-slate-200 bg-white px-3 md:px-5 flex items-center justify-between mb-3 md:mb-4">
+                <h2 className="text-base md:text-2xl uppercase tracking-wide" style={{ color: '#374151', fontFamily: 'Nunito, sans-serif' }}>
+                  {(sectionTitle || category).replace(/-/g, ' ')}
+                </h2>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={scrollLeft}
+                    className="w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center"
+                    style={{ backgroundColor: '#4f6bd8' }}
+                  >
+                    <ChevronLeft className="w-4 h-4 md:w-5 md:h-5 text-white" />
+                  </button>
+                  <button
+                    onClick={scrollRight}
+                    className="w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center"
+                    style={{ backgroundColor: '#4f6bd8' }}
+                  >
+                    <ChevronRight className="w-4 h-4 md:w-5 md:h-5 text-white" />
+                  </button>
+                </div>
+              </div>
+
+              <div ref={scrollRef} className="flex-1 overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
+                <div className="grid grid-rows-1 md:grid-rows-2 grid-flow-col auto-cols-[220px] md:auto-cols-[260px] gap-3 md:gap-4 min-w-max pr-2">
+                  {products.map((product) => (
+                    <div key={product.id} className="w-[220px] md:w-[260px]">
+                      <ProductCard
+                        product={product}
+                        onAddToCart={onAddToCart}
+                        onProductClick={onProductClick}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="relative mt-0" style={{ backgroundColor: '#FA003F' }}>
       <div className="pb-16 pt-8" style={{ backgroundColor: '#FA003F', margin: 0, border: 'none' }}>
-        <div className="max-w-[98vw] mx-auto px-4 relative z-10">
+        <div className="max-w-[98vw] mx-auto px-3 md:px-4 relative z-10">
           <h2 
-            className="text-xl md:text-2xl font-black uppercase tracking-wide mt-8 mb-6" 
+            className="text-lg md:text-2xl font-black uppercase tracking-wide mt-5 md:mt-8 mb-4 md:mb-6" 
             style={{ color: 'white', fontFamily: 'Nunito, sans-serif' }}
           >
             {category.replace(/-/g, ' ')}
           </h2>
 
           <div 
-            className="grid grid-cols-1 lg:grid-cols-5 gap-6"
-            style={{ minHeight: '350px' }}
+            className="grid grid-cols-1 lg:grid-cols-5 gap-4 md:gap-5 items-stretch"
+            style={{ minHeight: 'auto' }}
           >
-            <div className="lg:col-span-2 relative" style={{ backgroundColor: '#FA003F', borderRadius: '12px', padding: '12px' }}>
+            <div className="lg:col-span-2 relative">
               <button
                 onClick={scrollLeft}
-                className="absolute left-2 top-1/2 -translate-y-1/2 z-30 w-10 h-10 rounded-full flex items-center justify-center"
+                className="absolute left-1 md:-left-4 top-1/2 -translate-y-1/2 z-30 w-9 h-9 md:w-11 md:h-11 rounded-full flex items-center justify-center shadow-lg"
                 style={{ backgroundColor: '#FA003F' }}
               >
-                <ChevronLeft className="w-6 h-6 text-white" />
+                <ChevronLeft className="w-5 h-5 md:w-6 md:h-6 text-white" />
               </button>
 
               <div 
                 ref={scrollRef}
-                className="flex gap-2 overflow-x-auto pb-4 scrollbar-hide" 
+                className="flex overflow-x-auto pb-2 scrollbar-hide" 
                 style={{ scrollbarWidth: 'none' }}
               >
                 <div 
-                  className="flex gap-4 px-12 h-full" 
-                  style={{ backgroundColor: 'transparent', borderRadius: '12px', padding: '8px' }}
+                  className="flex gap-3 md:gap-4 px-8 md:px-8 py-2 h-full"
                 >
-                  {categoryProducts.slice(0, 12).map((product) => (
-                    <div key={product.id} className="flex-shrink-0 w-[250px]">
+                  {products.slice(0, 12).map((product) => (
+                    <div key={product.id} className="flex-shrink-0 w-[220px] md:w-[250px]">
                       <ProductCard
                         product={product}
                         onAddToCart={onAddToCart}
@@ -95,31 +154,31 @@ export const ProductCarouselSection = ({
 
               <button
                 onClick={scrollRight}
-                className="absolute right-2 top-1/2 -translate-y-1/2 z-30 w-10 h-10 rounded-full flex items-center justify-center"
+                className="absolute right-1 md:-right-4 top-1/2 -translate-y-1/2 z-30 w-9 h-9 md:w-11 md:h-11 rounded-full flex items-center justify-center shadow-lg"
                 style={{ backgroundColor: '#FA003F' }}
               >
-                <ChevronRight className="w-6 h-6 text-white" />
+                <ChevronRight className="w-5 h-5 md:w-6 md:h-6 text-white" />
               </button>
             </div>
 
-            <div className="lg:col-span-3 flex items-center" onClick={handleBannerClick}>
+            <div className="lg:col-span-3 h-full" onClick={handleBannerClick}>
               <img
                 src={bannerImage}
                 alt={category}
-                className="w-full h-auto object-contain rounded-xl cursor-pointer"
+                className="w-full h-auto lg:h-full object-contain rounded-xl cursor-pointer"
               />
             </div>
           </div>
         </div>
+      </div>
 
-        <div className="absolute bottom-0 left-0 right-0 h-16 md:h-24">
-          <svg className="absolute bottom-0 w-full h-full" viewBox="0 0 1440 80" preserveAspectRatio="none">
-            <path 
-              d="M0,80 C0,80 180,40 360,60 C540,80 720,30 900,50 C1080,70 1260,20 1440,40 L1440,80 Z" 
-              fill="white" 
-            />
-          </svg>
-        </div>
+      <div className="absolute bottom-0 left-0 right-0 h-16 md:h-24">
+        <svg className="absolute bottom-0 w-full h-full" viewBox="0 0 1440 80" preserveAspectRatio="none">
+          <path 
+            d="M0,80 C0,80 180,40 360,60 C540,80 720,30 900,50 C1080,70 1260,20 1440,40 L1440,80 Z" 
+            fill="white" 
+          />
+        </svg>
       </div>
     </section>
   );

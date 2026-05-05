@@ -10,6 +10,14 @@ export default defineConfig(({ mode }) => ({
       overlay: false,
     },
     proxy: {
+      '/api/chat': {
+        target: 'http://127.0.0.1:8787',
+        changeOrigin: true,
+      },
+      '/api/payments': {
+        target: 'http://127.0.0.1:8787',
+        changeOrigin: true,
+      },
       '/api': {
         target: 'http://26.65.247.204:91',
         changeOrigin: true,

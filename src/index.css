@@ -140,6 +140,7 @@
     font-family: 'Rubik', system-ui, -apple-system, sans-serif;
     background-color: #ffffff;
     min-height: 100vh;
+    overflow-x: hidden;
   }
 
   
@@ -434,4 +435,23 @@
   display: none;
 }
 
+@media (max-width: 768px) {
+  html,
+  body,
+  #root {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
 
+  .product-card:hover,
+  .card-lift:hover {
+    transform: none;
+    box-shadow: var(--shadow-card);
+  }
+
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
+}
