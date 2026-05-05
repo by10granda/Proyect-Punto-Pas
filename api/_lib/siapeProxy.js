@@ -30,7 +30,7 @@ const readRawBody = (req) =>
     req.on("error", reject);
   });
 
-const proxyToSiape = async (req, res, path, options = {}) => {
+export const proxyToSiape = async (req, res, path, options = {}) => {
   const { method = req.method || "GET", query = req.query || {} } = options;
   const targetUrl = buildUrl(path, query);
 
@@ -63,5 +63,3 @@ const proxyToSiape = async (req, res, path, options = {}) => {
   res.setHeader("Cache-Control", "no-store");
   res.send(responseBuffer);
 };
-
-module.exports = { proxyToSiape };
