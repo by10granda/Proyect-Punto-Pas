@@ -4,7 +4,7 @@ const slides = [
   {
     id: 1,
     type: "image" as const,
-    src: "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777751131/PORTADA_1-1.png",
+    src: "https://res.cloudinary.com/dbbkpdhze/image/upload/v1778001612/PORTADA_1-1.png",
     action: "none" as const,
     value: "",
   },

@@ -1,4 +1,4 @@
-import { MapPin, Phone, Mail, Clock, Shield, Home, Info, ShoppingCart } from "lucide-react";
+import { MapPin, Phone, Mail, Clock, Shield, Home, Info, ShoppingCart, FileText, PackageSearch } from "lucide-react";
 import { Link } from "react-router-dom";
 import logoPuntoPas from "@/assets/logo-punto-pas.png";
 
@@ -91,6 +91,24 @@ export const Footer = ({ onCartClick }: FooterProps) => {
                   <MapPin className="w-4 h-4 text-white" />
                 </div>
                 <span className="text-white">Sucursales</span>
+              </Link>
+              <Link
+                to="/politicas"
+                className="flex items-center gap-3 text-white/70 hover:text-white transition-colors group"
+              >
+                <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center group-hover:bg-white/20 transition-colors">
+                  <FileText className="w-4 h-4 text-white" />
+                </div>
+                <span className="text-white">Políticas y devoluciones</span>
+              </Link>
+              <Link
+                to="/seguimiento"
+                className="flex items-center gap-3 text-white/70 hover:text-white transition-colors group"
+              >
+                <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center group-hover:bg-white/20 transition-colors">
+                  <PackageSearch className="w-4 h-4 text-white" />
+                </div>
+                <span className="text-white">Seguimiento de pedido</span>
               </Link>
               {onCartClick ? (
                 <button 

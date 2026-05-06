@@ -5,9 +5,10 @@ interface ProductCardProps {
   product: Product;
   onAddToCart: (product: Product) => void;
   onProductClick: (product: Product) => void;
+  compact?: boolean;
 }
 
-export const ProductCard = memo(({ product, onAddToCart, onProductClick }: ProductCardProps) => {
+export const ProductCard = memo(({ product, onAddToCart, onProductClick, compact = false }: ProductCardProps) => {
   const [imageError, setImageError] = useState(false);
 
   const handleImageError = () => {
@@ -28,7 +29,7 @@ export const ProductCard = memo(({ product, onAddToCart, onProductClick }: Produ
       }}
       onClick={() => onProductClick(product)}
     >
-      <div className="relative aspect-[4/5] bg-gray-50 overflow-hidden">
+      <div className={`relative ${compact ? "aspect-[4/3]" : "aspect-[4/5]"} bg-gray-50 overflow-hidden`}>
         {product.stock === 0 && (
           <div className="absolute inset-0 z-20 flex items-center justify-center bg-white/90">
             <span className="text-red-600 text-sm font-semibold px-4 py-2 bg-red-50 rounded-full">
@@ -48,7 +49,7 @@ export const ProductCard = memo(({ product, onAddToCart, onProductClick }: Produ
           </div>
         )}
 
-        <div className="w-full h-full flex items-center justify-center p-3 sm:p-4">
+        <div className={`w-full h-full flex items-center justify-center ${compact ? "p-2" : "p-3 sm:p-4"}`}>
           {imageError ? (
             <div className="flex flex-col items-center justify-center text-gray-400">
               <span className="text-4xl mb-2">📦</span>
@@ -66,20 +67,20 @@ export const ProductCard = memo(({ product, onAddToCart, onProductClick }: Produ
         </div>
       </div>
 
-      <div className="p-3 sm:p-4 flex flex-col flex-grow">
+      <div className={`${compact ? "p-2" : "p-3 sm:p-4"} flex flex-col flex-grow`}>
         <div className="mb-1">
-          <span className="text-[10px] sm:text-xs uppercase tracking-wider text-gray-500 truncate block">
+          <span className={`${compact ? "text-[10px]" : "text-[10px] sm:text-xs"} uppercase tracking-wider text-gray-500 truncate block`}>
             {product.brand || 'General'}
           </span>
         </div>
 
-        <h3 className="text-xs sm:text-sm font-semibold text-gray-900 line-clamp-2 mb-2 sm:mb-3 leading-snug font-manrope">
+        <h3 className={`${compact ? "text-[11px] mb-1.5" : "text-xs sm:text-sm mb-2 sm:mb-3"} font-semibold text-gray-900 line-clamp-2 leading-snug font-manrope`}>
           {product.name}
         </h3>
 
         <div className="mt-auto">
-          <div className="flex flex-wrap items-baseline gap-1.5 sm:gap-2 mb-2 sm:mb-3">
-            <span className="text-base sm:text-xl font-bold text-gray-900 font-manrope">
+          <div className={`flex flex-wrap items-baseline ${compact ? "gap-1 mb-1.5" : "gap-1.5 sm:gap-2 mb-2 sm:mb-3"}`}>
+            <span className={`${compact ? "text-base" : "text-base sm:text-xl"} font-bold text-gray-900 font-manrope`}>
               ${product.price?.toFixed(2)}
             </span>
             {hasDiscount && (
@@ -89,13 +90,13 @@ export const ProductCard = memo(({ product, onAddToCart, onProductClick }: Produ
             )}
           </div>
 
-          <button
+           <button
             onClick={(e) => {
               e.stopPropagation();
               onAddToCart(product);
             }}
             disabled={product.stock === 0}
-            className="w-full py-2 sm:py-2.5 rounded-lg text-xs sm:text-sm font-semibold transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed disabled:border-none font-manrope"
+            className={`w-full ${compact ? "py-1.5 text-[11px]" : "py-2 sm:py-2.5 text-xs sm:text-sm"} rounded-lg font-semibold transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed disabled:border-none font-manrope`}
             style={{ 
               backgroundColor: '#FA003F', 
               color: 'white',

@@ -18,8 +18,6 @@ import { loadProductsUseCase } from "@/application/use-cases/loadProducts";
 import {
   getDiscountedProducts,
   Level2Category,
-  products,
-  categories,
   getCategories,
   getLevel2Categories,
   getLevel3ByParent,
@@ -34,7 +32,7 @@ const Index = () => {
   type MainFilterMode = "none" | "search" | "type" | "category" | "brand" | "carousel";
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const [allProducts, setAllProducts] = useState<Product[]>(products);
+  const [allProducts, setAllProducts] = useState<Product[]>([]);
   const [isLoadingProducts, setIsLoadingProducts] = useState(true);
   const [apiError, setApiError] = useState<string | null>(null);
   const [apiStatus, setApiStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
@@ -57,7 +55,7 @@ const Index = () => {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isProductModalOpen, setIsProductModalOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const [productCategories, setProductCategories] = useState(categories);
+  const [productCategories, setProductCategories] = useState(getCategories());
   const [nivel2Categories, setNivel2Categories] = useState<Level2Category[]>([]);
   const [nivel3ByParent, setNivel3ByParent] = useState<Map<number, string[]>>(new Map());
   
@@ -175,7 +173,7 @@ const Index = () => {
   }, []);
 
   const filteredProducts = useMemo(() => {
-    const sourceProducts = apiStatus === 'success' && allProducts.length >0 ? allProducts : products;
+    const sourceProducts = allProducts;
 
     const selectedCategoryFilter = mainFilter.mode === "category" ? mainFilter.value : "all";
     const selectedTypeFilter = mainFilter.mode === "type" ? mainFilter.value : "all";
@@ -256,7 +254,7 @@ const Index = () => {
         return;
       }
       
-      const sourceProducts = apiStatus === 'success' ? allProducts : products;
+      const sourceProducts = allProducts;
       const product = sourceProducts.find(p => p.id === id);
       const maxQuantity = product ? product.stock : 999;
       
@@ -416,7 +414,7 @@ const Index = () => {
           onCartClick={() => setIsCartOpen(true)}
           onGoToHome={handleGoToHome}
           onClearSearch={clearSearch}
-          products={allProducts.length > 0 ? allProducts : products}
+          products={allProducts}
           popularSearches={["Lavadoras", "Televisores", "Refrigeradores", "Celulares"]}
           onProductClick={handleProductClick}
           onTypeSelect={handleTypeSelect}
@@ -432,7 +430,7 @@ const Index = () => {
               <HeroCarousel 
                 onProductClick={(code) => {
                   console.log('HeroCarousel clicked, code:', code);
-                  const product = (apiStatus === 'success' && allProducts.length > 0 ? allProducts : products).find(p => p.code === code);
+                  const product = allProducts.find(p => p.code === code);
                   console.log('Product found:', product?.name, 'code:', product?.code);
                   if (product) {
                     setSelectedProduct(product);
@@ -665,7 +663,7 @@ const Index = () => {
                 bannerImage="https://res.cloudinary.com/dbbkpdhze/image/upload/v1777823224/Seccion_Neveras_1.png"
                 layout="fridge"
                 onBannerClick={() => {
-                  const sourceProducts = apiStatus === "success" && allProducts.length > 0 ? allProducts : products;
+                  const sourceProducts = allProducts;
                   const featuredProduct = sourceProducts.find((p) => p.code === "00001528");
                   if (featuredProduct) {
                     setSelectedProduct(featuredProduct);
@@ -758,7 +756,7 @@ const Index = () => {
 
         <Footer onCartClick={() => setIsCartOpen(true)} />
         
-        <WhatsAppButton products={apiStatus === 'success' ? allProducts : products} />
+        <WhatsAppButton products={allProducts} />
         
               <ProductModal
                 product={selectedProduct}
@@ -771,7 +769,7 @@ const Index = () => {
         isOpen={isCartOpen}
         onClose={() => setIsCartOpen(false)}
         items={cart}
-        products={apiStatus === 'success' ? allProducts : products}
+        products={allProducts}
         onUpdateQuantity={handleUpdateQuantity}
         onRemoveItem={handleRemoveItem}
         onClearCart={handleClearCart}

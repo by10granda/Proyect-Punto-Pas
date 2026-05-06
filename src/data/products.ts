@@ -8,9 +8,6 @@ export type { Product, Level2Category, ClassificationItem } from '@/domain/produ
 const CLOUDINARY_BASE_URL = 'https://res.cloudinary.com/dbbkpdhze/image/upload/';
 const CLOUDINARY_VERSION = 'v1774530743';
 
-const CACHE_KEY = 'puntopas_products';
-const CACHE_CATEGORIES_KEY = 'puntopas_categories';
-const CACHE_EXPIRY = 1000 * 60 * 5;
 
 let classificationsList: string[] = [];
 const classificationsHierarchy: Map<number, { name: string; level: number; parentId: number | null }> = new Map();
@@ -110,46 +107,6 @@ const getFriendlyCategory = (apiCategory: string): string => {
   return apiCategory.toUpperCase().trim();
 };
 
-const getCachedProducts = (): Product[] | null => {
-  try {
-    const cached = localStorage.getItem(CACHE_KEY);
-    if (!cached) return null;
-    const { data, timestamp } = JSON.parse(cached);
-    if (Date.now() - timestamp > CACHE_EXPIRY) {
-      localStorage.removeItem(CACHE_KEY);
-      return null;
-    }
-    return data;
-  } catch {
-    return null;
-  }
-};
-
-const setCachedProducts = (products: Product[]) => {
-  try {
-    localStorage.setItem(CACHE_KEY, JSON.stringify({ data: products, timestamp: Date.now() }));
-  } catch {
-    // Ignore localStorage quota errors
-  }
-};
-
-const getCachedCategories = (): { id: string; name: string; icon: string }[] | null => {
-  try {
-    const cached = localStorage.getItem(CACHE_CATEGORIES_KEY);
-    if (!cached) return null;
-    return JSON.parse(cached);
-  } catch {
-    return null;
-  }
-};
-
-const setCachedCategories = (categories: { id: string; name: string; icon: string }[]) => {
-  try {
-    localStorage.setItem(CACHE_CATEGORIES_KEY, JSON.stringify(categories));
-  } catch {
-    // Ignore localStorage quota errors
-  }
-};
 
 export const products: Product[] = [];
 
@@ -201,15 +158,6 @@ export const setCategories = (uniqueCategories: string[]) => {
     ...uniqueMapped.sort((a, b) => a.name.localeCompare(b.name))
   ];
   
-  setCachedCategories(categoriesList);
-};
-
-const initFromCache = (): Product[] | null => {
-  const cached = getCachedProducts();
-  if (cached && cached.length > 0) {
-    return cached;
-  }
-  return null;
 };
 
 export const getProductsByCategory = (categoryId: string): Product[] => {
@@ -280,17 +228,6 @@ export const loadProductsFromAPI = async (): Promise<Product[]> => {
     return apiProducts;
   }
 
-  const cached = initFromCache();
-  if (cached) {
-    apiProducts = cached;
-    const cachedCats = getCachedCategories();
-    if (cachedCats) {
-      categoriesList = cachedCats;
-    }
-    refreshInventario();
-    return apiProducts;
-  }
-  
   try {
     const data = await productService.getProducts();
     
@@ -346,7 +283,6 @@ export const loadProductsFromAPI = async (): Promise<Product[]> => {
         { id: "all", name: "Todo", icon: "🏠" },
         ...mappedCats.sort((a, b) => a.name.localeCompare(b.name))
       ];
-      setCachedCategories(categoriesList);
     } else {
       const categoriesFromProducts = [...new Set(data.map((item: ApiProductItem) => item.descripcionCategoria || 'OTROS'))];
       
@@ -376,7 +312,6 @@ export const loadProductsFromAPI = async (): Promise<Product[]> => {
         { id: "all", name: "Todo", icon: '🏠' },
         ...mappedCats.sort((a, b) => a.name.localeCompare(b.name))
       ];
-      setCachedCategories(categoriesList);
     }
     
     const IMAGE_VERSION = 'v1776289862';
@@ -388,22 +323,12 @@ export const loadProductsFromAPI = async (): Promise<Product[]> => {
       getFriendlyCategory,
     });
 
-    setCachedProducts(apiProducts);
     return apiProducts;
   } catch (_error: unknown) {
-    const cached = getCachedProducts();
-    if (cached) {
-      apiProducts = cached;
-      const cachedCats = getCachedCategories();
-      if (cachedCats) {
-        categoriesList = cachedCats;
-      }
-      return apiProducts;
-    }
-    return products;
+    return [];
   }
 };
 
 export const getAPIPoducts = (): Product[] => {
-  return apiProducts || products;
+  return apiProducts || [];
 };

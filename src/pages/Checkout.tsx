@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ArrowLeft, Truck, Phone, User, Mail, Check, ShoppingBag, Shield } from "lucide-react";
+import { ArrowLeft, Truck, Phone, User, Mail, ShoppingBag, Shield } from "lucide-react";
 import { toast } from "sonner";
 import logoPuntoPas from "@/assets/logo-punto-pas.png";
 import { TipoIdentificacionCliente } from "@/services/api";
@@ -13,8 +13,9 @@ interface CheckoutForm {
   numIdentificacion: string;
   email: string;
   telefono: string;
-  entrega: "retiro" | "envio";
+  entrega: "retiro";
   sucursal?: string;
+  acceptedPolicies: boolean;
 }
 
 export const Checkout = () => {
@@ -28,7 +29,8 @@ export const Checkout = () => {
     email: "",
     telefono: "",
     entrega: "retiro",
-    sucursal: ""
+    sucursal: "",
+    acceptedPolicies: false,
   });
 
   const CHECKOUT_STORAGE_KEY = "puntopas_checkout_customer";
@@ -47,8 +49,13 @@ export const Checkout = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!form.nombre || !form.apellido || !form.telefono || !form.numIdentificacion || (form.entrega === "retiro" && !form.sucursal)) {
+    if (!form.nombre || !form.apellido || !form.telefono || !form.numIdentificacion || !form.sucursal) {
       toast.error("Por favor completa todos los campos obligatorios");
+      return;
+    }
+
+    if (!form.acceptedPolicies) {
+      toast.error("Debes aceptar las políticas de compra para continuar.");
       return;
     }
 
@@ -213,70 +220,53 @@ export const Checkout = () => {
                   <Truck className="w-5 h-5 text-primary" />
                   Entrega
                 </h2>
-                <p className="text-sm text-muted-foreground mb-5 sm:mb-6">Elige cómo recibirás tu pedido.</p>
+                <p className="text-sm text-muted-foreground mb-5 sm:mb-6">Todas las compras se entregan solo por retiro en tienda.</p>
                 <div className="space-y-3">
-                  {[
-                    { id: "retiro", label: "Retiro en tienda", desc: "Retira tu pedido en sucursal", icon: "🏬", disabled: false },
-                    { id: "envio", label: "Envío (Próximamente)", desc: "Esta opción estará disponible próximamente", icon: "🚚", disabled: true },
-                  ].map((metodo) => (
-                    <label
-                      key={metodo.id}
-                       className={`flex items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl border-2 transition-all ${
-                        metodo.disabled
-                          ? "opacity-60 cursor-not-allowed border-slate-200 bg-slate-50"
-                          : "cursor-pointer"
-                      } ${
-                        form.entrega === metodo.id && !metodo.disabled
-                          ? "border-primary bg-primary/5"
-                          : "border-border hover:border-primary/50"
-                      }`}
-                    >
-                      <input
-                        type="radio"
-                        name="entrega"
-                        value={metodo.id}
-                        checked={form.entrega === metodo.id}
-                        onChange={handleInputChange}
-                        disabled={metodo.disabled}
-                        className="sr-only"
-                      />
-                         <span className="text-xl sm:text-2xl">{metodo.icon}</span>
-                      <div className="flex-1">
-                         <span className="font-semibold text-foreground block text-sm sm:text-base">{metodo.label}</span>
-                         <span className="text-xs sm:text-sm text-muted-foreground">{metodo.desc}</span>
-                      </div>
-                      <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
-                        form.entrega === metodo.id && !metodo.disabled
-                          ? "border-primary bg-primary" 
-                          : "border-border"
-                      }`}>
-                        {form.entrega === metodo.id && !metodo.disabled && (
-                          <Check className="w-4 h-4 text-primary-foreground" />
-                        )}
-                      </div>
-                    </label>
-                  ))}
-
-                  {form.entrega === "retiro" && (
-                    <div className="mt-3">
-                      <label className="block text-sm font-medium text-foreground mb-2">Selecciona sucursal *</label>
-                      <select
-                        name="sucursal"
-                        value={form.sucursal}
-                        onChange={handleInputChange}
-                         className="w-full px-4 py-3 rounded-xl border border-border bg-background focus:ring-2 focus:ring-primary focus:border-primary transition-all text-sm sm:text-base"
-                      >
-                        <option value="">-- Seleccionar --</option>
-                        <option value="esmeraldas">Esmeraldas</option>
-                        <option value="san_lorenzo" disabled>San Lorenzo (Próximamente)</option>
-                        <option value="stihl_san_lorenzo" disabled>Stihl San Lorenzo (Próximamente)</option>
-                      </select>
+                  <div className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl border-2 border-primary bg-primary/5">
+                    <span className="text-xl sm:text-2xl">🏬</span>
+                    <div className="flex-1">
+                      <span className="font-semibold text-foreground block text-sm sm:text-base">Retiro en tienda</span>
+                      <span className="text-xs sm:text-sm text-muted-foreground">Retira tu pedido con cédula y número de orden</span>
                     </div>
-                  )}
+                  </div>
+
+                  <div className="mt-3">
+                    <label className="block text-sm font-medium text-foreground mb-2">Selecciona sucursal *</label>
+                    <select
+                      name="sucursal"
+                      value={form.sucursal}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-3 rounded-xl border border-border bg-background focus:ring-2 focus:ring-primary focus:border-primary transition-all text-sm sm:text-base"
+                      required
+                    >
+                      <option value="">-- Seleccionar --</option>
+                      <option value="esmeraldas">Esmeraldas</option>
+                      <option value="san_lorenzo" disabled>San Lorenzo (Próximamente)</option>
+                      <option value="stihl_san_lorenzo" disabled>Stihl San Lorenzo (Próximamente)</option>
+                    </select>
+                  </div>
                 </div>
               </div>
 
               {/* Submit button for mobile */}
+              <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+                <label className="flex items-start gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={form.acceptedPolicies}
+                    onChange={(e) => setForm((prev) => ({ ...prev, acceptedPolicies: e.target.checked }))}
+                    className="mt-1 w-4 h-4"
+                  />
+                  <span className="text-sm text-slate-700">
+                    He leído y acepto las{" "}
+                    <Link to="/politicas" target="_blank" className="text-primary font-semibold hover:underline">
+                      políticas de compra, cancelación y devolución
+                    </Link>
+                    .
+                  </span>
+                </label>
+              </div>
+
               <button
                 type="submit"
                 disabled={isSubmitting}

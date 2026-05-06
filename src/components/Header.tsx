@@ -1,4 +1,4 @@
-import { Search, ShoppingCart, Mic, MicOff, Plus, MapPin, X, Headphones, Radio, Play, Pause, Shield, ChevronRight, SlidersHorizontal } from "lucide-react";
+import { Search, ShoppingCart, Mic, MicOff, Plus, Minus, MapPin, X, Headphones, Radio, Play, Pause, Shield, ChevronRight, SlidersHorizontal } from "lucide-react";
 import { useState, useRef, useEffect, useMemo } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AdvancedProductFilters, applyAdvancedProductFilters, defaultAdvancedProductFilters, getAdvancedFilterOptions } from "@/application/use-cases/advancedProductFilters";
@@ -46,7 +46,7 @@ export const Header = ({ cartCount, searchQuery: propSearchQuery, onSearch, onCa
   const { isPlaying, toggleRadio, currentSong, isLoading, error, volume, setVolume } = useRadio();
   const location = useLocation();
   const navigate = useNavigate();
-  const hideCommerceControls = ["/quienes-somos", "/sucursales", "/privacidad"].includes(location.pathname);
+  const hideCommerceControls = ["/quienes-somos", "/sucursales", "/privacidad", "/politicas", "/seguimiento"].includes(location.pathname);
   const menuRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLFormElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -564,7 +564,7 @@ export const Header = ({ cartCount, searchQuery: propSearchQuery, onSearch, onCa
 
              {/* Categories Panel - shows on click */}
              {showCategoriesPanel && (
-               <div className="absolute left-0 top-full mt-3 w-[92vw] max-w-[680px] bg-white rounded-2xl shadow-[0_22px_70px_-20px_rgba(0,0,0,0.35)] border border-slate-200 overflow-hidden z-50">
+               <div className="fixed md:absolute left-1/2 md:left-0 -translate-x-1/2 md:translate-x-0 top-[72px] md:top-full mt-0 md:mt-3 w-[94vw] md:w-[92vw] max-w-[680px] max-h-[calc(100vh-92px)] md:max-h-none bg-white rounded-2xl shadow-[0_22px_70px_-20px_rgba(0,0,0,0.35)] border border-slate-200 overflow-hidden z-50">
                  <div className="sm:hidden flex items-center gap-2 p-3 border-b border-slate-100 bg-slate-50/70">
                    <button
                      onClick={() => setMobileCategoriesView('categories')}
@@ -584,12 +584,12 @@ export const Header = ({ cartCount, searchQuery: propSearchQuery, onSearch, onCa
                    </button>
                  </div>
 
-                 <div className="flex flex-col sm:flex-row" style={{ minHeight: '340px' }}>
+                 <div className="flex flex-col sm:flex-row min-h-[70vh] sm:min-h-[340px]">
 {/* Left column - Nivel 2 (Categorías) - max 7 visible + scroll */}
                     <div className={`${mobileCategoriesView === 'categories' ? 'block' : 'hidden'} sm:block sm:w-[42%] border-r border-slate-100 bg-slate-50/45`}>
                       <div className="p-4">
                          <h3 className="text-[11px] font-semibold tracking-[0.18em] text-slate-500 uppercase mb-3">Categorías</h3>
-                         <div className="overflow-y-auto pr-1" style={{ maxHeight: '300px' }}>
+                         <div className="overflow-y-auto pr-1 max-h-[calc(70vh-96px)] sm:max-h-[300px]">
                           {visibleNivel2Categories.map((catObj, idx) => (
                             <button
                               key={`${catObj.id}-${idx}`}
@@ -625,7 +625,7 @@ export const Header = ({ cartCount, searchQuery: propSearchQuery, onSearch, onCa
                           )}
                         </div>
                         {hoveredType ? (
-                          <div className="grid grid-cols-2 gap-2 overflow-y-auto pr-1" style={{ maxHeight: '300px' }}>
+                           <div className="grid grid-cols-2 gap-2 overflow-y-auto pr-1 max-h-[calc(70vh-96px)] sm:max-h-[300px]">
                             {getTypes(hoveredType).map((typeObj, idx) => (
                               <button
                                 key={`${typeObj.name}-${idx}`}
@@ -655,9 +655,9 @@ export const Header = ({ cartCount, searchQuery: propSearchQuery, onSearch, onCa
                             ))}
                           </div>
                         ) : (
-                          <div className="h-[300px] flex items-center justify-center rounded-xl border border-dashed border-slate-200 bg-slate-50 text-slate-400 text-sm">
-                            Pasa el puntero sobre una categoría
-                          </div>
+                           <div className="h-[calc(70vh-96px)] sm:h-[300px] flex items-center justify-center rounded-xl border border-dashed border-slate-200 bg-slate-50 text-slate-400 text-sm">
+                             Pasa el puntero sobre una categoría
+                           </div>
                         )}
                      </div>
                    </div>
@@ -1128,17 +1128,27 @@ export const Header = ({ cartCount, searchQuery: propSearchQuery, onSearch, onCa
                   </div>
                 </div>
               </div>
-              <button 
-                onClick={() => {
-                  if (isPlaying) {
-                    toggleRadio();
-                  }
-                  setShowMiniPlayer(false);
-                }}
-                className="text-white/80 hover:text-white hover:bg-white/20 p-2 rounded-full transition-all relative z-10"
-              >
-                <X className="w-5 h-5" />
-              </button>
+              <div className="flex items-center gap-1.5">
+                <button
+                  onClick={() => setIsRadioMinimized(true)}
+                  className="text-white/80 hover:text-white hover:bg-white/20 p-2 rounded-full transition-all"
+                  aria-label="Minimizar radio"
+                >
+                  <Minus className="w-5 h-5" />
+                </button>
+                <button 
+                  onClick={() => {
+                    if (isPlaying) {
+                      toggleRadio();
+                    }
+                    setShowMiniPlayer(false);
+                  }}
+                  className="text-white/80 hover:text-white hover:bg-white/20 p-2 rounded-full transition-all relative z-10"
+                  aria-label="Cerrar radio"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
             </div>
 
             <div className="px-4 py-3 bg-gray-50">

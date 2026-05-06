@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ArrowLeft, CreditCard, Check, ShoppingBag, Shield } from "lucide-react";
+import { ArrowLeft, CreditCard, ShoppingBag, Shield } from "lucide-react";
 import { toast } from "sonner";
 import logoPuntoPas from "@/assets/logo-punto-pas.png";
 import { invoiceService, TipoIdentificacionCliente } from "@/services/api";
@@ -48,6 +48,7 @@ export const CheckoutPayment = () => {
   const [widgetUrl, setWidgetUrl] = useState<string | null>(null);
   const [widgetReady, setWidgetReady] = useState(false);
   const [metodoPago, setMetodoPago] = useState<"transferencia" | "tarjeta">("transferencia");
+  const [radioBubbleId, setRadioBubbleId] = useState<string | null>(null);
   const widgetContainerRef = useRef<HTMLDivElement | null>(null);
 
   const cartData = localStorage.getItem("puntopas_cart");
@@ -342,6 +343,8 @@ export const CheckoutPayment = () => {
                       checked={metodoPago === metodo.id}
                       onChange={() => {
                         setMetodoPago(metodo.id as "transferencia" | "tarjeta");
+                        setRadioBubbleId(metodo.id);
+                        setTimeout(() => setRadioBubbleId(null), 420);
                         setCheckoutId(null);
                         setWidgetUrl(null);
                       }}
@@ -352,8 +355,15 @@ export const CheckoutPayment = () => {
                       <span className="font-semibold text-slate-900 block text-sm sm:text-base">{metodo.label}</span>
                       <span className="text-xs sm:text-sm text-slate-600">{metodo.desc}</span>
                     </div>
-                    <div className={`w-6 h-6 rounded-full border-2 flex flex-shrink-0 items-center justify-center ${metodoPago === metodo.id ? "border-primary bg-primary" : "border-slate-300"}`}>
-                      {metodoPago === metodo.id && <Check className="w-4 h-4 text-white" />}
+                    <div className={`relative w-6 h-6 rounded-full border-2 flex flex-shrink-0 items-center justify-center ${metodoPago === metodo.id ? "border-primary bg-primary" : "border-slate-300"}`}>
+                      {metodoPago === metodo.id && (
+                        <>
+                          <span className="text-white text-sm leading-none font-bold">-</span>
+                          {radioBubbleId === metodo.id && (
+                            <span className="absolute inset-0 rounded-full border-2 border-primary animate-ping" />
+                          )}
+                        </>
+                      )}
                     </div>
                   </label>
                 ))}

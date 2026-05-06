@@ -47,27 +47,27 @@ export const ProductCarouselSection = ({
 
   if (layout === 'fridge') {
     return (
-      <section className="relative bg-white py-5 md:py-6">
+      <section className="relative bg-white py-3 md:py-5">
         <div className="max-w-[98vw] mx-auto px-3 md:px-4">
           <h2
-            className="text-lg md:text-2xl font-black uppercase tracking-wide mb-4 md:mb-5"
+            className="text-base md:text-2xl font-black uppercase tracking-wide mb-2 md:mb-4"
             style={{ color: '#FA003F', fontFamily: 'Nunito, sans-serif' }}
           >
             {(topTitle || category).replace(/-/g, ' ')}
           </h2>
 
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 md:gap-5 items-stretch" style={{ minHeight: 'auto' }}>
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-3 md:gap-4 items-start" style={{ minHeight: 'auto' }}>
             <div className="lg:col-span-2 h-full" onClick={handleBannerClick}>
               <img
                 src={bannerImage}
                 alt={category}
-                className="w-full h-auto lg:h-full object-cover rounded-lg cursor-pointer"
+                className="w-full h-[150px] sm:h-[190px] lg:h-[680px] object-contain rounded-lg cursor-pointer bg-white"
               />
             </div>
 
-            <div className="lg:col-span-3 h-full flex flex-col">
-              <div className="h-12 md:h-14 rounded-lg border border-slate-200 bg-white px-3 md:px-5 flex items-center justify-between mb-3 md:mb-4">
-                <h2 className="text-base md:text-2xl uppercase tracking-wide" style={{ color: '#374151', fontFamily: 'Nunito, sans-serif' }}>
+            <div className="lg:col-span-3 h-full lg:h-[680px] flex flex-col">
+              <div className="h-10 md:h-14 rounded-lg border border-slate-200 bg-white px-3 md:px-5 flex items-center justify-between mb-2 md:mb-4">
+                <h2 className="text-sm md:text-2xl uppercase tracking-wide" style={{ color: '#374151', fontFamily: 'Nunito, sans-serif' }}>
                   {(sectionTitle || category).replace(/-/g, ' ')}
                 </h2>
                 <div className="flex items-center gap-2">
@@ -89,13 +89,14 @@ export const ProductCarouselSection = ({
               </div>
 
               <div ref={scrollRef} className="flex-1 overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
-                <div className="grid grid-rows-1 md:grid-rows-2 grid-flow-col auto-cols-[220px] md:auto-cols-[260px] gap-3 md:gap-4 min-w-max pr-2">
+                <div className="grid grid-rows-1 lg:grid-rows-2 grid-flow-col auto-cols-[168px] md:auto-cols-[188px] gap-2 md:gap-2.5 min-w-max pr-2">
                   {products.map((product) => (
-                    <div key={product.id} className="w-[220px] md:w-[260px]">
+                    <div key={product.id} className="w-[168px] md:w-[188px]">
                       <ProductCard
                         product={product}
                         onAddToCart={onAddToCart}
                         onProductClick={onProductClick}
+                        compact
                       />
                     </div>
                   ))}

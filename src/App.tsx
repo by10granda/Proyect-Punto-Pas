@@ -13,6 +13,8 @@ import CheckoutPaymentResult from "./pages/CheckoutPaymentResult";
 import OrderReview from "./pages/OrderReview";
 import Sucursales from "./pages/Sucursales";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
+import PoliciesAndReturns from "./pages/PoliciesAndReturns";
+import OrderTracking from "./pages/OrderTracking";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -34,6 +36,8 @@ const App = () => (
             <Route path="/compra" element={<OrderReview />} />
             <Route path="/sucursales" element={<Sucursales />} />
             <Route path="/privacidad" element={<PrivacyPolicy />} />
+            <Route path="/politicas" element={<PoliciesAndReturns />} />
+            <Route path="/seguimiento" element={<OrderTracking />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
