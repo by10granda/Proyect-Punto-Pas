@@ -677,7 +677,7 @@ const Index = () => {
               <div id="weeklydeals-section">
                <WeeklyDeals
                images={[
-                 "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777429427/Descuento1_s.png",
+                  "https://res.cloudinary.com/dbbkpdhze/image/upload/v1778073484/Descuento1_s.png",
                  "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777429432/Descuento2_s.png",
                  "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777429429/Descuento3_s.png",
                  "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777429442/Descuento4_s.png",
