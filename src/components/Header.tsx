@@ -4,7 +4,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AdvancedProductFilters, applyAdvancedProductFilters, defaultAdvancedProductFilters, getAdvancedFilterOptions } from "@/application/use-cases/advancedProductFilters";
 import { buildSearchSuggestions, SearchSuggestion } from "@/application/use-cases/searchSuggestions";
 import { useRadio } from "@/contexts/RadioContext";
-import logoPuntoPas from "@/assets/logo-punto-pas.png";
+const headerLogo = "/LOGO_DISTRIBUIDOR-PUNTOPAS.png";
 import { Level2Category, Product } from "@/data/products";
 
 interface HeaderProps {
@@ -513,25 +513,23 @@ export const Header = ({ cartCount, searchQuery: propSearchQuery, onSearch, onCa
 
   return (
     <>
-      <header className="sticky top-0 z-40 bg-primary shadow-xl">
+      <header className="sticky top-0 z-40 shadow-xl" style={{ backgroundColor: "#ff0000" }}>
         {/* Main header bar */}
         <div className="flex flex-wrap md:flex-nowrap items-center justify-between px-3 md:px-4 py-3 gap-2 md:gap-3 max-w-7xl mx-auto">
           {/* Logo - Navigate to home */}
           <div onClick={goToHome} className="flex items-center gap-2 md:gap-3 flex-shrink-0 group cursor-pointer">
-            <div className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform overflow-hidden">
+            <div className="w-14 h-14 md:w-20 md:h-20 rounded-full bg-white/10 flex items-center justify-center group-hover:scale-[1.02] transition-transform overflow-hidden">
               <img 
-                src={logoPuntoPas} 
+                src={headerLogo} 
                 alt="Punto Pas" 
                 className="w-full h-full object-contain"
               />
             </div>
-            <div className="hidden md:block">
-              <span className="text-xl lg:text-2xl font-black text-primary-foreground tracking-tight block leading-tight">
-                PUNTO PAS
-              </span>
-              <span className="text-[10px] text-primary-foreground/80 font-medium tracking-widest">
-                ENCUENTRA TODO EN UN SOLO LUGAR
-              </span>
+            <div className="hidden sm:block leading-none">
+              <span className="block text-white font-black tracking-tight text-lg md:text-2xl">PUNTO PAS</span>
+              <span className="block text-white/95 font-semibold tracking-wide text-[9px] md:text-sm mt-1">ENCUENTRA TODO EN UN SOLO LUGAR</span>
+              <span className="block text-white font-black italic tracking-[0.02em] text-sm md:text-[24px] mt-1">PETMEMEBASPS</span>
+              <span className="block h-[3px] md:h-[5px] w-[150px] md:w-[250px] rounded-full bg-lime-400 mt-1" />
             </div>
           </div>
 

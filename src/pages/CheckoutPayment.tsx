@@ -5,7 +5,6 @@ import { toast } from "sonner";
 import logoPuntoPas from "@/assets/logo-punto-pas.png";
 import { invoiceService, TipoIdentificacionCliente } from "@/services/api";
 import { CheckoutSteps } from "@/components/CheckoutSteps";
-import { createDatafastCheckout } from "@/services/datafastPayment";
 
 interface CheckoutCustomerData {
   nombre: string;
@@ -14,7 +13,7 @@ interface CheckoutCustomerData {
   numIdentificacion: string;
   email: string;
   telefono: string;
-  entrega: "retiro" | "envio";
+  entrega: "retiro";
   sucursal?: string;
 }
 
@@ -22,34 +21,20 @@ const STORAGE_KEY = "puntopas_checkout_customer";
 
 declare global {
   interface Window {
-    wpwlOptions?: Record<string, unknown>;
+    PPaymentButtonBox?: new (config: Record<string, unknown>) => { render: (target: string) => void };
   }
 }
 
-const getDatafastDocType = (tipoIdentificacion?: TipoIdentificacionCliente) => {
-  if (tipoIdentificacion === 2) return "TAXSTATEMENT";
-  if (tipoIdentificacion === 3) return "PASSPORT";
-  return "IDCARD";
-};
-
-const isTrustedDatafastScript = (url: string) => {
-  try {
-    const parsed = new URL(url);
-    return parsed.protocol === "https:" && parsed.hostname.endsWith("oppwa.com") && parsed.pathname === "/v1/paymentWidgets.js";
-  } catch {
-    return false;
-  }
-};
+const PAYPHONE_SCRIPT = "https://cdn.payphonetodoesposible.com/box/v2.0/payphone-payment-box.js";
+const PAYPHONE_CSS = "https://cdn.payphonetodoesposible.com/box/v2.0/payphone-payment-box.css";
 
 export const CheckoutPayment = () => {
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [checkoutId, setCheckoutId] = useState<string | null>(null);
-  const [widgetUrl, setWidgetUrl] = useState<string | null>(null);
-  const [widgetReady, setWidgetReady] = useState(false);
+  const [isPayphoneReady, setIsPayphoneReady] = useState(false);
   const [metodoPago, setMetodoPago] = useState<"transferencia" | "tarjeta">("transferencia");
   const [radioBubbleId, setRadioBubbleId] = useState<string | null>(null);
-  const widgetContainerRef = useRef<HTMLDivElement | null>(null);
+  const payphoneContainerRef = useRef<HTMLDivElement | null>(null);
 
   const cartData = localStorage.getItem("puntopas_cart");
   const cartItems = cartData ? JSON.parse(cartData) : [];
@@ -64,6 +49,48 @@ export const CheckoutPayment = () => {
       style: "currency",
       currency: "USD",
     });
+
+  const payphoneToken = import.meta.env.VITE_PAYPHONE_TOKEN as string | undefined;
+  const payphoneStoreId = import.meta.env.VITE_PAYPHONE_STORE_ID as string | undefined;
+
+  const ensurePayphoneAssets = async () => {
+    const hasCss = document.querySelector(`link[href="${PAYPHONE_CSS}"]`);
+    if (!hasCss) {
+      const link = document.createElement("link");
+      link.rel = "stylesheet";
+      link.href = PAYPHONE_CSS;
+      document.head.appendChild(link);
+    }
+
+    if (window.PPaymentButtonBox) return;
+
+    await new Promise<void>((resolve, reject) => {
+      const hasScript = document.querySelector(`script[src="${PAYPHONE_SCRIPT}"]`) as HTMLScriptElement | null;
+      if (hasScript) {
+        hasScript.addEventListener("load", () => resolve(), { once: true });
+        hasScript.addEventListener("error", () => reject(new Error("No se pudo cargar SDK de Payphone")), { once: true });
+        return;
+      }
+
+      const script = document.createElement("script");
+      script.src = PAYPHONE_SCRIPT;
+      script.type = "module";
+      script.onload = () => resolve();
+      script.onerror = () => reject(new Error("No se pudo cargar SDK de Payphone"));
+      document.body.appendChild(script);
+    });
+  };
+
+  const getPayphoneIdentificationType = (tipoIdentificacion?: TipoIdentificacionCliente) => {
+    if (tipoIdentificacion === 1) return 2;
+    if (tipoIdentificacion === 3) return 3;
+    return 1;
+  };
+
+  const buildClientTransactionId = () => {
+    const random = Math.random().toString(36).slice(2, 8).toUpperCase();
+    return `PP-${Date.now()}-${random}`.slice(0, 50);
+  };
 
   useEffect(() => {
     if (!customer) {
@@ -106,189 +133,70 @@ export const CheckoutPayment = () => {
     }
   };
 
-  const handleContinueCard = async () => {
-    if (!customer) {
-      toast.error("Primero completa tus datos para continuar.");
-      navigate("/checkout");
-      return;
-    }
+  useEffect(() => {
+    const renderPayphone = async () => {
+      if (metodoPago !== "tarjeta" || !customer || !payphoneContainerRef.current) return;
 
-    if (!cartItems.length || total <= 0) {
-      toast.error("Tu carrito esta vacio o el total no es valido.");
-      return;
-    }
-
-    setIsSubmitting(true);
-    try {
-      const checkout = await createDatafastCheckout({
-        amount: total,
-        currency: "USD",
-        paymentType: "DB",
-        customerDocType: getDatafastDocType(customer.tipoIdentificacion),
-      });
-
-      if (!isTrustedDatafastScript(checkout.scriptUrl)) {
-        throw new Error("La URL del widget de pago no es confiable.");
+      if (!payphoneToken || !payphoneStoreId) {
+        setIsPayphoneReady(false);
+        toast.error("Faltan credenciales de Payphone en el frontend.");
+        return;
       }
 
-      setCheckoutId(checkout.checkoutId);
-      setWidgetUrl(checkout.scriptUrl);
-      setWidgetReady(false);
-      toast.success("Checkout de Datafast creado.");
-    } catch (error) {
-      toast.error((error as Error)?.message || "No se pudo iniciar pago con tarjeta");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+      if (!cartItems.length || total <= 0) {
+        setIsPayphoneReady(false);
+        return;
+      }
 
-  useEffect(() => {
-    if (!widgetUrl || !widgetContainerRef.current) return;
+      try {
+        setIsPayphoneReady(false);
+        await ensurePayphoneAssets();
 
-    const container = widgetContainerRef.current;
-    container.innerHTML = "";
+        const clientTransactionId = buildClientTransactionId();
+        sessionStorage.setItem("puntopas_payphone_client_tx", clientTransactionId);
 
-    window.wpwlOptions = {
-      locale: "es",
-      style: "plain",
-      brands: ["VISA", "MASTERCARD", "AMEX"],
-      brandDetection: true,
-      showCVVHint: true,
-      labels: {
-        cvv: "CVV",
-      },
-      onReady: () => {
-        const styleId = "datafast-widget-theme";
-        const oldStyle = document.getElementById(styleId);
-        if (oldStyle) oldStyle.remove();
+        const amount = Math.round(total * 100);
 
-        const style = document.createElement("style");
-        style.id = styleId;
-        style.textContent = `
-          .wpwl-form-card {
-            max-width: 680px;
-            margin: 0;
-            padding: 1rem;
-            border: 1px solid #e2e8f0;
-            border-radius: 0.9rem;
-            background: #ffffff;
-            box-shadow: none;
-          }
-          .wpwl-label,
-          .wpwl-brand,
-          .wpwl-group-brand label {
-            color: #0f172a;
-            font-weight: 600;
-            font-size: 0.9rem;
-          }
-          .wpwl-control,
-          .wpwl-control-cardNumber,
-          .wpwl-control-expiry,
-          .wpwl-control-cvv,
-          .wpwl-control-cardHolder,
-          .wpwl-select {
-            border: 1px solid #cbd5e1 !important;
-            border-radius: 0.7rem !important;
-            background: #ffffff !important;
-            color: #0f172a !important;
-            min-height: 42px;
-            box-shadow: none !important;
-          }
-          .wpwl-control:focus,
-          .wpwl-control-cardNumber:focus,
-          .wpwl-control-expiry:focus,
-          .wpwl-control-cvv:focus,
-          .wpwl-control-cardHolder:focus,
-          .wpwl-select:focus {
-            border-color: #ef4444 !important;
-            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.12) !important;
-            outline: none !important;
-          }
-          .wpwl-button-pay {
-            background: #ef4444 !important;
-            color: #fff !important;
-            border: none !important;
-            border-radius: 0.75rem !important;
-            min-height: 44px;
-            padding: 0 1.2rem !important;
-            font-weight: 700 !important;
-            box-shadow: none !important;
-          }
-          .wpwl-button-pay:hover {
-            background: #dc2626 !important;
-          }
-          .wpwl-hint {
-            color: #64748b !important;
-            font-size: 0.78rem;
-          }
-          .wpwl-has-error .wpwl-control,
-          .wpwl-has-error .wpwl-select {
-            border-color: #e11d48 !important;
-          }
-          @media (max-width: 640px) {
-            .wpwl-form-card {
-              width: 100% !important;
-              max-width: 100% !important;
-              padding: 0.85rem !important;
-              border-radius: 0.85rem !important;
-            }
-            .wpwl-group,
-            .wpwl-group-brand,
-            .wpwl-group-cardNumber,
-            .wpwl-group-expiry,
-            .wpwl-group-cvv,
-            .wpwl-group-cardHolder,
-            .wpwl-wrapper {
-              width: 100% !important;
-              display: block !important;
-              float: none !important;
-              margin-left: 0 !important;
-              margin-right: 0 !important;
-            }
-            .wpwl-control,
-            .wpwl-select {
-              width: 100% !important;
-              min-height: 44px;
-            }
-            .wpwl-button-pay {
-              width: 100% !important;
-              margin-top: 0.5rem !important;
-            }
-            .wpwl-label,
-            .wpwl-brand,
-            .wpwl-group-brand label {
-              font-size: 0.82rem !important;
-            }
-          }
-        `;
+        payphoneContainerRef.current.innerHTML = "";
+        const mount = document.createElement("div");
+        mount.id = "pp-button";
+        payphoneContainerRef.current.appendChild(mount);
 
-        document.head.appendChild(style);
-      },
+        if (!window.PPaymentButtonBox) {
+          throw new Error("SDK Payphone no inicializado.");
+        }
+
+        const ppb = new window.PPaymentButtonBox({
+          token: payphoneToken,
+          clientTransactionId,
+          amount,
+          amountWithoutTax: amount,
+          amountWithTax: 0,
+          tax: 0,
+          service: 0,
+          tip: 0,
+          currency: "USD",
+          storeId: payphoneStoreId,
+          reference: `Pago Punto Pas ${clientTransactionId}`.slice(0, 100),
+          lang: "es",
+          defaultMethod: "card",
+          timeZone: -5,
+          phoneNumber: customer.telefono || undefined,
+          email: customer.email || undefined,
+          documentId: customer.numIdentificacion || undefined,
+          identificationType: getPayphoneIdentificationType(customer.tipoIdentificacion),
+        });
+
+        ppb.render("pp-button");
+        setIsPayphoneReady(true);
+      } catch (error) {
+        setIsPayphoneReady(false);
+        toast.error((error as Error)?.message || "No se pudo cargar Payphone.");
+      }
     };
 
-    const form = document.createElement("form");
-    form.setAttribute("action", "/checkout/pago/resultado");
-    form.className = "paymentWidgets";
-    form.setAttribute("data-brands", "VISA MASTERCARD AMEX");
-    container.appendChild(form);
-
-    const script = document.createElement("script");
-    script.src = widgetUrl;
-    script.async = true;
-    script.onload = () => setWidgetReady(true);
-    script.onerror = () => {
-      setWidgetReady(false);
-      toast.error("No se pudo cargar el formulario de tarjeta de Datafast.");
-    };
-
-    container.appendChild(script);
-
-    return () => {
-      container.innerHTML = "";
-      setWidgetReady(false);
-      delete window.wpwlOptions;
-    };
-  }, [widgetUrl]);
+    void renderPayphone();
+  }, [metodoPago, customer, total, cartItems.length, payphoneToken, payphoneStoreId]);
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -324,12 +232,12 @@ export const CheckoutPayment = () => {
           <div className="lg:col-span-2">
             <div className="bg-white rounded-2xl border border-slate-200 p-4 sm:p-6">
               <h1 className="text-xl sm:text-2xl md:text-3xl font-black text-slate-900 mb-2" style={{ fontFamily: "Nunito, sans-serif" }}>
-                Elije tu metodo de pago
+                Elige tu metodo de pago
               </h1>
-              <p className="text-sm sm:text-base text-slate-600 mb-5 sm:mb-6">Selecciona cómo deseas completar tu compra.</p>
+              <p className="text-sm sm:text-base text-slate-600 mb-5 sm:mb-6">Selecciona como deseas completar tu compra con Payphone o transferencia.</p>
 
               <div className="space-y-3">
-                {[{ id: "transferencia", label: "Transferencia bancaria", desc: "Te compartiremos los datos para transferir." }, { id: "tarjeta", label: "Pago con tarjeta", desc: "Pago seguro con tarjeta de crédito o débito." }].map((metodo) => (
+                {[{ id: "transferencia", label: "Transferencia bancaria", desc: "Te compartiremos los datos para transferir." }, { id: "tarjeta", label: "Pago en linea con Payphone", desc: "Pago seguro con tarjeta o saldo Payphone." }].map((metodo) => (
                   <label
                     key={metodo.id}
                     className={`flex items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl border-2 cursor-pointer transition-all ${
@@ -345,8 +253,6 @@ export const CheckoutPayment = () => {
                         setMetodoPago(metodo.id as "transferencia" | "tarjeta");
                         setRadioBubbleId(metodo.id);
                         setTimeout(() => setRadioBubbleId(null), 420);
-                        setCheckoutId(null);
-                        setWidgetUrl(null);
                       }}
                       className="sr-only"
                     />
@@ -369,30 +275,11 @@ export const CheckoutPayment = () => {
                 ))}
               </div>
 
-              {metodoPago === "tarjeta" && !checkoutId && (
-                <button
-                  onClick={handleContinueCard}
-                  disabled={isSubmitting}
-                  className="mt-6 w-full md:w-auto px-6 py-3.5 md:py-3 rounded-xl bg-primary text-white font-semibold hover:bg-primary/90 disabled:opacity-70"
-                >
-                  {isSubmitting ? "Creando checkout..." : "Continuar con tarjeta"}
-                </button>
-              )}
-
-              {checkoutId && widgetUrl && metodoPago === "tarjeta" && (
+              {metodoPago === "tarjeta" && (
                 <div className="mt-6 overflow-hidden">
-                  {!widgetReady && <p className="text-sm text-slate-600 mb-3">Cargando formulario seguro de tarjeta...</p>}
-                  <div ref={widgetContainerRef} />
-                  <button
-                    onClick={() => {
-                      setCheckoutId(null);
-                      setWidgetUrl(null);
-                      setWidgetReady(false);
-                    }}
-                    className="mt-4 w-full sm:w-auto px-6 py-2.5 rounded-xl border border-slate-300 text-slate-700 hover:bg-slate-100"
-                  >
-                    Cancelar pago con tarjeta
-                  </button>
+                  {!isPayphoneReady && <p className="text-sm text-slate-600 mb-3">Cargando cajita segura de Payphone...</p>}
+                  <div ref={payphoneContainerRef} />
+                  <p className="mt-3 text-xs text-slate-500">Al completar el pago, seras redirigido para confirmar la transaccion en segundos.</p>
                 </div>
               )}
 

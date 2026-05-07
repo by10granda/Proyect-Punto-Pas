@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { CheckCircle2, XCircle, LoaderCircle } from "lucide-react";
 import { toast } from "sonner";
-import { fetchDatafastStatus } from "@/services/datafastPayment";
+import { confirmPayphoneTransaction } from "@/services/payphonePayment";
 import { invoiceService, TipoIdentificacionCliente } from "@/services/api";
 
 interface CheckoutCustomerData {
@@ -63,22 +63,29 @@ const CheckoutPaymentResult = () => {
       if (hasProcessedResult.current) return;
       hasProcessedResult.current = true;
 
-      const checkoutId = searchParams.get("id") || "";
-      const resourcePath = searchParams.get("resourcePath") || "";
+      const idParam = Number(searchParams.get("id") || 0);
+      const clientTransactionId = searchParams.get("clientTransactionId") || "";
 
-      if (!checkoutId || !resourcePath) {
+      if (!idParam || !clientTransactionId) {
         setStatus("failed");
-        setMessage("No llegaron los datos de confirmacion de Datafast.");
+        setMessage("No llegaron los datos de confirmacion de Payphone.");
         return;
       }
 
       try {
-        const paymentStatus = await fetchDatafastStatus(checkoutId, resourcePath);
-        const description = String(paymentStatus?.result?.description || "");
-
-        if (!paymentStatus.verified || paymentStatus.paymentState !== "approved") {
+        const expectedClientTx = sessionStorage.getItem("puntopas_payphone_client_tx");
+        if (expectedClientTx && expectedClientTx !== clientTransactionId) {
           setStatus("failed");
-          setMessage(description || "Pago no aprobado por Datafast.");
+          setMessage("La transaccion recibida no coincide con la transaccion iniciada.");
+          return;
+        }
+
+        const paymentStatus = await confirmPayphoneTransaction({ id: idParam, clientTxId: clientTransactionId });
+        const isApproved = paymentStatus?.statusCode === 3 || String(paymentStatus?.transactionStatus || "").toLowerCase() === "approved";
+
+        if (!isApproved) {
+          setStatus("failed");
+          setMessage(paymentStatus?.message || "Pago no aprobado por Payphone.");
           return;
         }
 
@@ -94,6 +101,7 @@ const CheckoutPaymentResult = () => {
           await invoiceService.createFactura(payload);
           localStorage.removeItem("puntopas_cart");
           sessionStorage.removeItem(STORAGE_KEY);
+          sessionStorage.removeItem("puntopas_payphone_client_tx");
           setStatus("success");
           setMessage("Pago y factura procesados correctamente.");
           toast.success("Pago completado con exito");
@@ -118,7 +126,7 @@ const CheckoutPaymentResult = () => {
         {status === "failed" && <XCircle className="w-12 h-12 text-rose-600 mx-auto" />}
         {status === "invoice_failed" && <CheckCircle2 className="w-12 h-12 text-amber-500 mx-auto" />}
 
-        <h1 className="mt-4 text-2xl font-black text-slate-900">Resultado del pago</h1>
+        <h1 className="mt-4 text-2xl font-black text-slate-900">Resultado del pago Payphone</h1>
         <p className="mt-2 text-slate-600">{message}</p>
 
         <div className="mt-6 flex justify-center gap-3">

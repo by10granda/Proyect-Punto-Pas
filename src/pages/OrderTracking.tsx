@@ -24,9 +24,12 @@ const OrderTracking = () => {
             <p className="text-slate-600 mt-3">
               Ingresa tu número de pedido para consultar el estado de tu compra.
             </p>
+            <div className="inline-flex items-center mt-4 px-3 py-1.5 rounded-full border border-amber-200 bg-amber-50 text-amber-700 text-xs font-semibold tracking-wide uppercase">
+              Próximamente
+            </div>
           </div>
 
-          <div className="rounded-2xl border border-slate-200 bg-white p-5">
+          <div className="rounded-2xl border border-slate-200 bg-white p-5 opacity-70 pointer-events-none">
             <label className="block text-sm font-medium text-slate-700 mb-2">Número de pedido</label>
             <div className="flex flex-col sm:flex-row gap-3">
               <input

@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
-import { ArrowLeft, MapPin, Clock, Sparkles, Target } from "lucide-react";
+import { Clock, Sparkles, Target } from "lucide-react";
 import logoPuntoPas from "@/assets/logo-punto-pas.png";
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Header } from "@/components/Header";
 import { CartDrawer, CartItem } from "@/components/CartDrawer";
 import { Footer } from "@/components/Footer";
@@ -22,7 +22,7 @@ const milestones = [
     year: "2007",
     title: "Primer Local Stihl",
     description: "Con el valioso apoyo y respaldo incondicional de su esposa Marlene Ambuldi, El empresario Franco Becerra materializa una visión empresarial estratégica al fundar el primer local Stihl, marcando así el inicio de una alianza comercial con una de las marcas más prestigiosas del sector de maquinaria y equipos de exterior.",
-     image: "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777489094/Stihl_Q.png"
+     image: "https://res.cloudinary.com/dbbkpdhze/image/upload/v1778102905/Stihl_Q.png"
   },
   {
     year: "2008",
@@ -35,33 +35,18 @@ const milestones = [
     title: "Consolidación Regional",
     description: "Con el apoyo de sus hijos y continuando con su proceso de expansión, Punto Pas abre una nueva sucursal en Esmeraldas, consolidándose como una empresa comercial que ofrece una amplia variedad de productos, desde ferretería y materiales de construcción hasta electrodomésticos y artículos para el hogar.",
      image: "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777489086/Almacenes_Q.png"
-  },
-  {
-    year: "Presente",
-    title: "Visión de Futuro",
-    description: "Gracias a su trayectoria, visión empresarial y compromiso con la calidad, Punto Pas se proyecta como una empresa sólida y en constante crecimiento, orientada a satisfacer las necesidades de sus clientes y a fortalecer su presencia en el mercado regional.",
-     image: "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777491547/Futuro_Q.png"
   }
 ];
 
 export const QuienesSomos = () => {
   const navigate = useNavigate();
-  const [currentSlide, setCurrentSlide] = useState(0);
   const [cart, setCart] = useState<CartItem[]>(() => {
     const saved = localStorage.getItem("puntopas_cart");
     return saved ? JSON.parse(saved) : [];
   });
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const [visibleStats, setVisibleStats] = useState(false);
-  const statsRef = useRef<HTMLDivElement>(null);
-  const carouselRef = useRef<HTMLDivElement>(null);
-
-  const scroll = (direction: 'left' | 'right') => {
-    if (carouselRef.current) {
-      const scrollAmount = 400;
-      carouselRef.current.scrollLeft += direction === 'left' ? -scrollAmount : scrollAmount;
-    }
-  };
+  const historyRefs = useRef<(HTMLElement | null)[]>([]);
+  const [visibleHistory, setVisibleHistory] = useState<number[]>([]);
 
    const heroSlides = [
     {
@@ -71,21 +56,6 @@ export const QuienesSomos = () => {
       overlay: "from-primary via-primary/80 to-transparent"
     }
   ];
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
-    }, 5000);
-    return () => clearInterval(interval);
-  }, [heroSlides.length]);
-
-  const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
-  };
-
-  const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + heroSlides.length) % heroSlides.length);
-  };
 
   // Persist cart to localStorage
   const updateCart = (newCart: CartItem[]) => {
@@ -137,6 +107,28 @@ export const QuienesSomos = () => {
     }
   };
 
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          const idxAttr = entry.target.getAttribute("data-history-idx");
+          const idx = idxAttr ? Number(idxAttr) : -1;
+          if (idx >= 0) {
+            setVisibleHistory((prev) => (prev.includes(idx) ? prev : [...prev, idx]));
+          }
+        });
+      },
+      { threshold: 0.2 }
+    );
+
+    historyRefs.current.forEach((node) => {
+      if (node) observer.observe(node);
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <div className="min-h-screen bg-background">
       <Header 
@@ -145,87 +137,31 @@ export const QuienesSomos = () => {
         onCartClick={() => setIsCartOpen(true)}
       />
 
-       {/* Hero Section con Carrusel */}
-       <header className="relative h-[70vh] overflow-hidden">
-         {/* Carrusel de imágenes de fondo */}
-         <div className="absolute inset-0">
-           {heroSlides.map((slide, index) => (
-             <div
-               key={index}
-               className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
-                 index === currentSlide ? 'opacity-100' : 'opacity-0'
-               }`}
-             >
-               <div 
-                 className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-                 style={{ backgroundImage: `url(${slide.image})` }}
-               />
-               {/* Efecto oscuro sutil */}
-               <div className="absolute inset-0 bg-black/30" />
-             </div>
-           ))}
+       {/* Hero Section - portada clásica */}
+       <header className="relative h-[68vh] min-h-[480px] overflow-hidden">
+         <div className="absolute inset-0 bg-cover bg-center bg-no-repeat" style={{ backgroundImage: `url(${heroSlides[0].image})` }} />
+         <div className="absolute inset-0 bg-black/35" />
+         <div className="relative z-10 h-full max-w-7xl mx-auto px-4 flex flex-col items-center justify-center text-center">
+           <div className="w-28 h-28 md:w-32 md:h-32 bg-white rounded-full p-1 mb-6 shadow-2xl animate-in fade-in zoom-in-95 duration-700">
+             <img src={logoPuntoPas} alt="Punto Pas Logo" className="w-full h-full object-cover rounded-full" />
+           </div>
+           <h1 className="text-4xl md:text-6xl font-black tracking-tight text-white animate-in fade-in slide-in-from-bottom-5 duration-700">{heroSlides[0].title}</h1>
+           <p className="mt-4 text-lg md:text-2xl text-white/90 max-w-3xl animate-in fade-in slide-in-from-bottom-5 duration-700">{heroSlides[0].subtitle}</p>
          </div>
-
-        {/* Contenido animado */}
-        <div className="relative z-10 h-full flex flex-col">
-          <div className="flex-1 flex flex-col items-center justify-center text-center px-4 pt-20">
-            <div className="w-32 h-32 bg-white rounded-full p-1 mb-6 shadow-2xl animate-fade-in">
-              <img 
-                src={logoPuntoPas} 
-                alt="Punto Pas Logo" 
-                className="w-full h-full object-cover rounded-full"
-              />
-            </div>
-            <h1 className="text-4xl md:text-6xl font-black mb-4 tracking-tight text-white animate-fade-in-up">
-              {heroSlides[currentSlide].title}
-            </h1>
-            <p className="text-xl md:text-2xl text-white/90 max-w-3xl animate-fade-in-up">
-              {heroSlides[currentSlide].subtitle}
-            </p>
-          </div>
-
-          {/* Navegación del carrusel - Solo mostrar si hay más de un slide */}
-          {heroSlides.length > 1 && (
-            <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex gap-4">
-              <button
-                onClick={prevSlide}
-                className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/30 transition-colors"
-              >
-                <ArrowLeft className="w-5 h-5" />
-              </button>
-              <div className="flex gap-2 items-center">
-                {heroSlides.map((_, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setCurrentSlide(index)}
-                    className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                      index === currentSlide ? 'w-8 bg-white' : 'w-2 bg-white/50'
-                    }`}
-                  />
-                ))}
-              </div>
-              <button
-                onClick={nextSlide}
-                className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/30 transition-colors"
-              >
-                <ArrowLeft className="w-5 h-5 rotate-180" />
-              </button>
-            </div>
-          )}
-        </div>
       </header>
 
         {/* Quiénes Somos, Misión y Visión - Cards */}
-        <section className="py-32 bg-[#ffbd2b] relative">
+        <section className="py-20 md:py-24 bg-[#ff0000] relative overflow-hidden">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_10%_10%,rgba(255,255,255,0.25),transparent_30%)]" />
           <div className="max-w-6xl mx-auto px-4">
             <div className="grid gap-6">
               {/* Quiénes Somos */}
-              <div className="bg-white border-2 border-border rounded-xl p-8 shadow-lg hover:shadow-xl transition-shadow">
+              <div className="bg-white/95 border border-white/80 rounded-2xl p-8 shadow-[0_20px_50px_-30px_rgba(0,0,0,0.45)] hover:-translate-y-1 transition-all duration-300">
                 <div className="mb-4">
-                   <h2 className="text-2xl md:text-3xl font-black" style={{fontFamily: "'Josefin Sans', sans-serif", color: '#ffbd2b'}}>
+                   <h2 className="text-2xl md:text-3xl font-black" style={{fontFamily: "'Josefin Sans', sans-serif", color: '#f82626'}}>
                      ¿Quiénés somos?
-                   </h2>
-                 </div>
+                    </h2>
+                  </div>
                  <p className="text-muted-foreground leading-relaxed text-justify">
                    En <strong className="text-foreground">Punto-Pas</strong> somos una empresa
                    dedicada a la comercialización de una amplia variedad de productos para el hogar,
@@ -243,9 +179,10 @@ export const QuienesSomos = () => {
               {/* Misión y Visión en grid */}
               <div className="grid md:grid-cols-2 gap-6">
                 {/* Misión */}
-                <div className="bg-white border-2 border-border rounded-xl p-8 shadow-lg hover:shadow-xl transition-shadow">
+                <div className="bg-white/95 border border-white/80 rounded-2xl p-8 shadow-[0_20px_50px_-30px_rgba(0,0,0,0.45)] hover:-translate-y-1 transition-all duration-300">
                   <div className="mb-4">
-                    <h2 className="text-left text-xl md:text-2xl font-bold" style={{fontFamily: "'Josefin Sans', sans-serif", color: '#FB0548'}}>
+                    <h2 className="text-left text-xl md:text-2xl font-bold flex items-center gap-2" style={{fontFamily: "'Josefin Sans', sans-serif", color: '#FB0548'}}>
+                      <Target className="w-5 h-5" />
                       Misión
                     </h2>
                   </div>
@@ -257,16 +194,17 @@ export const QuienesSomos = () => {
                 </div>
 
                 {/* Visión */}
-                <div className="bg-white border-2 border-border rounded-xl p-8 shadow-lg hover:shadow-xl transition-shadow">
+                <div className="bg-white/95 border border-white/80 rounded-2xl p-8 shadow-[0_20px_50px_-30px_rgba(0,0,0,0.45)] hover:-translate-y-1 transition-all duration-300">
                   <div className="mb-4">
-                    <h2 className="text-left text-xl md:text-2xl font-bold" style={{fontFamily: "'Josefin Sans', sans-serif", color: '#FB0548'}}>
+                    <h2 className="text-left text-xl md:text-2xl font-bold flex items-center gap-2" style={{fontFamily: "'Josefin Sans', sans-serif", color: '#FB0548'}}>
+                      <Sparkles className="w-5 h-5" />
                       Visión
                     </h2>
                   </div>
                   <p className="text-muted-foreground leading-relaxed text-justify">
                     Ser una empresa referente en la comercialización de productos para el hogar,
                     la construcción y el comercio en general, reconocida por su variedad,
-                    calidad y excelencia en el servicio, consolidándonos como una opción confiable
+                    calidad y excelencia en el servicio, consolidándonos como una empresa confiable
                     y preferida por nuestros clientes.
                   </p>
                 </div>
@@ -283,137 +221,108 @@ export const QuienesSomos = () => {
         </section>
 
         {/* Timeline - Historia */}
-        <section className="px-4 pb-20 bg-white">
-          <div className="max-w-5xl mx-auto">
-            <div className="text-left mb-16">
+        <section className="w-full pb-20 pt-6 bg-white">
+          <div className="w-full">
+            <div className="text-center mb-16 animate-in fade-in slide-in-from-bottom-5 duration-700">
               <span className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-semibold mb-4">
                 <Clock className="w-4 h-4" />
                 Nuestra Historia
               </span>
-              <h2 className="text-left text-3xl md:text-4xl font-bold text-[#FB0548] mt-4" style={{fontFamily: "'Josefin Sans', sans-serif"}}>
+              <h2 className="text-3xl md:text-5xl font-bold text-[#FB0548] mt-4" style={{fontFamily: "'Josefin Sans', sans-serif"}}>
                  25 Años de Trayectoria
               </h2>
-              <p className="text-muted-foreground max-w-2xl mt-2">
+              <p className="text-muted-foreground max-w-3xl mt-3 mx-auto text-base md:text-lg">
                 Un recorrido de esfuerzo, dedicación y compromiso con nuestros clientes
               </p>
             </div>
 
-            {/* Timeline Vertical */}
-            <div className="relative">
-              {/* Línea central vertical */}
-              <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-primary via-primary/50 to-transparent transform md:-translate-x-1/2" />
-
+            {/* Timeline Alternado con imagen/texto */}
+            <div className="space-y-0">
               {milestones.map((milestone, index) => (
-                <div
+                <article
                   key={milestone.year}
-                  className={`relative flex flex-col md:flex-row items-start md:items-center gap-6 mb-16 last:mb-0 ${
-                    index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'
+                  ref={(node) => {
+                    historyRefs.current[index] = node;
+                  }}
+                  data-history-idx={index}
+                  className={`relative overflow-hidden border-b border-slate-200 transition-all duration-700 ${
+                    visibleHistory.includes(index)
+                      ? "opacity-100 translate-y-0 scale-100"
+                      : `opacity-0 translate-y-10 scale-[0.985] ${index % 2 === 0 ? "md:-translate-x-10" : "md:translate-x-10"}`
                   }`}
                 >
-                  {/* Círculo con año */}
-                  <div className="absolute left-4 md:left-1/2 transform md:-translate-x-1/2 z-10">
-                    <div className="w-20 h-20 bg-primary rounded-full flex items-center justify-center shadow-xl shadow-primary/30 border-4 border-background">
-                      <span className="text-primary-foreground font-black text-sm text-center leading-tight">
+                  <div className="grid md:grid-cols-2 min-h-[64vh] md:min-h-[78vh]">
+                    <div className={`${index % 2 === 0 ? "md:order-1" : "md:order-2"} relative bg-slate-900`}>
+                      <img src={milestone.image} alt={milestone.title} className="w-full h-full object-contain transition-transform duration-1000 ease-out hover:scale-[1.02]" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent" />
+                      <div className="absolute top-4 left-4 md:top-6 md:left-6 bg-white/90 backdrop-blur-sm text-primary px-4 py-2 rounded-full text-base md:text-lg font-black tracking-wide">
                         {milestone.year}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Contenido - Izquierda */}
-                  <div className={`flex-1 pl-16 md:pl-0 ${index % 2 === 0 ? 'md:pr-24 md:text-right' : 'md:pl-24 md:text-left'}`}>
-                    <div className={`bg-card rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500 border border-border group ${index % 2 === 0 ? 'md:ml-auto' : 'md:mr-auto'} max-w-md`}>
-                      {/* Imagen */}
-                      <div className="aspect-[16/10] overflow-hidden relative">
-                        <img
-                          src={milestone.image}
-                          alt={milestone.title}
-                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                        <div className="absolute bottom-3 left-3 right-3">
-                          <h3 className="text-white font-bold text-lg drop-shadow-lg">{milestone.title}</h3>
-                        </div>
-                      </div>
-                      {/* Descripción */}
-                      <div className="p-5">
-                        <p className="text-muted-foreground text-sm leading-relaxed">
-                          {milestone.description}
-                        </p>
                       </div>
                     </div>
+                    <div className={`${index % 2 === 0 ? "md:order-2" : "md:order-1"} bg-[#0f172a] text-white p-6 md:p-10 flex flex-col justify-center`}>
+                      <p className="text-xs md:text-sm uppercase tracking-[0.22em] text-white/60 mb-4">Nuestra Historia</p>
+                      <h3 className="text-4xl md:text-6xl font-black leading-[0.92]">{milestone.title}</h3>
+                      <p className="mt-5 text-base md:text-xl text-white/85 leading-relaxed max-w-2xl">{milestone.description}</p>
+                    </div>
                   </div>
-
-                  {/* Espacio vacío para el otro lado */}
-                  <div className="hidden md:block flex-1" />
-                </div>
+                </article>
               ))}
             </div>
           </div>
         </section>
 
-      {/* Sección de Videos - Carrusel */}
-      <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-left text-2xl md:text-3xl font-bold text-[#FB0548] mb-10" style={{fontFamily: "'Josefin Sans', sans-serif"}}>
-            Nuestros Videos
-          </h2>
-          <p className="mt-2 text-sm text-gray-500">
-            Conoce más sobre Punto Pas en nuestras redes
-          </p>
-          
-          {/* Carrusel con scroll-snap */}
-          <div className="relative">
-            {/* Flecha izquierda */}
-            <button 
-              onClick={() => scroll('left')}
-              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-10 h-10 bg-[#FB0548] rounded-full shadow-md flex items-center justify-center hover:bg-[#d9043f] transition-colors"
-            >
-              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={4} d="M15 19l-7-7 7-7" />
-              </svg>
-            </button>
+        {/* Otros emprendimientos */}
+        <section className="px-4 py-16 bg-white border-t border-slate-100">
+          <div className="max-w-[96vw] mx-auto text-center animate-in fade-in slide-in-from-bottom-5 duration-700">
+            <span className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-semibold mb-4">
+              <Sparkles className="w-4 h-4" /> Ecosistema de marcas
+            </span>
+            <h2 className="text-3xl md:text-5xl font-black" style={{ fontFamily: "'Josefin Sans', sans-serif", color: "#ff0000" }}>
+              Otros Emprendimientos
+            </h2>
+            <p className="mt-3 text-sm md:text-base font-semibold text-slate-700">
+              Pulse en una de las imagenes para mas informacion.
+            </p>
+            <p className="text-slate-500 mt-3 max-w-2xl mx-auto">
+              Proyectos que complementan nuestra historia empresarial con identidad propia.
+            </p>
 
-            <div 
-              ref={carouselRef}
-              className="flex gap-6 overflow-x-auto snap-x snap-mandatory scrollbar-hide pb-4"
-              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-            >
-               {[
-                 { id: '7634170687552310536', cite: 'https://www.tiktok.com/@punto_pas/video/7634170687552310536?is_from_webapp=1&sender_device=pc&web_id=7627152226280244753' },
-                 { id: '7633990538231893256', cite: 'https://www.tiktok.com/@punto_pas/video/7633990538231893256?is_from_webapp=1&sender_device=pc&web_id=7627152226280244753' },
-                 { id: '7622439772660698376', cite: 'https://www.tiktok.com/@punto_pas/video/7622439772660698376?is_from_webapp=1&sender_device=pc&web_id=7627152226280244753' },
-                 { id: '7600147557926341895', cite: 'https://www.tiktok.com/@punto_pas/video/7600147557926341895?is_from_webapp=1&sender_device=pc&web_id=7627152226280244753' },
-                 { id: '7597913602628144395', cite: 'https://www.tiktok.com/@punto_pas/video/7597913602628144395?is_from_webapp=1&sender_device=pc&web_id=7627152226280244753' },
-               ].map((video, index) => (
-                <div 
-                  key={index} 
-                  className="flex-none w-full md:w-[400px] snap-center"
-                >
-                  <blockquote 
-                    className="tiktok-embed" 
-                    cite={video.cite}
-                    data-video-id={video.id}
-                  >
-                    <section>
-                      <a target="_blank" title="@punto_pas" href="https://www.tiktok.com/@punto_pas">@punto_pas</a>
-                    </section>
-                  </blockquote>
-                </div>
-              ))}
+            <div className="mt-10 grid grid-cols-1 gap-5 items-center">
+              {[
+                { image: "https://res.cloudinary.com/dbbkpdhze/image/upload/v1778108511/MADEDERA.png", href: "/emprendimientos/madedera" },
+                { image: "https://res.cloudinary.com/dbbkpdhze/image/upload/v1778108507/JARDIN_DE_LA_PAZ.png", href: "/emprendimientos/jardin-de-la-paz" },
+                { image: "https://res.cloudinary.com/dbbkpdhze/image/upload/v1778108503/Rincon_del_pac%C3%ADfico.png", href: "/emprendimientos/rincon-del-pacifico" },
+              ].map((item, index) => {
+                const card = (
+                  <div className="group relative overflow-hidden rounded-[28px] cursor-pointer" style={{ animationDelay: `${index * 100}ms` }}>
+                    <img
+                      src={item.image}
+                      alt={`Emprendimiento ${index + 1}`}
+                      className="w-full h-[240px] md:h-[360px] object-contain rounded-[28px] transition-transform duration-500 hover:scale-[1.02]"
+                      loading="lazy"
+                    />
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/25 transition-colors duration-300" />
+                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      <span className="px-4 py-2 rounded-full bg-white/90 text-slate-900 text-sm md:text-base font-bold">
+                        Pulse para mas
+                      </span>
+                    </div>
+                  </div>
+                );
+
+                if (item.href) {
+                  return (
+                    <a key={item.image} href={item.href} target="_blank" rel="noopener noreferrer" className="block">
+                      {card}
+                    </a>
+                  );
+                }
+
+                return <div key={item.image}>{card}</div>;
+              })}
             </div>
-
-            {/* Flecha derecha */}
-            <button 
-              onClick={() => scroll('right')}
-              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-10 h-10 bg-[#FB0548] rounded-full shadow-md flex items-center justify-center hover:bg-[#d9043f] transition-colors"
-            >
-              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={4} d="M9 5l7 7-7 7" />
-              </svg>
-            </button>
           </div>
-        </div>
-      </section>
+        </section>
 
        {/* Footer CTA */}
        <section className="px-4 py-12 bg-slate-950 text-center">

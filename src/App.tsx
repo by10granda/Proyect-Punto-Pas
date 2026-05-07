@@ -15,6 +15,9 @@ import Sucursales from "./pages/Sucursales";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import PoliciesAndReturns from "./pages/PoliciesAndReturns";
 import OrderTracking from "./pages/OrderTracking";
+import EmprendimientoMadedera from "./pages/EmprendimientoMadedera";
+import EmprendimientoJardinPaz from "./pages/EmprendimientoJardinPaz";
+import EmprendimientoRinconPacifico from "./pages/EmprendimientoRinconPacifico";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -38,6 +41,9 @@ const App = () => (
             <Route path="/privacidad" element={<PrivacyPolicy />} />
             <Route path="/politicas" element={<PoliciesAndReturns />} />
             <Route path="/seguimiento" element={<OrderTracking />} />
+            <Route path="/emprendimientos/madedera" element={<EmprendimientoMadedera />} />
+            <Route path="/emprendimientos/jardin-de-la-paz" element={<EmprendimientoJardinPaz />} />
+            <Route path="/emprendimientos/rincon-del-pacifico" element={<EmprendimientoRinconPacifico />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
