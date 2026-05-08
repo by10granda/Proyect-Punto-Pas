@@ -173,8 +173,8 @@ export const CheckoutPayment = () => {
           throw new Error("SDK Payphone no inicializado.");
         }
 
-        const normalizedStoreId = Number(payphoneStoreId);
-        if (!Number.isFinite(normalizedStoreId) || normalizedStoreId <= 0) {
+        const normalizedStoreId = String(payphoneStoreId || "").trim();
+        if (!normalizedStoreId) {
           throw new Error("StoreID de Payphone invalido.");
         }
 
