@@ -195,9 +195,7 @@ export const CheckoutPayment = () => {
           timeZone: -5,
         };
 
-        const cleanPhone = (customer.telefono || "").replace(/\D/g, "");
         const cleanDocument = (customer.numIdentificacion || "").replace(/\s+/g, "").trim();
-        if (cleanPhone.length >= 8) ppbConfig.phoneNumber = cleanPhone;
         if (customer.email?.trim()) ppbConfig.email = customer.email.trim();
         if (cleanDocument) {
           ppbConfig.documentId = cleanDocument;
