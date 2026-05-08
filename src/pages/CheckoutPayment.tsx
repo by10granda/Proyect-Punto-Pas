@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, CreditCard, ShoppingBag, Shield } from "lucide-react";
 import { toast } from "sonner";
@@ -36,12 +36,20 @@ export const CheckoutPayment = () => {
   const [radioBubbleId, setRadioBubbleId] = useState<string | null>(null);
   const payphoneContainerRef = useRef<HTMLDivElement | null>(null);
 
-  const cartData = localStorage.getItem("puntopas_cart");
-  const cartItems = cartData ? JSON.parse(cartData) : [];
-  const customerRaw = sessionStorage.getItem(STORAGE_KEY);
-  const customer = customerRaw ? (JSON.parse(customerRaw) as CheckoutCustomerData) : null;
+  const cartItems = useMemo(() => {
+    const cartData = localStorage.getItem("puntopas_cart");
+    return cartData ? JSON.parse(cartData) : [];
+  }, []);
 
-  const subtotal = cartItems.reduce((sum: number, item: { price: number; quantity: number }) => sum + (item.price * item.quantity), 0);
+  const customer = useMemo(() => {
+    const customerRaw = sessionStorage.getItem(STORAGE_KEY);
+    return customerRaw ? (JSON.parse(customerRaw) as CheckoutCustomerData) : null;
+  }, []);
+
+  const subtotal = useMemo(
+    () => cartItems.reduce((sum: number, item: { price: number; quantity: number }) => sum + (item.price * item.quantity), 0),
+    [cartItems],
+  );
   const total = subtotal;
 
   const formatPrice = (price: number) =>
@@ -74,7 +82,6 @@ export const CheckoutPayment = () => {
 
       const script = document.createElement("script");
       script.src = PAYPHONE_SCRIPT;
-      script.type = "module";
       script.onload = () => resolve();
       script.onerror = () => reject(new Error("No se pudo cargar SDK de Payphone"));
       document.body.appendChild(script);
