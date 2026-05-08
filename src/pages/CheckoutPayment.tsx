@@ -173,7 +173,12 @@ export const CheckoutPayment = () => {
           throw new Error("SDK Payphone no inicializado.");
         }
 
-        const ppb = new window.PPaymentButtonBox({
+        const normalizedStoreId = Number(payphoneStoreId);
+        if (!Number.isFinite(normalizedStoreId) || normalizedStoreId <= 0) {
+          throw new Error("StoreID de Payphone invalido.");
+        }
+
+        const ppbConfig: Record<string, unknown> = {
           token: payphoneToken,
           clientTransactionId,
           amount,
@@ -183,16 +188,23 @@ export const CheckoutPayment = () => {
           service: 0,
           tip: 0,
           currency: "USD",
-          storeId: payphoneStoreId,
+          storeId: normalizedStoreId,
           reference: `Pago Punto Pas ${clientTransactionId}`.slice(0, 100),
           lang: "es",
           defaultMethod: "card",
           timeZone: -5,
-          phoneNumber: customer.telefono || undefined,
-          email: customer.email || undefined,
-          documentId: customer.numIdentificacion || undefined,
-          identificationType: getPayphoneIdentificationType(customer.tipoIdentificacion),
-        });
+        };
+
+        const cleanPhone = (customer.telefono || "").replace(/\D/g, "");
+        const cleanDocument = (customer.numIdentificacion || "").replace(/\s+/g, "").trim();
+        if (cleanPhone.length >= 8) ppbConfig.phoneNumber = cleanPhone;
+        if (customer.email?.trim()) ppbConfig.email = customer.email.trim();
+        if (cleanDocument) {
+          ppbConfig.documentId = cleanDocument;
+          ppbConfig.identificationType = getPayphoneIdentificationType(customer.tipoIdentificacion);
+        }
+
+        const ppb = new window.PPaymentButtonBox(ppbConfig);
 
         ppb.render("pp-button");
         setIsPayphoneReady(true);
