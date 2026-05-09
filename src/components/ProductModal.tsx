@@ -1,5 +1,5 @@
-﻿import { useState, useEffect, useRef } from "react";
-import { X, Minus, Plus, ShoppingCart, Check } from "lucide-react";
+import { useEffect, useState } from "react";
+import { X, Minus, Plus, ShoppingCart, Check, ChevronLeft, ChevronRight } from "lucide-react";
 import { Product } from "@/data/products";
 
 interface ProductModalProps {
@@ -7,287 +7,212 @@ interface ProductModalProps {
   isOpen: boolean;
   onClose: () => void;
   onAddToCart: (product: Product, quantity: number) => void;
+  relatedProducts?: Product[];
+  onProductSelect?: (product: Product) => void;
 }
 
-export const ProductModal = ({ product, isOpen, onClose, onAddToCart }: ProductModalProps) => {
+const paymentBadges = [
+  "https://res.cloudinary.com/dbbkpdhze/image/upload/v1778348731/TARJETA1.png",
+  "https://res.cloudinary.com/dbbkpdhze/image/upload/v1778348732/TARJETA2.png",
+  "https://res.cloudinary.com/dbbkpdhze/image/upload/v1778348732/TARJETA3.png",
+  "https://res.cloudinary.com/dbbkpdhze/image/upload/v1778348732/TARJETA4.png",
+  "https://res.cloudinary.com/dbbkpdhze/image/upload/v1778348732/TARJETA5.png",
+];
+
+export const ProductModal = ({ product, isOpen, onClose, onAddToCart, relatedProducts = [], onProductSelect }: ProductModalProps) => {
   const [quantity, setQuantity] = useState(1);
   const [addedToCart, setAddedToCart] = useState(false);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
-  const [errorImages, setErrorImages] = useState<Set<number>>(new Set());
-  const [isZooming, setIsZooming] = useState(false);
-  const [zoomPosition, setZoomPosition] = useState({ x: 50, y: 50 });
-  const [viewingCount, setViewingCount] = useState(() => Math.floor(Math.random() * 10) + 1);
-const lastViewingCount = useRef(viewingCount);
-
-  useEffect(() => {
-    if (!isOpen || !product) return;
-    const interval = setInterval(() => {
-      setViewingCount(prev => {
-        let newVal;
-        do {
-          const change = Math.random() > 0.5 ? 1 : -1;
-          newVal = prev + change;
-          if (newVal < 1) newVal = 1;
-          if (newVal > 10) newVal = 10;
-        } while (newVal === lastViewingCount.current);
-        lastViewingCount.current = newVal;
-        return newVal;
-      });
-    }, 8000);
-    return () => clearInterval(interval);
-  }, [isOpen, product]);
-  const imageContainerRef = useRef<HTMLDivElement>(null);
+  const [carouselStart, setCarouselStart] = useState(0);
 
   useEffect(() => {
     if (isOpen && product) {
       setQuantity(1);
       setAddedToCart(false);
       setSelectedImageIndex(0);
-      setErrorImages(new Set());
-      setIsZooming(false);
-      document.body.style.overflow = 'hidden';
+      setCarouselStart(0);
+      document.body.style.overflow = "hidden";
     }
     return () => {
-      document.body.style.overflow = '';
+      document.body.style.overflow = "";
     };
   }, [isOpen, product]);
 
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
+      if (e.key === "Escape") onClose();
     };
-    if (isOpen) {
-      document.addEventListener('keydown', handleEsc);
-    }
-    return () => document.removeEventListener('keydown', handleEsc);
+    if (isOpen) document.addEventListener("keydown", handleEsc);
+    return () => document.removeEventListener("keydown", handleEsc);
   }, [isOpen, onClose]);
 
   if (!isOpen || !product) return null;
 
-  const rawImages = product.images && product.images.length > 0 ? product.images : [product.image];
-  const productImages = rawImages.slice(0, 4);
-  
-  const activeImages = productImages.filter((_, idx) => !errorImages.has(idx));
-  const validImageCount = activeImages.length;
-  const showThumbnails = validImageCount > 1;
-  
-  const hasDiscount = product.pvpPrice && product.puntoPasPrice && product.pvpPrice > product.puntoPasPrice;
-  const discountPercent = hasDiscount ? Math.round((1 - product.puntoPasPrice! / product.pvpPrice!) * 100) : 0;
+  const productImages = (product.images && product.images.length > 0 ? product.images : [product.image]).slice(0, 8);
   const displayPrice = product.puntoPasPrice || product.pvpPrice || product.price;
+  const related = relatedProducts.filter((p) => p.id !== product.id).slice(0, 12);
+  const visibleRelated = related.slice(carouselStart, carouselStart + 5);
 
   const handleAddToCart = () => {
     if (product.stock <= 0 || addedToCart) return;
     onAddToCart(product, quantity);
     setAddedToCart(true);
-    setTimeout(() => onClose(), 1500);
   };
 
-  const handleImageError = (idx: number) => {
-    setErrorImages(prev => {
-      const newSet = new Set(prev);
-      newSet.add(idx);
-      return newSet;
-    });
-  };
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!imageContainerRef.current || !isZooming) return;
-    const rect = imageContainerRef.current.getBoundingClientRect();
-    const x = ((e.clientX - rect.left) / rect.width) * 100;
-    const y = ((e.clientY - rect.top) / rect.height) * 100;
-    setZoomPosition({ 
-      x: Math.max(0, Math.min(100, x)), 
-      y: Math.max(0, Math.min(100, y)) 
-    });
-  };
-
-  const handleSelectImage = (index: number) => {
-    setSelectedImageIndex(index);
-  };
-
-  const getDisplayImage = () => {
-    if (selectedImageIndex < activeImages.length) {
-      return activeImages[selectedImageIndex];
+  const handleManualQuantity = (value: string) => {
+    const parsed = Number.parseInt(value, 10);
+    if (Number.isNaN(parsed)) {
+      setQuantity(1);
+      return;
     }
-    return activeImages[0] || product.image;
+    setQuantity(Math.max(1, Math.min(parsed, Math.max(1, product.stock))));
   };
+
+  const canMoveLeft = carouselStart > 0;
+  const canMoveRight = carouselStart + 5 < related.length;
 
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-2 lg:p-4">
-      <div className="absolute inset-0 bg-black/60" onClick={onClose} />
-      
-      <div className="relative w-full max-w-5xl bg-white rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200 max-h-[95vh] overflow-y-auto">
-        <button
-          onClick={onClose}
-          className="absolute top-2 right-2 z-50 w-8 h-8 lg:w-10 lg:h-10 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center transition-colors"
-        >
-          <X className="w-4 h-4 lg:w-5 lg:h-5 text-gray-600" />
-        </button>
-
-        <div className="flex flex-col lg:flex-row">
-          {showThumbnails && (
-            <div className="w-full lg:w-20 p-2 lg:p-4 flex lg:flex-col gap-2 overflow-x-auto lg:overflow-y-auto bg-gray-50">
-              {productImages.map((img, idx) => {
-                if (errorImages.has(idx)) return null;
-                const isActive = activeImages[idx] === activeImages[selectedImageIndex];
-                return (
-                  <button
-                    key={idx}
-                    onClick={() => handleSelectImage(idx)}
-                    className={`flex-shrink-0 w-12 h-12 lg:w-full lg:h-20 rounded-lg overflow-hidden border-2 transition-all cursor-pointer ${
-                      isActive 
-                        ? 'border-red-500 ring-2 ring-red-200' 
-                        : 'border-gray-200 hover:border-gray-300'
-                    }`}
-                  >
-                    <img 
-                      src={img} 
-                      alt={`${product.name} ${idx + 1}`} 
-                      className="w-full h-full object-cover"
-                      onError={() => handleImageError(idx)}
-                    />
-                  </button>
-                );
-              })}
-            </div>
-          )}
-
-          <div 
-            ref={imageContainerRef}
-            className="w-full lg:flex-1 bg-gray-50 p-2 lg:p-8 flex items-center justify-center overflow-hidden min-h-[250px] lg:min-h-[400px]"
-            onMouseEnter={() => setIsZooming(true)}
-            onMouseLeave={() => setIsZooming(false)}
-            onMouseMove={handleMouseMove}
-          >
-            <div className="w-full max-w-md overflow-hidden">
-              <img
-                src={getDisplayImage()}
-                alt={product.name}
-                className="w-full h-auto object-contain transition-transform duration-100"
-                style={{
-                  transform: isZooming ? `scale(2.5) translate(${(50 - zoomPosition.x) * 0.3}%, ${(50 - zoomPosition.y) * 0.3}%)` : 'scale(1)',
-                  transformOrigin: `${zoomPosition.x}% ${zoomPosition.y}%`,
-                  cursor: isZooming ? 'zoom-out' : 'zoom-in'
-                }}
-                onError={(e) => {
-                  const img = e.target as HTMLImageElement;
-                  if (img.src !== product.image) {
-                    img.src = product.image;
-                  }
-                }}
-              />
-            </div>
+    <div className="fixed inset-0 z-[9999] bg-black/55 overflow-y-auto">
+      <div className="min-h-full p-2 md:p-5">
+        <div className="mx-auto w-full max-w-[1500px] rounded-2xl bg-white shadow-2xl">
+          <div className="sticky top-0 z-20 flex items-center justify-between border-b bg-white px-4 py-3 md:px-6">
+            <p className="text-sm font-semibold text-slate-500">Vista del producto</p>
+            <button onClick={onClose} className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 hover:bg-slate-200">
+              <X className="h-5 w-5 text-slate-700" />
+            </button>
           </div>
 
-          <div className="w-full lg:w-[45%] p-4 lg:p-8 flex flex-col">
-            <div className="flex items-center gap-2 mb-2">
-              <span className="text-xs uppercase tracking-wider text-gray-500">
-                {product.brand || 'General'}
-              </span>
-              <span className="text-xs text-gray-400">|</span>
-              <span className="text-xs text-gray-500">CODIGO: {product.code}</span>
-            </div>
-            
-            <h2 className="text-lg lg:text-xl font-semibold text-gray-900 mb-3 lg:mb-4 leading-snug">
-              {product.name}
-            </h2>
-
-            <div className="mb-4">
-              <div className="flex items-baseline gap-3">
-                <span className="text-2xl font-bold" style={{ color: '#FA003F' }}>
-                  ${displayPrice.toFixed(2)}
-                </span>
-                {hasDiscount && (
-                  <span className="text-sm text-gray-400 line-through">
-                    ${product.pvpPrice?.toFixed(2)}
-                  </span>
-                )}
-              </div>
-              {hasDiscount && (
-                <span 
-                  className="inline-block mt-2 text-xs font-semibold px-2 py-1 rounded-full"
-                  style={{ backgroundColor: '#FA003F', color: 'white' }}
+          <div className="grid grid-cols-1 gap-5 p-4 md:p-6 xl:grid-cols-[90px_1.5fr_1fr_360px]">
+            <div className="order-2 xl:order-1 flex xl:flex-col gap-2 overflow-x-auto xl:overflow-visible">
+              {productImages.map((img, idx) => (
+                <button
+                  key={`${img}-${idx}`}
+                  onClick={() => setSelectedImageIndex(idx)}
+                  className={`h-16 w-16 shrink-0 overflow-hidden rounded-lg border-2 ${selectedImageIndex === idx ? "border-[#FA003F]" : "border-slate-200"}`}
                 >
-                  -{discountPercent}%
-                </span>
-              )}
+                  <img src={img} alt={`${product.name} ${idx + 1}`} className="h-full w-full object-cover" />
+                </button>
+              ))}
             </div>
 
-              <div className="mb-6">
-                <span className="text-sm text-gray-600 mb-2 block">
-                  {product.stock === 0 ? (
-                    <span className="text-red-600 font-medium">Sin stock</span>
-                  ) : (
-                    <span className="text-green-600 font-medium">{product.stock} unidades disponibles</span>
-                  )}
-                </span>
-                <div className="mt-3">
-                  <span className="text-sm font-bold text-blue-700">
-                    {viewingCount} personas estan viendo este producto ahora mismo
-                  </span>
+            <div className="order-1 xl:order-2 rounded-xl border bg-slate-50 p-4">
+              <img src={productImages[selectedImageIndex]} alt={product.name} className="mx-auto h-[300px] w-full object-contain md:h-[520px]" />
+            </div>
+
+            <div className="order-3 space-y-4">
+              <p className="text-xs uppercase tracking-wide text-slate-500">{product.category} / {product.type}</p>
+              <h2 className="text-3xl font-extrabold leading-tight text-slate-900">{product.name}</h2>
+              <div className="space-y-1 text-sm text-slate-600">
+                <p><span className="font-semibold text-slate-800">Codigo:</span> {product.code}</p>
+                <p><span className="font-semibold text-slate-800">Marca:</span> {product.brand || "Sin marca"}</p>
+              </div>
+
+              <div>
+                <p className="text-sm font-semibold text-slate-600">Precio actual</p>
+                <p className="text-4xl font-black text-[#FA003F]">${displayPrice.toFixed(2)}</p>
+              </div>
+
+              <div>
+                <p className="mb-2 text-sm font-semibold text-slate-700">Modos de pago</p>
+                <div className="flex flex-wrap items-center gap-2">
+                  {paymentBadges.map((badge) => (
+                    <img key={badge} src={badge} alt="Metodo de pago" className="h-10 w-auto rounded-md border border-slate-200 bg-white p-1" />
+                  ))}
                 </div>
               </div>
 
-            <div className="mb-6">
-              <span className="text-sm font-medium text-gray-700 mb-2 block">Cantidad</span>
-              <div className="flex items-center gap-3">
+              <div>
+                <p className="mb-2 text-sm font-semibold text-slate-700">Cantidad</p>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setQuantity((prev) => Math.max(1, prev - 1))}
+                    disabled={quantity <= 1}
+                    className="flex h-10 w-10 items-center justify-center rounded-lg border bg-white disabled:opacity-40"
+                  >
+                    <Minus className="h-4 w-4" />
+                  </button>
+                  <input
+                    type="number"
+                    min={1}
+                    max={Math.max(1, product.stock)}
+                    value={quantity}
+                    onChange={(e) => handleManualQuantity(e.target.value)}
+                    className="h-10 w-20 rounded-lg border text-center font-semibold"
+                  />
+                  <button
+                    onClick={() => setQuantity((prev) => Math.min(Math.max(1, product.stock), prev + 1))}
+                    disabled={quantity >= Math.max(1, product.stock)}
+                    className="flex h-10 w-10 items-center justify-center rounded-lg border bg-white disabled:opacity-40"
+                  >
+                    <Plus className="h-4 w-4" />
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <aside className="order-4 rounded-xl border border-slate-200 p-4">
+              <div className="grid grid-cols-3 overflow-hidden rounded-lg border text-sm font-semibold">
+                <div className="bg-emerald-50 px-2 py-2 text-center text-emerald-700">Efectivo / Transferencia</div>
+                <div className="bg-slate-100 px-2 py-2 text-center text-slate-500">T. Credito</div>
+                <div className="bg-slate-100 px-2 py-2 text-center text-slate-500">Credito Directo</div>
+              </div>
+
+              <div className="mt-4 rounded-lg border bg-slate-50 p-3">
+                <p className="text-xs text-slate-500">Precio</p>
+                <p className="text-3xl font-black text-[#FA003F]">${displayPrice.toFixed(2)}</p>
+                <p className="mt-1 text-xs text-slate-400">Precio incluye IVA</p>
+              </div>
+
+              <button
+                onClick={handleAddToCart}
+                disabled={product.stock <= 0 || addedToCart}
+                className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-[#FA003F] py-3 font-bold text-white disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {addedToCart ? <Check className="h-5 w-5" /> : <ShoppingCart className="h-5 w-5" />}
+                {addedToCart ? "Agregado" : product.stock <= 0 ? "Sin stock" : "Agregar al carrito"}
+              </button>
+            </aside>
+          </div>
+
+          <div className="border-t px-4 py-5 md:px-6 md:py-6">
+            <div className="mb-3 flex items-center justify-between">
+              <h3 className="text-xl font-bold text-slate-900">Productos relacionados</h3>
+              <div className="flex gap-2">
                 <button
-                  onClick={() => setQuantity(q => Math.max(1, q - 1))}
-                  disabled={quantity <= 1}
-                  className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center font-bold disabled:opacity-40"
+                  onClick={() => canMoveLeft && setCarouselStart((prev) => Math.max(0, prev - 1))}
+                  disabled={!canMoveLeft}
+                  className="flex h-9 w-9 items-center justify-center rounded-full border bg-white disabled:opacity-40"
                 >
-                  <Minus className="w-4 h-4" />
+                  <ChevronLeft className="h-4 w-4" />
                 </button>
-                <input
-                  type="number"
-                  min={1}
-                  max={product.stock}
-                  value={quantity}
-                  onChange={(e) => {
-                    const val = parseInt(e.target.value) || 1;
-                    setQuantity(Math.max(1, Math.min(val, product.stock)));
-                  }}
-                  className="w-16 h-10 rounded-lg text-center font-medium border"
-                />
                 <button
-                  onClick={() => setQuantity(q => Math.min(product.stock, q + 1))}
-                  disabled={quantity >= product.stock}
-                  className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center font-bold disabled:opacity-40"
+                  onClick={() => canMoveRight && setCarouselStart((prev) => Math.min(related.length - 5, prev + 1))}
+                  disabled={!canMoveRight}
+                  className="flex h-9 w-9 items-center justify-center rounded-full border bg-white disabled:opacity-40"
                 >
-                  <Plus className="w-4 h-4" />
+                  <ChevronRight className="h-4 w-4" />
                 </button>
               </div>
             </div>
 
-            <div className="mt-auto">
-              <div className="flex items-center justify-between mb-3 lg:mb-2 text-base lg:text-lg font-semibold text-gray-700">
-                <span>Total</span>
-                <span className="text-2xl lg:text-3xl font-bold" style={{ color: '#FA003F' }}>
-                  ${(displayPrice * quantity).toFixed(2)}
-                </span>
-              </div>
-              
-              <button
-                onClick={handleAddToCart}
-                disabled={product.stock === 0 || addedToCart}
-                className="w-full py-3 rounded-xl font-semibold transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-                style={{ 
-                  backgroundColor: addedToCart ? '#10B981' : '#FA003F', 
-                  color: 'white' 
-                }}
-              >
-                {addedToCart ? (
-                  <span className="flex items-center justify-center gap-2">
-                    <Check className="w-5 h-5" />
-                    Agregado
-                  </span>
-                ) : (
-                  <span className="flex items-center justify-center gap-2">
-                    <ShoppingCart className="w-5 h-5" />
-                    {product.stock === 0 ? 'Sin stock' : 'Agregar al carrito'}
-                  </span>
-                )}
-              </button>
+            <div className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-5">
+              {visibleRelated.map((item) => {
+                const itemPrice = item.puntoPasPrice || item.pvpPrice || item.price;
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => onProductSelect?.(item)}
+                    className="rounded-xl border border-slate-200 p-2 text-left transition hover:-translate-y-0.5 hover:border-[#FA003F]/60 hover:shadow-md"
+                  >
+                    <div className="mb-2 rounded-lg bg-slate-50 p-2">
+                      <img src={item.image} alt={item.name} className="h-32 w-full object-contain" />
+                    </div>
+                    <p className="line-clamp-2 text-sm font-semibold text-slate-800">{item.name}</p>
+                    <p className="mt-1 text-xs text-slate-500">Cod. {item.code}</p>
+                    <p className="mt-1 text-lg font-black text-[#FA003F]">${itemPrice.toFixed(2)}</p>
+                  </button>
+                );
+              })}
             </div>
           </div>
         </div>

@@ -284,8 +284,7 @@ const Index = () => {
   };
 
   const handleProductClick = (product: Product) => {
-    setSelectedProduct(product);
-    setIsProductModalOpen(true);
+    navigate(`/product/${product.id}`);
   };
 
   const handleSearch = (query: string) => {
@@ -433,8 +432,7 @@ const Index = () => {
                   const product = allProducts.find(p => p.code === code);
                   console.log('Product found:', product?.name, 'code:', product?.code);
                   if (product) {
-                    setSelectedProduct(product);
-                    setIsProductModalOpen(true);
+                    navigate(`/product/${product.id}`);
                   }
                 }}
                 onCategoryClick={(category) => {
@@ -666,8 +664,7 @@ const Index = () => {
                   const sourceProducts = allProducts;
                   const featuredProduct = sourceProducts.find((p) => p.code === "00001528");
                   if (featuredProduct) {
-                    setSelectedProduct(featuredProduct);
-                    setIsProductModalOpen(true);
+                    navigate(`/product/${featuredProduct.id}`);
                   }
                 }}
                 onProductClick={handleProductClick}
@@ -692,8 +689,7 @@ const Index = () => {
                   setWeeklyDealsCategory(category);
                 }}
                  onProductClick={(product) => {
-                   setSelectedProduct(product);
-                   setIsProductModalOpen(true);
+                   navigate(`/product/${product.id}`);
                  }}
               />
               </div>
@@ -763,6 +759,8 @@ const Index = () => {
                 isOpen={isProductModalOpen}
                 onClose={() => setIsProductModalOpen(false)}
                 onAddToCart={handleAddToCart}
+                relatedProducts={allProducts.filter((p) => selectedProduct && p.id !== selectedProduct.id && (p.category === selectedProduct.category || p.type === selectedProduct.type))}
+                onProductSelect={(product) => setSelectedProduct(product)}
               />
 
       <CartDrawer

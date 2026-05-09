@@ -7,6 +7,14 @@ interface FooterProps {
 }
 
 export const Footer = ({ onCartClick }: FooterProps) => {
+  const paymentBadges = [
+    "https://res.cloudinary.com/dbbkpdhze/image/upload/v1778348731/TARJETA1.png",
+    "https://res.cloudinary.com/dbbkpdhze/image/upload/v1778348732/TARJETA2.png",
+    "https://res.cloudinary.com/dbbkpdhze/image/upload/v1778348732/TARJETA3.png",
+    "https://res.cloudinary.com/dbbkpdhze/image/upload/v1778348732/TARJETA4.png",
+    "https://res.cloudinary.com/dbbkpdhze/image/upload/v1778348732/TARJETA5.png",
+  ];
+
   return (
     <footer id="contacto" className="bg-primary text-white">
       <div className="max-w-7xl mx-auto px-4 py-12">
@@ -208,6 +216,17 @@ export const Footer = ({ onCartClick }: FooterProps) => {
       </div>
       
       {/* Bottom bar */}
+      <div className="border-t border-white/10 bg-white/5">
+        <div className="max-w-7xl mx-auto px-4 py-5">
+          <p className="mb-3 text-center text-sm font-semibold text-white">Tipos de pago</p>
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            {paymentBadges.map((badge) => (
+              <img key={badge} src={badge} alt="Tipo de pago" className="h-14 w-auto rounded-md border border-white/20 bg-white p-1.5" />
+            ))}
+          </div>
+        </div>
+      </div>
+
       <div className="border-t border-white/10">
         <div className="max-w-7xl mx-auto px-4 py-5">
           <p className="text-sm text-white/50 text-center">
