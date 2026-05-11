@@ -107,21 +107,28 @@ const Index = () => {
     if (query) {
       // Restore search query from URL
       const decodedQuery = decodeURIComponent(query);
+      const normalizedQuery = decodedQuery.trim();
       if (decodedQuery !== searchQuery) {
         setSearchQuery(decodedQuery);
       }
-      setMainFilter({ mode: "search", value: decodedQuery });
+      if (normalizedQuery.length >= 2) {
+        setMainFilter({ mode: "search", value: normalizedQuery });
+      } else {
+        setMainFilter({ mode: "none", value: "all" });
+      }
       setActiveTab("home");
       setSelectedCategory("all");
       setSelectedType("all");
       setSelectedBrand("all");
       setOffersCategory("all");
-      setTimeout(() => {
-        const productsSection = document.getElementById("productos");
-        if (productsSection) {
-          productsSection.scrollIntoView({ behavior: "smooth", block: "start" });
-        }
-      }, 120);
+      if (normalizedQuery.length >= 2) {
+        setTimeout(() => {
+          const productsSection = document.getElementById("productos");
+          if (productsSection) {
+            productsSection.scrollIntoView({ behavior: "smooth", block: "start" });
+          }
+        }, 120);
+      }
     } else {
       // No search query in URL = user pressed back button
       if (searchQuery) {
