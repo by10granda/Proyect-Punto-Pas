@@ -444,6 +444,38 @@ const Index = () => {
         />
       {activeTab === "home" && !searchQuery && (
         <>
+          <section className="bg-white pt-3 pb-2">
+            <div className="max-w-[99vw] mx-auto px-2">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-3">
+                <div className="overflow-hidden rounded-[20px] border border-slate-200 bg-black">
+                  <video
+                    src="https://res.cloudinary.com/dbbkpdhze/video/upload/v1778516888/PUBLICIDAD_PAGOS.mp4"
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    className="w-full h-[82px] md:h-[95px] object-cover"
+                  />
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => navigate("/quienes-somos#otros-emprendimientos")}
+                  className="overflow-hidden rounded-[20px] border border-slate-200 bg-black text-left"
+                >
+                  <video
+                    src="https://res.cloudinary.com/dbbkpdhze/video/upload/v1778516886/PUBLICIDAD_OTROS_NEGOCIOS.mp4"
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    className="w-full h-[82px] md:h-[95px] object-cover"
+                  />
+                </button>
+              </div>
+            </div>
+          </section>
+
           <div className="-mt-1">
               <HeroCarousel 
                 onProductClick={(code) => {

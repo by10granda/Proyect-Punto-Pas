@@ -9,7 +9,7 @@ import {
   products,
 } from "@/data/products";
 import { toast } from "sonner";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const milestones = [
   {
@@ -40,6 +40,7 @@ const milestones = [
 
 export const QuienesSomos = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [cart, setCart] = useState<CartItem[]>(() => {
     const saved = localStorage.getItem("puntopas_cart");
     return saved ? JSON.parse(saved) : [];
@@ -47,6 +48,17 @@ export const QuienesSomos = () => {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const historyRefs = useRef<(HTMLElement | null)[]>([]);
   const [visibleHistory, setVisibleHistory] = useState<number[]>([]);
+
+  useEffect(() => {
+    if (location.hash === "#otros-emprendimientos") {
+      const section = document.getElementById("otros-emprendimientos");
+      if (section) {
+        setTimeout(() => {
+          section.scrollIntoView({ behavior: "smooth", block: "start" });
+        }, 120);
+      }
+    }
+  }, [location.hash]);
 
    const heroSlides = [
     {
@@ -272,7 +284,7 @@ export const QuienesSomos = () => {
         </section>
 
         {/* Otros emprendimientos */}
-        <section className="px-4 py-16 bg-white border-t border-slate-100">
+        <section id="otros-emprendimientos" className="px-4 py-16 bg-white border-t border-slate-100">
           <div className="max-w-[96vw] mx-auto text-center animate-in fade-in slide-in-from-bottom-5 duration-700">
             <span className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-semibold mb-4">
               <Sparkles className="w-4 h-4" /> Ecosistema de marcas

@@ -138,6 +138,8 @@ export const ProductGrid = ({ products, onAddToCart, onProductClick, title }: {
   const totalPages = Math.ceil(products.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const visibleProducts = products.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  const rangeStart = startIndex + 1;
+  const rangeEnd = startIndex + visibleProducts.length;
 
   if (products.length === 0) {
     return (
@@ -204,44 +206,49 @@ export const ProductGrid = ({ products, onAddToCart, onProductClick, title }: {
       </div>
 
       {totalPages > 1 && (
-        <div className="flex items-center justify-center gap-1.5 sm:gap-2 mt-8 overflow-x-auto pb-1">
-          <button
-            onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-            disabled={currentPage === 1}
-            className="w-8 h-8 rounded-lg flex items-center justify-center text-sm font-medium disabled:opacity-30 disabled:cursor-not-allowed hover:bg-gray-100 transition-colors"
-          >
-            ‹
-          </button>
-          
-          {getPageNumbers().map((page, idx) => (
-            typeof page === 'number' ? (
-              <button
-                key={idx}
-                onClick={() => setCurrentPage(page)}
-                className={`w-8 h-8 rounded-lg flex items-center justify-center text-sm font-medium transition-colors ${
-                  currentPage === page ? 'text-white' : 'hover:bg-gray-100'
-                }`}
-                style={{ 
-                  backgroundColor: currentPage === page ? '#FA003F' : 'transparent',
-                  color: currentPage === page ? 'white' : '#374151'
-                }}
-              >
-                {page}
-              </button>
-            ) : (
-              <span key={idx} className="w-8 h-8 flex items-center justify-center text-sm text-gray-400">
-                {page}
-              </span>
-            )
-          ))}
-          
-          <button
-            onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-            disabled={currentPage === totalPages}
-            className="w-8 h-8 rounded-lg flex items-center justify-center text-sm font-medium disabled:opacity-30 disabled:cursor-not-allowed hover:bg-gray-100 transition-colors"
-          >
-            ›
-          </button>
+        <div className="mt-8">
+          <div className="flex items-center justify-center gap-1.5 sm:gap-2 overflow-x-auto pb-1">
+            <button
+              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+              className="w-8 h-8 rounded-lg flex items-center justify-center text-sm font-medium disabled:opacity-30 disabled:cursor-not-allowed hover:bg-gray-100 transition-colors"
+            >
+              ‹
+            </button>
+            
+            {getPageNumbers().map((page, idx) => (
+              typeof page === 'number' ? (
+                <button
+                  key={idx}
+                  onClick={() => setCurrentPage(page)}
+                  className={`w-8 h-8 rounded-lg flex items-center justify-center text-sm font-medium transition-colors ${
+                    currentPage === page ? 'text-white' : 'hover:bg-gray-100'
+                  }`}
+                  style={{ 
+                    backgroundColor: currentPage === page ? '#FA003F' : 'transparent',
+                    color: currentPage === page ? 'white' : '#374151'
+                  }}
+                >
+                  {page}
+                </button>
+              ) : (
+                <span key={idx} className="w-8 h-8 flex items-center justify-center text-sm text-gray-400">
+                  {page}
+                </span>
+              )
+            ))}
+            
+            <button
+              onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+              disabled={currentPage === totalPages}
+              className="w-8 h-8 rounded-lg flex items-center justify-center text-sm font-medium disabled:opacity-30 disabled:cursor-not-allowed hover:bg-gray-100 transition-colors"
+            >
+              ›
+            </button>
+          </div>
+          <p className="mt-2 text-center text-xs sm:text-sm text-gray-500 font-manrope">
+            Mostrando {rangeStart}-{rangeEnd} de {products.length} productos
+          </p>
         </div>
       )}
     </div>

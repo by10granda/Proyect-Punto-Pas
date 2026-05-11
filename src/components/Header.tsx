@@ -513,7 +513,7 @@ export const Header = ({ cartCount, searchQuery: propSearchQuery, onSearch, onCa
 
   return (
     <>
-      <header className="sticky top-0 z-40 shadow-xl" style={{ backgroundColor: "#ff0000" }}>
+      <header className="sticky top-0 z-40 shadow-xl rounded-b-[26px] overflow-hidden" style={{ backgroundColor: "#ff0000" }}>
         {/* Main header bar */}
         <div className="flex flex-wrap md:flex-nowrap items-center justify-between px-3 md:px-4 py-3 gap-2 md:gap-3 max-w-7xl mx-auto">
           {/* Logo - Navigate to home */}
