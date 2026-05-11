@@ -55,7 +55,6 @@ const Sucursales = () => {
   });
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [selectedStore, setSelectedStore] = useState<Store | null>(null);
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   const cartItemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
@@ -216,59 +215,8 @@ const Sucursales = () => {
             </div>
           </div>
 
-          {/* Otras Sucursales - Advertising Section */}
-          <div className="mt-12">
-            <h2 className="text-2xl md:text-3xl font-bold text-red-600 mb-6" style={{ fontFamily: "'Josefin Sans', sans-serif" }}>
-              OTRAS SUCURSALES
-            </h2>
-            <div className="grid md:grid-cols-2 gap-6">
-              <div 
-                className="rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer"
-                onClick={() => setSelectedImage("https://res.cloudinary.com/dbbkpdhze/image/upload/v1777562416/CAMPO_SANTO.png")}
-              >
-                <img 
-                  src="https://res.cloudinary.com/dbbkpdhze/image/upload/v1777562416/CAMPO_SANTO.png" 
-                  alt="Campo Santo" 
-                  className="w-full h-80 object-cover hover:scale-105 transition-transform duration-300"
-                />
-              </div>
-              <div 
-                className="rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer"
-                onClick={() => setSelectedImage("https://res.cloudinary.com/dbbkpdhze/image/upload/v1777562412/Rincon_del_pac%C3%ADfico.png")}
-              >
-                <img 
-                  src="https://res.cloudinary.com/dbbkpdhze/image/upload/v1777562412/Rincon_del_pac%C3%ADfico.png" 
-                  alt="Rincón del Pacífico" 
-                  className="w-full h-80 object-cover hover:scale-105 transition-transform duration-300"
-                />
-              </div>
-            </div>
-          </div>
-
         </div>
       </div>
-
-      {/* Image Modal */}
-      {selectedImage && (
-        <div 
-          className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 cursor-pointer"
-          onClick={() => setSelectedImage(null)}
-        >
-          <div className="relative max-w-4xl max-h-[90vh]">
-            <img 
-              src={selectedImage} 
-              alt="Imagen completa" 
-              className="w-full h-auto max-h-[90vh] object-contain rounded-lg"
-            />
-            <button 
-              onClick={(e) => { e.stopPropagation(); setSelectedImage(null); }}
-              className="absolute top-4 right-4 bg-white/80 hover:bg-white text-gray-900 rounded-full w-10 h-10 flex items-center justify-center text-2xl font-bold transition-colors"
-            >
-              ×
-            </button>
-          </div>
-        </div>
-      )}
 
       <Footer onCartClick={() => setIsCartOpen(true)} />
 
