@@ -63,7 +63,7 @@ export const mapApiProductsToDomain = (
       originalPrice: hasBothPrices ? pvpPrice : undefined,
       discount,
       category: getFriendlyCategory(categoria),
-      type: item.tipo || item.descripcionTipo || categoria || 'OTROS',
+      type: item.descripcionTipo || item.tipo || categoria || 'OTROS',
       image: productImage,
       images: productImages,
       isActive: item.estado === 'A',

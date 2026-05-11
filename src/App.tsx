@@ -19,7 +19,6 @@ import EmprendimientoMadedera from "./pages/EmprendimientoMadedera";
 import EmprendimientoJardinPaz from "./pages/EmprendimientoJardinPaz";
 import EmprendimientoRinconPacifico from "./pages/EmprendimientoRinconPacifico";
 import NotFound from "./pages/NotFound";
-import { CookieConsentBanner } from "@/components/CookieConsentBanner";
 
 const queryClient = new QueryClient();
 
@@ -29,7 +28,6 @@ const App = () => (
       <RadioProvider>
         <Toaster />
         <Sonner />
-        <CookieConsentBanner />
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />

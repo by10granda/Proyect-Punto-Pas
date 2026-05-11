@@ -1,5 +1,19 @@
 import { Product } from '@/domain/product';
 
+const normalizeText = (value: string | undefined | null) =>
+  (value || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .toUpperCase();
+
+const laptopSynonyms = ['LAPTOP', 'LAPTOPS', 'COMPUTADORA', 'COMPUTADORAS', 'COMPUTER', 'COMPUTERS', 'PC', 'PCS'];
+
+const hasLaptopIntent = (query: string) => {
+  return laptopSynonyms.some((term) => query.includes(term));
+};
+
 export interface ProductFilterInput {
   sourceProducts: Product[];
   selectedCategory: string;
@@ -18,14 +32,14 @@ export const filterProductsUseCase = ({
   carouselCategory,
 }: ProductFilterInput): Product[] => {
   if (carouselCategory !== 'all') {
-    const carouselUpper = carouselCategory.toUpperCase().trim();
+    const carouselUpper = normalizeText(carouselCategory);
     if (carouselUpper === 'LAVADORAS Y SECADERAS') {
       return sourceProducts.filter((p) =>
         p.isActive && (
-          p.category?.toUpperCase().trim().includes('LAVADORAS') ||
-          p.category?.toUpperCase().trim().includes('SECADERAS') ||
-          p.type?.toUpperCase().trim().includes('LAVADORAS') ||
-          p.type?.toUpperCase().trim().includes('SECADERAS')
+          normalizeText(p.category).includes('LAVADORAS') ||
+          normalizeText(p.category).includes('SECADERAS') ||
+          normalizeText(p.type).includes('LAVADORAS') ||
+          normalizeText(p.type).includes('SECADERAS')
         )
       );
     }
@@ -33,43 +47,74 @@ export const filterProductsUseCase = ({
     return sourceProducts.filter(
       (p) =>
         p.isActive &&
-        (p.category?.toUpperCase().trim() === carouselUpper ||
-          p.type?.toUpperCase().trim() === carouselUpper)
+        (normalizeText(p.category) === carouselUpper ||
+          normalizeText(p.type) === carouselUpper)
     );
   }
 
   let filtered = sourceProducts.filter((p) => p.isActive);
 
   if (selectedCategory !== 'all') {
-    const selectedUpper = selectedCategory.toUpperCase().trim();
+    const selectedUpper = normalizeText(selectedCategory);
     filtered = filtered.filter(
       (p) =>
-        p.category?.toUpperCase().trim() === selectedUpper ||
-        p.type?.toUpperCase().trim() === selectedUpper
+        normalizeText(p.category) === selectedUpper ||
+        normalizeText(p.type) === selectedUpper
     );
   }
 
   if (selectedType !== 'all') {
+    const selectedTypeNormalized = normalizeText(selectedType);
     filtered = filtered.filter(
-      (p) => p.type?.toUpperCase().trim() === selectedType.toUpperCase().trim()
+      (p) => {
+        const productType = normalizeText(p.type);
+        const productCategory = normalizeText(p.category);
+        return (
+          productType === selectedTypeNormalized ||
+          productCategory === selectedTypeNormalized ||
+          productType.includes(selectedTypeNormalized) ||
+          selectedTypeNormalized.includes(productType) ||
+          productCategory.includes(selectedTypeNormalized)
+        );
+      }
     );
   }
 
   if (selectedBrand !== 'all') {
+    const selectedBrandNormalized = normalizeText(selectedBrand);
     filtered = filtered.filter(
-      (p) => p.brand?.toUpperCase().trim() === selectedBrand.toUpperCase().trim()
+      (p) => normalizeText(p.brand) === selectedBrandNormalized
     );
   }
 
   if (searchQuery) {
-    const query = searchQuery.toLowerCase().trim();
+    const query = normalizeText(searchQuery);
+    const laptopIntent = hasLaptopIntent(query);
     filtered = filtered.filter(
-      (p) =>
-        p.name.toLowerCase().includes(query) ||
-        p.code.toLowerCase().includes(query) ||
-        p.brand?.toLowerCase().includes(query) ||
-        p.category?.toLowerCase().includes(query) ||
-        p.type?.toLowerCase().includes(query)
+      (p) => {
+        const normalizedName = normalizeText(p.name);
+        const normalizedCode = normalizeText(p.code);
+        const normalizedBrand = normalizeText(p.brand);
+        const normalizedCategory = normalizeText(p.category);
+        const normalizedType = normalizeText(p.type);
+
+        const directMatch =
+          normalizedName.includes(query) ||
+          normalizedCode.includes(query) ||
+          normalizedBrand.includes(query) ||
+          normalizedCategory.includes(query) ||
+          normalizedType.includes(query);
+
+        if (directMatch) return true;
+
+        if (!laptopIntent) return false;
+
+        return (
+          laptopSynonyms.some((term) => normalizedName.includes(term)) ||
+          laptopSynonyms.some((term) => normalizedCategory.includes(term)) ||
+          laptopSynonyms.some((term) => normalizedType.includes(term))
+        );
+      }
     );
   }
 
