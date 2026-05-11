@@ -476,7 +476,7 @@ const Index = () => {
             </div>
           </section>
 
-          <div className="-mt-1">
+          <div className="-mt-1 max-w-[99vw] mx-auto px-2">
               <HeroCarousel 
                 onProductClick={(code) => {
                   console.log('HeroCarousel clicked, code:', code);
@@ -510,7 +510,7 @@ const Index = () => {
               <img
                 src="https://res.cloudinary.com/dbbkpdhze/image/upload/v1777323714/PORTADA_SECCION_2.png"
                 alt="Sección Principal"
-                className="w-full h-auto rounded-2xl md:rounded-[50px]"
+                className="w-full h-auto rounded-xl md:rounded-2xl"
               />
             </div>
           </section>
