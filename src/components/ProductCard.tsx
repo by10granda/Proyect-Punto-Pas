@@ -11,6 +11,7 @@ interface ProductCardProps {
 export const ProductCard = memo(({ product, onAddToCart, onProductClick, compact = false }: ProductCardProps) => {
   const [imageError, setImageError] = useState(false);
 
+
   const handleImageError = () => {
     setImageError(true);
   };
@@ -22,10 +23,10 @@ export const ProductCard = memo(({ product, onAddToCart, onProductClick, compact
 
   return (
     <div 
-      className="group bg-white rounded-xl overflow-hidden cursor-pointer h-full flex flex-col transition-all duration-200 sm:hover:shadow-lg sm:hover:-translate-y-1"
+      className="group bg-white rounded-xl overflow-hidden cursor-pointer h-full flex flex-col transition-all duration-200 sm:hover:shadow-md sm:hover:-translate-y-0.5"
       style={{ 
-        border: '1px solid #f1f1f1',
-        boxShadow: '0 2px 8px rgba(0,0,0,0.02)'
+        border: '1px solid #efefef',
+        boxShadow: '0 1px 6px rgba(0,0,0,0.03)'
       }}
       onClick={() => onProductClick(product)}
     >
@@ -80,38 +81,24 @@ export const ProductCard = memo(({ product, onAddToCart, onProductClick, compact
 
         <div className="mt-auto">
           <div className={`flex flex-wrap items-baseline ${compact ? "gap-1 mb-1.5" : "gap-1.5 sm:gap-2 mb-2 sm:mb-3"}`}>
-            <span className={`${compact ? "text-base" : "text-base sm:text-xl"} font-bold text-gray-900 font-manrope`}>
-              ${product.price?.toFixed(2)}
+            <span className={`${compact ? "text-base" : "text-[17px] sm:text-[18px]"} font-black leading-none`} style={{ color: '#FA003F', fontFamily: 'Nunito, sans-serif' }}>
+              ${(product.puntoPasPrice || product.pvpPrice || product.price)?.toFixed(2)}
             </span>
             {hasDiscount && (
-              <span className="text-sm text-gray-400 line-through font-manrope">
+              <span className="text-sm text-gray-400 line-through" style={{ fontFamily: 'Nunito, sans-serif' }}>
                 ${product.originalPrice?.toFixed(2)}
               </span>
             )}
           </div>
 
-           <button
+          <button
             onClick={(e) => {
               e.stopPropagation();
               onAddToCart(product);
             }}
             disabled={product.stock === 0}
-            className={`w-full ${compact ? "py-1.5 text-[11px]" : "py-2 sm:py-2.5 text-xs sm:text-sm"} rounded-lg font-semibold transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed disabled:border-none font-manrope`}
-            style={{ 
-              backgroundColor: '#FA003F', 
-              color: 'white',
-              border: '1px solid #FA003F'
-            }}
-            onMouseOver={(e) => {
-              if (product.stock !== 0) {
-                e.currentTarget.style.backgroundColor = 'white';
-                e.currentTarget.style.color = '#FA003F';
-              }
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.backgroundColor = '#FA003F';
-              e.currentTarget.style.color = 'white';
-            }}
+            className={`w-full ${compact ? "py-1.5 text-[10px]" : "py-2 text-xs"} rounded-lg font-semibold transition hover:brightness-110 disabled:opacity-40`}
+            style={{ backgroundColor: '#FA003F', color: 'white' }}
           >
             {product.stock === 0 ? 'Sin stock' : 'Agregar al carrito'}
           </button>

@@ -104,6 +104,23 @@ const ProductPage = () => {
     toast.success("Producto agregado al carrito");
   };
 
+  const handleWhatsAppBuy = () => {
+    if (!product) return;
+    const productUrl = `${window.location.origin}/product/${product.id}`;
+    const productPrice = (product.puntoPasPrice || product.pvpPrice || product.price).toFixed(2);
+    const message = [
+      "Hola, quiero comprar este producto:",
+      `Producto: ${product.name}`,
+      `Codigo: ${product.code}`,
+      `Cantidad: ${quantity}`,
+      `Precio referencial: $${productPrice}`,
+      `Link: ${productUrl}`,
+    ].join("\n");
+
+    const waUrl = `https://wa.me/593959990999?text=${encodeURIComponent(message)}`;
+    window.open(waUrl, "_blank", "noopener,noreferrer");
+  };
+
   const relatedProducts = useMemo(() => {
     if (!product) return [];
     const currentCategory = normalizeCategory(product.category || "");
@@ -274,6 +291,14 @@ const ProductPage = () => {
               >
                 <ShoppingCart className="h-5 w-5" />
                 {product.stock <= 0 ? "Sin stock" : "Agregar al carrito"}
+              </button>
+
+              <button
+                onClick={handleWhatsAppBuy}
+                className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-[#22c55e] px-3 py-3 text-sm font-bold text-white transition hover:bg-[#16a34a]"
+              >
+                Comprar por WhatsApp
+                <img src="/whatsapp.png" alt="WhatsApp" className="h-4 w-4 object-contain" />
               </button>
             </aside>
           </div>

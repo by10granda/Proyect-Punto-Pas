@@ -27,6 +27,7 @@ export const ProductCarouselSection = ({
   onAddToCart 
 }: ProductCarouselSectionProps) => {
   const scrollRef = useRef<HTMLDivElement>(null);
+  const isFridgeAndFreezerSection = category.toUpperCase().trim() === "CONGELADORES Y NEVERAS";
 
   const scrollLeft = () => {
     scrollRef.current?.scrollBy({ left: -280, behavior: 'smooth' });
@@ -91,7 +92,10 @@ export const ProductCarouselSection = ({
               <div ref={scrollRef} className="flex-1 overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
                 <div className="grid grid-rows-1 lg:grid-rows-2 grid-flow-col auto-cols-[168px] md:auto-cols-[188px] gap-2 md:gap-2.5 min-w-max pr-2">
                   {products.map((product) => (
-                    <div key={product.id} className="w-[168px] md:w-[188px]">
+                    <div
+                      key={product.id}
+                      className={`w-[168px] md:w-[188px] ${isFridgeAndFreezerSection ? "h-[250px] md:h-[280px]" : ""}`}
+                    >
                       <ProductCard
                         product={product}
                         onAddToCart={onAddToCart}

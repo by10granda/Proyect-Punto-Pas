@@ -27,24 +27,24 @@ const ProductCardGrid = ({ product, onAddToCart, onProductClick }: {
 
   return (
     <div 
-      className="group bg-white rounded-xl overflow-hidden cursor-pointer h-full flex flex-col transition-all duration-200 sm:hover:shadow-lg sm:hover:-translate-y-1"
-      style={{ border: '1px solid #f1f1f1', boxShadow: '0 2px 8px rgba(0,0,0,0.02)' }}
+      className="group bg-white rounded-xl overflow-hidden cursor-pointer h-full flex flex-col transition-all duration-200 sm:hover:shadow-sm"
+      style={{ border: '1px solid #ececec', boxShadow: '0 1px 4px rgba(0,0,0,0.025)' }}
       onClick={() => onProductClick(product)}
     >
-      <div className="relative aspect-[4/5] bg-gray-50 overflow-hidden">
+        <div className="relative aspect-[4/5] bg-gray-50/60 overflow-hidden">
         {product.stock === 0 && (
           <div className="absolute inset-0 z-20 flex items-center justify-center bg-white/90">
             <span className="text-red-600 text-sm font-semibold px-4 py-2 bg-red-50 rounded-full">Sin stock</span>
           </div>
         )}
         {hasPvpAndPuntoPas && product.stock > 0 && (
-          <div className="absolute top-3 left-3 z-10">
-            <span className="text-xs font-semibold px-2 py-1 rounded-full" style={{ backgroundColor: '#FA003F', color: 'white' }}>
+          <div className="absolute top-2 left-2 z-10">
+            <span className="text-[10px] font-semibold px-2 py-1 rounded-lg" style={{ backgroundColor: '#FA003F', color: 'white' }}>
               -{discountPercent}%
             </span>
           </div>
         )}
-        <div className="w-full h-full flex items-center justify-center p-3 sm:p-4">
+          <div className="w-full h-full flex items-center justify-center p-2.5 sm:p-3">
           {imageError ? (
             <span className="text-4xl">📦</span>
           ) : (
@@ -53,12 +53,12 @@ const ProductCardGrid = ({ product, onAddToCart, onProductClick }: {
         </div>
       </div>
       <div className="p-2.5 sm:p-3 flex flex-col flex-grow">
-        <span className="text-[10px] sm:text-xs uppercase tracking-wider text-gray-500 truncate">{product.brand || 'General'}</span>
-        <h3 className="text-xs sm:text-sm font-semibold text-gray-900 line-clamp-2 mb-2 font-manrope leading-snug">{product.name}</h3>
+        <span className="text-[7px] uppercase tracking-[0.1em] text-gray-400 truncate">{product.brand || 'General'}</span>
+        <h3 className="text-[11px] sm:text-[12px] font-medium text-gray-900 line-clamp-2 mb-1.5 leading-[1.3] tracking-[0.01em] font-manrope">{product.name}</h3>
         <div className="mt-auto">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-2">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1.5 mb-1.5">
             <div className="flex flex-col">
-              <span className="text-base sm:text-lg font-bold font-manrope" style={{ color: '#FA003F' }}>
+              <span className="text-[16px] sm:text-[17px] font-extrabold leading-none" style={{ color: '#FA003F', fontFamily: 'Nunito, sans-serif' }}>
                 ${(hasPvpAndPuntoPas ? product.puntoPasPrice : product.price)?.toFixed(2)}
               </span>
               {hasPvpAndPuntoPas && (
@@ -76,7 +76,7 @@ const ProductCardGrid = ({ product, onAddToCart, onProductClick }: {
               <button
                 onClick={(e) => { e.stopPropagation(); setQuantity(q => Math.max(1, q - 1)); }}
                 disabled={product.stock === 0 || quantity <= 1}
-                className="w-7 h-7 sm:w-6 sm:h-6 rounded flex items-center justify-center text-sm font-bold disabled:opacity-30"
+                className="w-5.5 h-5.5 rounded-md flex items-center justify-center text-[10px] font-bold disabled:opacity-30"
                 style={{ backgroundColor: '#f3f4f6', color: '#374151' }}
               >
                 -
@@ -92,13 +92,13 @@ const ProductCardGrid = ({ product, onAddToCart, onProductClick }: {
                   setQuantity(Math.max(1, Math.min(val, product.stock || 999)));
                 }}
                 onClick={(e) => e.stopPropagation()}
-                className="w-10 sm:w-8 h-7 sm:h-6 rounded text-center text-xs font-medium border"
+                className="w-8 h-5.5 rounded-md text-center text-[11px] font-semibold border"
                 style={{ borderColor: '#e5e7eb' }}
               />
               <button
                 onClick={(e) => { e.stopPropagation(); setQuantity(q => Math.min(product.stock || 999, q + 1)); }}
                 disabled={product.stock === 0 || quantity >= (product.stock || 999)}
-                className="w-7 h-7 sm:w-6 sm:h-6 rounded flex items-center justify-center text-sm font-bold disabled:opacity-30"
+                className="w-5.5 h-5.5 rounded-md flex items-center justify-center text-[10px] font-bold disabled:opacity-30"
                 style={{ backgroundColor: '#f3f4f6', color: '#374151' }}
               >
                 +
@@ -109,7 +109,7 @@ const ProductCardGrid = ({ product, onAddToCart, onProductClick }: {
           <button
             onClick={handleAdd}
             disabled={product.stock === 0}
-            className="w-full py-2 rounded-lg text-xs sm:text-sm font-semibold disabled:opacity-40 font-manrope"
+            className="w-full py-2 rounded-md text-[10px] font-semibold disabled:opacity-40 transition hover:brightness-110"
             style={{ backgroundColor: '#FA003F', color: 'white' }}
           >
             {product.stock === 0 ? 'Sin stock' : 'Agregar'}

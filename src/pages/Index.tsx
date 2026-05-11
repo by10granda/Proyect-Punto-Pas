@@ -101,6 +101,13 @@ const Index = () => {
     }
   }, [searchParams, searchQuery]);
 
+  useEffect(() => {
+    const query = searchParams.get("q");
+    if (!query) {
+      window.scrollTo({ top: 0, behavior: "auto" });
+    }
+  }, [searchParams]);
+
   // Handle browser back button - sync with URL
   useEffect(() => {
     const query = searchParams.get("q");
