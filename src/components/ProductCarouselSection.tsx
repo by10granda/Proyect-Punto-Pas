@@ -28,13 +28,22 @@ export const ProductCarouselSection = ({
 }: ProductCarouselSectionProps) => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const isFridgeAndFreezerSection = category.toUpperCase().trim() === "CONGELADORES Y NEVERAS";
+  const isWasherAndDryerSection = category.toUpperCase().trim() === "LAVADORAS Y SECADERAS";
+
+  const getScrollAmount = () => {
+    if (isWasherAndDryerSection) {
+      return window.innerWidth >= 768 ? 532 : 464;
+    }
+
+    return 280;
+  };
 
   const scrollLeft = () => {
-    scrollRef.current?.scrollBy({ left: -280, behavior: 'smooth' });
+    scrollRef.current?.scrollBy({ left: -getScrollAmount(), behavior: 'smooth' });
   };
 
   const scrollRight = () => {
-    scrollRef.current?.scrollBy({ left: 280, behavior: 'smooth' });
+    scrollRef.current?.scrollBy({ left: getScrollAmount(), behavior: 'smooth' });
   };
 
   const handleBannerClick = () => {
@@ -125,10 +134,10 @@ export const ProductCarouselSection = ({
           </h2>
 
           <div 
-            className="grid grid-cols-1 lg:grid-cols-5 gap-4 md:gap-5 items-stretch"
+            className={`grid grid-cols-1 lg:grid-cols-5 gap-4 md:gap-5 items-stretch ${isWasherAndDryerSection ? "lg:min-h-[560px]" : ""}`}
             style={{ minHeight: 'auto' }}
           >
-            <div className="lg:col-span-2 relative">
+            <div className={`lg:col-span-2 relative ${isWasherAndDryerSection ? "lg:h-[560px]" : ""}`}>
               <button
                 onClick={scrollLeft}
                 className="absolute left-1 md:-left-4 top-1/2 -translate-y-1/2 z-30 w-9 h-9 md:w-11 md:h-11 rounded-full flex items-center justify-center shadow-lg"
@@ -139,14 +148,14 @@ export const ProductCarouselSection = ({
 
               <div 
                 ref={scrollRef}
-                className="flex overflow-x-auto pb-2 scrollbar-hide" 
+                className={`flex overflow-x-auto pb-2 scrollbar-hide ${isWasherAndDryerSection ? "lg:h-full" : ""}`} 
                 style={{ scrollbarWidth: 'none' }}
               >
                 <div 
-                  className="flex gap-3 md:gap-4 px-8 md:px-8 py-2 h-full"
+                  className={`flex gap-3 md:gap-4 px-8 md:px-8 py-2 h-full ${isWasherAndDryerSection ? "items-stretch" : ""}`}
                 >
                   {products.slice(0, 12).map((product) => (
-                    <div key={product.id} className="flex-shrink-0 w-[220px] md:w-[250px]">
+                    <div key={product.id} className={`flex-shrink-0 w-[220px] md:w-[250px] ${isWasherAndDryerSection ? "h-full" : ""}`}>
                       <ProductCard
                         product={product}
                         onAddToCart={onAddToCart}
@@ -166,7 +175,7 @@ export const ProductCarouselSection = ({
               </button>
             </div>
 
-            <div className="lg:col-span-3 h-full" onClick={handleBannerClick}>
+            <div className={`lg:col-span-3 h-full ${isWasherAndDryerSection ? "lg:h-[560px]" : ""}`} onClick={handleBannerClick}>
               <img
                 src={bannerImage}
                 alt={category}

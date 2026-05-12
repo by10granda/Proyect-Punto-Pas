@@ -29,6 +29,44 @@ import { toast } from "sonner";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 const Index = () => {
+  const PRODUCTS_ALERT_COOLDOWN_MS = 15 * 60 * 1000;
+  const PRODUCTS_ALERT_LAST_SENT_KEY = "products_alert_last_sent_at";
+
+  const sendProductsUnavailableAlert = async (detail: string) => {
+    try {
+      const now = Date.now();
+      const lastSentRaw = localStorage.getItem(PRODUCTS_ALERT_LAST_SENT_KEY);
+      const lastSent = lastSentRaw ? Number(lastSentRaw) : 0;
+
+      if (Number.isFinite(lastSent) && now - lastSent < PRODUCTS_ALERT_COOLDOWN_MS) {
+        return;
+      }
+
+      const payload = {
+        event: "productos_no_disponibles",
+        site: "distribuidor-puntopas",
+        apiStatus: "error",
+        detail,
+        apiUrl: "https://api.distribuidor-puntopas.com/api",
+        timestamp: new Date().toISOString(),
+      };
+
+      const response = await fetch("/api/alert", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (response.ok) {
+        localStorage.setItem(PRODUCTS_ALERT_LAST_SENT_KEY, String(now));
+      }
+    } catch (error) {
+      console.error("No se pudo enviar la alerta de productos:", error);
+    }
+  };
+
   type MainFilterMode = "none" | "search" | "type" | "category" | "brand" | "carousel";
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -182,6 +220,7 @@ const Index = () => {
         setApiStatus('error');
         setApiError('No se recibieron productos de la API');
         toast.error("La API no devolvió productos. Verifica la consola.");
+        void sendProductsUnavailableAlert("La API no devolvió productos");
       }
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : 'Error desconocido';
@@ -189,6 +228,7 @@ const Index = () => {
       setApiStatus('error');
       setApiError(message);
       toast.error(`Error de conexión: ${message}`);
+      void sendProductsUnavailableAlert(`Error de conexión: ${message}`);
     } finally {
       setIsLoadingProducts(false);
     }
