@@ -58,7 +58,7 @@ const ProductCardGrid = ({ product, onAddToCart, onProductClick }: {
         <div className="mt-auto">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1.5 mb-1.5">
             <div className="flex flex-col">
-              <span className="text-[16px] sm:text-[17px] font-extrabold leading-none" style={{ color: '#FA003F', fontFamily: 'Nunito, sans-serif' }}>
+              <span className="text-[16px] sm:text-[17px] font-extrabold leading-none" style={{ color: '#FF0000', fontFamily: 'Nunito, sans-serif' }}>
                 ${(hasPvpAndPuntoPas ? product.puntoPasPrice : product.price)?.toFixed(2)}
               </span>
               {hasPvpAndPuntoPas && (
@@ -110,7 +110,7 @@ const ProductCardGrid = ({ product, onAddToCart, onProductClick }: {
             onClick={handleAdd}
             disabled={product.stock === 0}
             className="w-full py-2 rounded-md text-[10px] font-semibold disabled:opacity-40 transition hover:brightness-110"
-            style={{ backgroundColor: '#FA003F', color: 'white' }}
+            style={{ backgroundColor: '#FF0000', color: 'white' }}
           >
             {product.stock === 0 ? 'Sin stock' : 'Agregar'}
           </button>
@@ -122,24 +122,18 @@ const ProductCardGrid = ({ product, onAddToCart, onProductClick }: {
 
 const ITEMS_PER_PAGE = 18;
 
-export const ProductGrid = ({ products, onAddToCart, onProductClick, title }: {
+export const ProductGrid = ({ products, onAddToCart, onProductClick, title, showPagination = true }: {
   products: Product[];
   onAddToCart: (product: Product, quantity: number) => void;
   onProductClick: (product: Product) => void;
   title?: string;
+  showPagination?: boolean;
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
 
-  // Reset page to 1 when products change (search, filters, etc.)
   useEffect(() => {
     setCurrentPage(1);
-  }, [products]);
-
-  const totalPages = Math.ceil(products.length / ITEMS_PER_PAGE);
-  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const visibleProducts = products.slice(startIndex, startIndex + ITEMS_PER_PAGE);
-  const rangeStart = startIndex + 1;
-  const rangeEnd = startIndex + visibleProducts.length;
+  }, [products, showPagination]);
 
   if (products.length === 0) {
     return (
@@ -157,10 +151,18 @@ export const ProductGrid = ({ products, onAddToCart, onProductClick, title }: {
     );
   }
 
+  const totalPages = Math.ceil(products.length / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const visibleProducts = showPagination
+    ? products.slice(startIndex, startIndex + ITEMS_PER_PAGE)
+    : products;
+  const rangeStart = startIndex + 1;
+  const rangeEnd = startIndex + visibleProducts.length;
+
   const getPageNumbers = () => {
     const pages: (number | string)[] = [];
     const maxVisible = 5;
-    
+
     if (totalPages <= maxVisible) {
       for (let i = 1; i <= totalPages; i++) pages.push(i);
     } else {
@@ -180,6 +182,7 @@ export const ProductGrid = ({ products, onAddToCart, onProductClick, title }: {
         pages.push(totalPages);
       }
     }
+
     return pages;
   };
 
@@ -205,7 +208,7 @@ export const ProductGrid = ({ products, onAddToCart, onProductClick, title }: {
         ))}
       </div>
 
-      {totalPages > 1 && (
+      {showPagination && totalPages > 1 && (
         <div className="mt-8">
           <div className="flex items-center justify-center gap-1.5 sm:gap-2 overflow-x-auto pb-1">
             <button
@@ -215,7 +218,7 @@ export const ProductGrid = ({ products, onAddToCart, onProductClick, title }: {
             >
               ‹
             </button>
-            
+
             {getPageNumbers().map((page, idx) => (
               typeof page === 'number' ? (
                 <button
@@ -224,7 +227,7 @@ export const ProductGrid = ({ products, onAddToCart, onProductClick, title }: {
                   className={`w-8 h-8 rounded-lg flex items-center justify-center text-sm font-medium transition-colors ${
                     currentPage === page ? 'text-white' : 'hover:bg-gray-100'
                   }`}
-                  style={{ 
+                  style={{
                     backgroundColor: currentPage === page ? '#FA003F' : 'transparent',
                     color: currentPage === page ? 'white' : '#374151'
                   }}
@@ -237,7 +240,7 @@ export const ProductGrid = ({ products, onAddToCart, onProductClick, title }: {
                 </span>
               )
             ))}
-            
+
             <button
               onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
               disabled={currentPage === totalPages}
@@ -251,6 +254,7 @@ export const ProductGrid = ({ products, onAddToCart, onProductClick, title }: {
           </p>
         </div>
       )}
+
     </div>
   );
 };

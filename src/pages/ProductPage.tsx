@@ -226,7 +226,7 @@ const ProductPage = () => {
 
               <div>
                 <p className="text-sm font-semibold text-slate-600">Precio actual</p>
-                <p className="text-4xl font-black text-[#FA003F]">${price.toFixed(2)}</p>
+                <p className="text-4xl font-black text-[#FF0000]">${price.toFixed(2)}</p>
               </div>
 
               <div>
@@ -280,14 +280,14 @@ const ProductPage = () => {
 
               <div className="mt-4 rounded-lg border bg-slate-50 p-3">
                 <p className="text-xs text-slate-500">Precio</p>
-                <p className="text-3xl font-black text-[#FA003F]">${price.toFixed(2)}</p>
+                <p className="text-3xl font-black text-[#FF0000]">${price.toFixed(2)}</p>
                 <p className="mt-1 text-xs text-slate-400">Precio incluye IVA</p>
               </div>
 
               <button
                 onClick={addToCart}
                 disabled={product.stock <= 0}
-                className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-[#FA003F] py-3 font-bold text-white disabled:cursor-not-allowed disabled:opacity-50"
+                className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-[#FF0000] py-3 font-bold text-white disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <ShoppingCart className="h-5 w-5" />
                 {product.stock <= 0 ? "Sin stock" : "Agregar al carrito"}

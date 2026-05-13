@@ -700,6 +700,7 @@ const Index = () => {
             onAddToCart={handleAddToCart}
             onProductClick={handleProductClick}
             title={getTitle()}
+            showPagination={!searchQuery}
           />
           
           {activeTab === "home" && !searchQuery && (

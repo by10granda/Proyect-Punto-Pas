@@ -122,9 +122,11 @@ export const ProductCarouselSection = ({
     );
   }
 
+  const sectionBackground = isWasherAndDryerSection ? '#FF0000' : '#FA003F';
+
   return (
-    <section className="relative mt-0" style={{ backgroundColor: '#FA003F' }}>
-      <div className="pb-16 pt-8" style={{ backgroundColor: '#FA003F', margin: 0, border: 'none' }}>
+    <section className="relative mt-0" style={{ backgroundColor: sectionBackground }}>
+      <div className="pb-16 pt-8" style={{ backgroundColor: sectionBackground, margin: 0, border: 'none' }}>
         <div className="max-w-[98vw] mx-auto px-3 md:px-4 relative z-10">
           <h2 
             className="text-lg md:text-2xl font-black uppercase tracking-wide mt-5 md:mt-8 mb-4 md:mb-6" 
@@ -141,7 +143,7 @@ export const ProductCarouselSection = ({
               <button
                 onClick={scrollLeft}
                 className="absolute left-1 md:-left-4 top-1/2 -translate-y-1/2 z-30 w-9 h-9 md:w-11 md:h-11 rounded-full flex items-center justify-center shadow-lg"
-                style={{ backgroundColor: '#FA003F' }}
+                style={{ backgroundColor: sectionBackground }}
               >
                 <ChevronLeft className="w-5 h-5 md:w-6 md:h-6 text-white" />
               </button>
@@ -169,7 +171,7 @@ export const ProductCarouselSection = ({
               <button
                 onClick={scrollRight}
                 className="absolute right-1 md:-right-4 top-1/2 -translate-y-1/2 z-30 w-9 h-9 md:w-11 md:h-11 rounded-full flex items-center justify-center shadow-lg"
-                style={{ backgroundColor: '#FA003F' }}
+                style={{ backgroundColor: sectionBackground }}
               >
                 <ChevronRight className="w-5 h-5 md:w-6 md:h-6 text-white" />
               </button>

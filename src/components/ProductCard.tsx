@@ -81,7 +81,7 @@ export const ProductCard = memo(({ product, onAddToCart, onProductClick, compact
 
         <div className="mt-auto">
           <div className={`flex flex-wrap items-baseline ${compact ? "gap-1 mb-1.5" : "gap-1.5 sm:gap-2 mb-2 sm:mb-3"}`}>
-            <span className={`${compact ? "text-base" : "text-[17px] sm:text-[18px]"} font-black leading-none`} style={{ color: '#FA003F', fontFamily: 'Nunito, sans-serif' }}>
+            <span className={`${compact ? "text-base" : "text-[17px] sm:text-[18px]"} font-black leading-none`} style={{ color: '#FF0000', fontFamily: 'Nunito, sans-serif' }}>
               ${(product.puntoPasPrice || product.pvpPrice || product.price)?.toFixed(2)}
             </span>
             {hasDiscount && (
@@ -98,7 +98,7 @@ export const ProductCard = memo(({ product, onAddToCart, onProductClick, compact
             }}
             disabled={product.stock === 0}
             className={`w-full ${compact ? "py-1.5 text-[10px]" : "py-2 text-xs"} rounded-lg font-semibold transition hover:brightness-110 disabled:opacity-40`}
-            style={{ backgroundColor: '#FA003F', color: 'white' }}
+            style={{ backgroundColor: '#FF0000', color: 'white' }}
           >
             {product.stock === 0 ? 'Sin stock' : 'Agregar al carrito'}
           </button>
