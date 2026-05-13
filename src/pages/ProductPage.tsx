@@ -24,6 +24,28 @@ const normalizeCategory = (value: string) =>
     .trim()
     .toUpperCase();
 
+const inferDisplayBrand = (brand: string, name: string) => {
+  const cleanedBrand = (brand || '').trim();
+  if (cleanedBrand && !/^\.+$/.test(cleanedBrand.replace(/\s+/g, ''))) {
+    return cleanedBrand;
+  }
+
+  const tokens = (name || '')
+    .toUpperCase()
+    .replace(/[^A-Z0-9\s]/g, ' ')
+    .split(/\s+/)
+    .filter(Boolean);
+  const ignored = new Set(['LAPTOP', 'LAPTOPS', 'NOTEBOOK', 'ULTRABOOK', 'COMPUTADORA', 'COMPUTADORAS', 'PC']);
+
+  for (const token of tokens) {
+    if (!ignored.has(token) && /^[A-Z0-9]{2,12}$/.test(token)) {
+      return token;
+    }
+  }
+
+  return 'Sin marca';
+};
+
 const ProductPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -42,17 +64,43 @@ const ProductPage = () => {
     const run = async () => {
       setLoading(true);
       try {
-        const all = await loadProductsFromAPI();
-        setProducts(all);
-        const found = all.find((p) => p.id === id) || null;
-        setProduct(found);
+        const cached = await loadProductsFromAPI({ maxAgeMs: 120000 });
+        setProducts(cached);
+        setProduct(cached.find((p) => p.id === id) || null);
       } catch {
         toast.error("No se pudo cargar el producto.");
       } finally {
         setLoading(false);
       }
+
+      void (async () => {
+        try {
+          const fresh = await loadProductsFromAPI({ forceRefresh: true });
+          setProducts(fresh);
+          setProduct(fresh.find((p) => p.id === id) || null);
+        } catch {
+          // silent background refresh
+        }
+      })();
     };
     if (id) void run();
+  }, [id]);
+
+  useEffect(() => {
+    if (!id) return;
+    const interval = setInterval(async () => {
+      if (document.visibilityState !== 'visible') return;
+      try {
+        const all = await loadProductsFromAPI({ maxAgeMs: 120000 });
+        setProducts(all);
+        const found = all.find((p) => p.id === id) || null;
+        setProduct(found);
+      } catch {
+        // silent refresh
+      }
+    }, 60000);
+
+    return () => clearInterval(interval);
   }, [id]);
 
   useEffect(() => {
@@ -152,6 +200,7 @@ const ProductPage = () => {
   const price = product.puntoPasPrice || product.pvpPrice || product.price;
   const visibleRelated = relatedProducts.slice(carouselStart, carouselStart + 6);
   const selectedImage = visibleImages[selectedImageIndex] || visibleImages[0] || product.image;
+  const displayBrand = inferDisplayBrand(product.brand, product.name);
 
   return (
     <div className="min-h-screen bg-white">
@@ -221,7 +270,7 @@ const ProductPage = () => {
               <h1 className="text-3xl font-extrabold leading-tight text-slate-900">{product.name}</h1>
               <div className="space-y-1 text-sm text-slate-600">
                 <p><span className="font-semibold text-slate-800">Codigo:</span> {product.code}</p>
-                <p><span className="font-semibold text-slate-800">Marca:</span> {product.brand || "Sin marca"}</p>
+                <p><span className="font-semibold text-slate-800">Marca:</span> {displayBrand}</p>
               </div>
 
               <div>

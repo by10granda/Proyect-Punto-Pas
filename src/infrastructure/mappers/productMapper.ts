@@ -8,6 +8,39 @@ interface ProductMapperOptions {
   getFriendlyCategory: (category: string) => string;
 }
 
+const isPlaceholderBrand = (value: string) => {
+  const cleaned = value.replace(/\s+/g, '');
+  return cleaned.length > 0 && /^\.+$/.test(cleaned);
+};
+
+const inferBrandFromName = (name: string) => {
+  const tokens = (name || '')
+    .toUpperCase()
+    .replace(/[^A-Z0-9\s]/g, ' ')
+    .split(/\s+/)
+    .filter(Boolean);
+
+  if (tokens.length < 2) return '';
+
+  const ignored = new Set(['LAPTOP', 'LAPTOPS', 'NOTEBOOK', 'ULTRABOOK', 'PC', 'COMPUTADORA']);
+  for (const token of tokens) {
+    if (!ignored.has(token) && /^[A-Z0-9]{2,12}$/.test(token)) {
+      return token;
+    }
+  }
+
+  return '';
+};
+
+const resolveBrand = (item: ApiProductItem) => {
+  const rawBrand = (item.descripcionMarca || '').trim();
+  if (rawBrand && !isPlaceholderBrand(rawBrand)) {
+    return rawBrand;
+  }
+
+  return inferBrandFromName(item.descripcionItem || '');
+};
+
 const getProductImages = (codigo: string, imageVersion: string): string[] => {
   const paddedCode = codigo.padStart(8, '0').substring(0, 8);
   const images: string[] = [];
@@ -24,6 +57,11 @@ export const mapApiProductsToDomain = (
 ): Product[] => {
   const rawProducts: Product[] = data.map((item, index) => {
     const categoria = item.descripcionCategoria || 'OTROS';
+    const itemDescription = item.descripcionItem || '';
+    const hasLaptopIntent = /\b(LAPTOP|LAPTOPS|NOTEBOOK|ULTRABOOK|COMPUTADORA|COMPUTADORAS)\b/i.test(itemDescription);
+    const mappedCategory = hasLaptopIntent ? 'LAPTOPS' : getFriendlyCategory(categoria);
+    const rawType = item.descripcionTipo || item.tipo || categoria || 'OTROS';
+    const mappedType = hasLaptopIntent && /MONITOR/i.test(rawType) ? 'LAPTOPS' : rawType;
     const itemId = String(item.codigo || index + 1);
     const codigoInterno = String(item.codigo || '');
 
@@ -54,16 +92,16 @@ export const mapApiProductsToDomain = (
     return {
       id: itemId,
       code: codigoInterno,
-      name: item.descripcionItem || '',
-      description: item.descripcionItem || '',
-      brand: item.descripcionMarca || '',
+      name: itemDescription,
+      description: itemDescription,
+      brand: resolveBrand(item),
       unit: item.descripcionUnidadInventario || 'UNIDAD',
       stock: inventarioMap[codigoInterno] || 0,
       price: finalPrice,
       originalPrice: hasBothPrices ? pvpPrice : undefined,
       discount,
-      category: getFriendlyCategory(categoria),
-      type: item.descripcionTipo || item.tipo || categoria || 'OTROS',
+      category: mappedCategory,
+      type: mappedType,
       image: productImage,
       images: productImages,
       isActive: item.estado === 'A',

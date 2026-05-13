@@ -86,6 +86,7 @@ const Index = () => {
   const [carouselCategory, setCarouselCategory] = useState("all");
   // Estado independiente para WeeklyDeals
   const [weeklyDealsCategory, setWeeklyDealsCategory] = useState("all");
+  const [envBannerParallax, setEnvBannerParallax] = useState(0);
   const [cart, setCart] = useState<CartItem[]>(() => {
     const saved = localStorage.getItem("puntopas_cart");
     return saved ? JSON.parse(saved) : [];
@@ -126,6 +127,7 @@ const Index = () => {
 
   const categoriesRef = useRef<HTMLDivElement>(null);
   const productsRef = useRef<HTMLDivElement>(null);
+  const envBannerRef = useRef<HTMLDivElement>(null);
 
   const updateCart = (newCart: CartItem[]) => {
     setCart(newCart);
@@ -213,7 +215,7 @@ const Index = () => {
       }
       setApiStatus('loading');
       setApiError(null);
-      const loadResult = await loadProductsUseCase(loadProductsFromAPI);
+      const loadResult = await loadProductsUseCase(() => loadProductsFromAPI({ maxAgeMs: 60000 }));
       if (loadResult.hasData) {
         setAllProducts(loadResult.products);
         setProductCategories(getCategories());
@@ -254,6 +256,28 @@ const Index = () => {
     }, 60000);
 
     return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const section = envBannerRef.current;
+      if (!section) return;
+
+      const rect = section.getBoundingClientRect();
+      const viewportHeight = window.innerHeight || 1;
+      const progress = 1 - Math.max(0, Math.min(1, rect.top / viewportHeight));
+      const shift = (progress - 0.5) * 36;
+      setEnvBannerParallax(shift);
+    };
+
+    handleScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('resize', handleScroll);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleScroll);
+    };
   }, []);
 
   const filteredProducts = useMemo(() => {
@@ -719,6 +743,7 @@ const Index = () => {
             onProductClick={handleProductClick}
             title={getTitle()}
             showPagination={!searchQuery}
+            isLoading={isLoadingProducts}
           />
           
           {activeTab === "home" && !searchQuery && (
@@ -809,6 +834,46 @@ const Index = () => {
                    navigate(`/product/${product.id}`);
                  }}
               />
+              </div>
+
+              <div
+                ref={envBannerRef}
+                className="relative mt-4 md:mt-6 w-full overflow-hidden bg-white"
+                style={{ backgroundColor: '#FFFFFF' }}
+              >
+                <div
+                  className="pointer-events-none absolute inset-0"
+                  style={{
+                    backgroundImage: "url('https://res.cloudinary.com/dbbkpdhze/image/upload/v1778709681/PORTADA_TEC1.png')",
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    transform: `translateY(${envBannerParallax}px) scale(1.08)`,
+                    filter: 'blur(8px) saturate(1.1)',
+                    opacity: 0.22,
+                    transition: 'transform 140ms ease-out',
+                  }}
+                />
+                <img
+                  src="https://res.cloudinary.com/dbbkpdhze/image/upload/v1778709681/PORTADA_TEC1.png"
+                  alt="Portada tecnologia ENV"
+                  className="relative z-10 block w-full h-auto cursor-pointer"
+                  onClick={() => {
+                    const normalizedBrand = "ENV";
+                    setMainFilter({ mode: "brand", value: normalizedBrand });
+                    setSelectedType("all");
+                    setCarouselCategory("all");
+                    setSelectedBrand(normalizedBrand);
+                    setSelectedCategory("all");
+                    setSearchQuery("");
+                    setActiveTab("home");
+                    setTimeout(() => {
+                      const productsSection = document.getElementById('productos');
+                      if (productsSection) {
+                        productsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                      }
+                    }, 100);
+                  }}
+                />
               </div>
 
               <div id="brands-section">

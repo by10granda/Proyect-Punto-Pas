@@ -181,6 +181,7 @@ export const searchProducts = (query: string): Product[] => {
 };
 
 let apiProducts: Product[] | null = null;
+let apiProductsLastSyncAt = 0;
 const inventarioMap: Record<string, number> = {};
 let updateInventoryCallback: ((products: Product[]) => void) | null = null;
 
@@ -223,8 +224,20 @@ export const refreshInventario = async (): Promise<void> => {
   }
 };
 
-export const loadProductsFromAPI = async (): Promise<Product[]> => {
-  if (apiProducts && apiProducts.length > 0) {
+export const loadProductsFromAPI = async ({
+  forceRefresh = false,
+  maxAgeMs = 60000,
+}: { forceRefresh?: boolean; maxAgeMs?: number } = {}): Promise<Product[]> => {
+  const hasFreshCache =
+    apiProducts &&
+    apiProducts.length > 0 &&
+    Date.now() - apiProductsLastSyncAt <= maxAgeMs;
+
+  if (!forceRefresh && hasFreshCache) {
+    return apiProducts;
+  }
+
+  if (!forceRefresh && apiProducts && apiProducts.length > 0) {
     return apiProducts;
   }
 
@@ -322,6 +335,7 @@ export const loadProductsFromAPI = async (): Promise<Product[]> => {
       inventarioMap,
       getFriendlyCategory,
     });
+    apiProductsLastSyncAt = Date.now();
 
     return apiProducts;
   } catch (_error: unknown) {

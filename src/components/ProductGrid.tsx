@@ -122,18 +122,29 @@ const ProductCardGrid = ({ product, onAddToCart, onProductClick }: {
 
 const ITEMS_PER_PAGE = 18;
 
-export const ProductGrid = ({ products, onAddToCart, onProductClick, title, showPagination = true }: {
+export const ProductGrid = ({ products, onAddToCart, onProductClick, title, showPagination = true, isLoading = false }: {
   products: Product[];
   onAddToCart: (product: Product, quantity: number) => void;
   onProductClick: (product: Product) => void;
   title?: string;
   showPagination?: boolean;
+  isLoading?: boolean;
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     setCurrentPage(1);
   }, [products, showPagination]);
+
+  if (isLoading) {
+    return (
+      <div className="px-4 py-16 text-center bg-white rounded-xl">
+        <div className="w-14 h-14 border-4 border-slate-200 border-t-[#FF0000] rounded-full animate-spin mx-auto mb-4" />
+        <h3 className="text-lg font-semibold text-gray-900 mb-1 font-manrope">Cargando productos</h3>
+        <p className="text-sm text-gray-500 font-manrope">Actualizando catalogo en tiempo real...</p>
+      </div>
+    );
+  }
 
   if (products.length === 0) {
     return (
