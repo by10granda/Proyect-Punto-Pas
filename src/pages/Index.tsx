@@ -496,7 +496,7 @@ const Index = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-3">
                 <div className="overflow-hidden rounded-[28px] bg-transparent">
                   <video
-                    src="https://res.cloudinary.com/dbbkpdhze/video/upload/v1778516888/PUBLICIDAD_PAGOS.mp4"
+                    src="https://res.cloudinary.com/dbbkpdhze/video/upload/v1778689011/PUBLICIDAD_PAGOS_2.mp4"
                     autoPlay
                     muted
                     loop
