@@ -511,7 +511,7 @@ const Index = () => {
                   className="overflow-hidden rounded-[28px] bg-transparent text-left"
                 >
                   <video
-                    src="https://res.cloudinary.com/dbbkpdhze/video/upload/v1778516886/PUBLICIDAD_OTROS_NEGOCIOS.mp4"
+                    src="https://res.cloudinary.com/dbbkpdhze/video/upload/v1778703220/PUBLICIDAD_OTROS_NEGOCIOS_2.mp4"
                     autoPlay
                     muted
                     loop
