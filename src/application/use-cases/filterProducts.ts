@@ -8,7 +8,13 @@ const normalizeText = (value: string | undefined | null) =>
     .trim()
     .toUpperCase();
 
-const laptopSynonyms = ['LAPTOP', 'LAPTOPS', 'COMPUTADORA', 'COMPUTADORAS', 'COMPUTER', 'COMPUTERS', 'PC', 'PCS'];
+const laptopSynonyms = ['LAPTOP', 'LAPTOPS', 'COMPUTADORA', 'COMPUTADORAS', 'COMPUTER', 'COMPUTERS'];
+
+const containsWholeWord = (text: string, term: string) => {
+  const escaped = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const regex = new RegExp(`(^|[^A-Z0-9])${escaped}([^A-Z0-9]|$)`);
+  return regex.test(text);
+};
 
 const hasLaptopIntent = (query: string) => {
   return laptopSynonyms.some((term) => query.includes(term));
@@ -110,9 +116,9 @@ export const filterProductsUseCase = ({
         if (!laptopIntent) return false;
 
         return (
-          laptopSynonyms.some((term) => normalizedName.includes(term)) ||
-          laptopSynonyms.some((term) => normalizedCategory.includes(term)) ||
-          laptopSynonyms.some((term) => normalizedType.includes(term))
+          laptopSynonyms.some((term) => containsWholeWord(normalizedName, term)) ||
+          laptopSynonyms.some((term) => containsWholeWord(normalizedCategory, term)) ||
+          laptopSynonyms.some((term) => containsWholeWord(normalizedType, term))
         );
       }
     );

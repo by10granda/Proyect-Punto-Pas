@@ -206,9 +206,11 @@ const Index = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const loadAPIProducts = async () => {
+  const loadAPIProducts = async ({ silent = false }: { silent?: boolean } = {}) => {
     try {
-      setIsLoadingProducts(true);
+      if (!silent) {
+        setIsLoadingProducts(true);
+      }
       setApiStatus('loading');
       setApiError(null);
       const loadResult = await loadProductsUseCase(loadProductsFromAPI);
@@ -219,7 +221,9 @@ const Index = () => {
       } else {
         setApiStatus('error');
         setApiError('No se recibieron productos de la API');
-        toast.error("La API no devolvió productos. Verifica la consola.");
+        if (!silent) {
+          toast.error("La API no devolvió productos. Verifica la consola.");
+        }
         void sendProductsUnavailableAlert("La API no devolvió productos");
       }
     } catch (error: unknown) {
@@ -227,15 +231,29 @@ const Index = () => {
       console.error('Error cargando productos de API:', message);
       setApiStatus('error');
       setApiError(message);
-      toast.error(`Error de conexión: ${message}`);
+      if (!silent) {
+        toast.error(`Error de conexión: ${message}`);
+      }
       void sendProductsUnavailableAlert(`Error de conexión: ${message}`);
     } finally {
-      setIsLoadingProducts(false);
+      if (!silent) {
+        setIsLoadingProducts(false);
+      }
     }
   };
 
   useEffect(() => {
     loadAPIProducts();
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (document.visibilityState === 'visible') {
+        void loadAPIProducts({ silent: true });
+      }
+    }, 60000);
+
+    return () => clearInterval(interval);
   }, []);
 
   const filteredProducts = useMemo(() => {
