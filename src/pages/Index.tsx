@@ -857,6 +857,11 @@ const Index = () => {
                   src="https://res.cloudinary.com/dbbkpdhze/image/upload/v1778709681/PORTADA_TEC1.png"
                   alt="Portada tecnologia ENV"
                   className="relative z-10 block w-full h-auto cursor-pointer"
+                  style={{
+                    transform: `translateY(${envBannerParallax * 0.35}px) scale(1.015)`,
+                    transition: 'transform 160ms ease-out',
+                    willChange: 'transform',
+                  }}
                   onClick={() => {
                     const normalizedBrand = "ENV";
                     setMainFilter({ mode: "brand", value: normalizedBrand });
