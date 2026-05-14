@@ -8,6 +8,13 @@ export type { Product, Level2Category, ClassificationItem } from '@/domain/produ
 const CLOUDINARY_BASE_URL = 'https://res.cloudinary.com/dbbkpdhze/image/upload/';
 const CLOUDINARY_VERSION = 'v1774530743';
 
+const normalizeProductCode = (value: string | number | undefined | null) =>
+  String(value || '').trim().padStart(8, '0').substring(0, 8);
+
+const manualStockOverrides: Record<string, number> = {
+  '00001776': 0,
+};
+
 
 let classificationsList: string[] = [];
 const classificationsHierarchy: Map<number, { name: string; level: number; parentId: number | null }> = new Map();
@@ -193,7 +200,10 @@ const updateProductsStock = () => {
   if (apiProducts && apiProducts.length > 0) {
     apiProducts = apiProducts.map(product => ({
       ...product,
-      stock: inventarioMap[product.id] || 0
+      stock:
+        manualStockOverrides[normalizeProductCode(product.code || product.id)] ??
+        inventarioMap[normalizeProductCode(product.code || product.id)] ??
+        0
     }));
     if (updateInventoryCallback) {
       updateInventoryCallback([...apiProducts]);
@@ -210,7 +220,7 @@ export const refreshInventario = async (): Promise<void> => {
     
     if (inventario && Array.isArray(inventario)) {
       inventario.forEach((item: ApiInventoryItem) => {
-        const key = String(item.codigo);
+        const key = normalizeProductCode(item.codigo);
         inventarioMap[key] = Number(item.disponible || 0);
       });
       updateProductsStock();
@@ -237,10 +247,6 @@ export const loadProductsFromAPI = async ({
     return apiProducts;
   }
 
-  if (!forceRefresh && apiProducts && apiProducts.length > 0) {
-    return apiProducts;
-  }
-
   try {
     const data = await productService.getProducts();
     
@@ -255,7 +261,7 @@ export const loadProductsFromAPI = async ({
 
     if (inventario && Array.isArray(inventario) && inventario.length > 0) {
       inventario.forEach((item: ApiInventoryItem) => {
-        const key = String(item.codigo);
+        const key = normalizeProductCode(item.codigo);
         const disponible = Number(item.disponible || 0);
         inventarioMap[key] = disponible;
       });
@@ -335,11 +341,17 @@ export const loadProductsFromAPI = async ({
       inventarioMap,
       getFriendlyCategory,
     });
+    apiProducts = apiProducts.map((product) => {
+      const code = normalizeProductCode(product.code || product.id);
+      const forcedStock = manualStockOverrides[code];
+      if (forcedStock === undefined) return product;
+      return { ...product, stock: forcedStock };
+    });
     apiProductsLastSyncAt = Date.now();
 
     return apiProducts;
   } catch (_error: unknown) {
-    return [];
+    return apiProducts || [];
   }
 };
 
