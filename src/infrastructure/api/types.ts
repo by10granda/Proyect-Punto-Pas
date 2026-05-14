@@ -26,6 +26,14 @@ export interface ApiProductItem {
   precioVentaConImpuestos?: number;
   descripcionMarca?: string;
   estado?: string;
+  fechaActualizacion?: string;
+  unidadesVenta?: Array<{
+    idUnidadVenta: number;
+    tipo: string;
+    factor: number;
+    muldiv: string;
+    permiteDecimales: string;
+  }>;
 }
 
 export interface ApiInventoryItem {

@@ -1,13 +1,10 @@
-import { API_CONFIG } from '@/infrastructure/api/config';
 import { fetchWithAuth } from '@/infrastructure/api/fetchWithAuth';
 import { ApiClassificationItem, ApiError, ApiErrorPayload, ApiInventoryItem, ApiProductItem } from '@/infrastructure/api/types';
 
 export const productService = {
   async getProducts(): Promise<ApiProductItem[]> {
     try {
-      const response = await fetchWithAuth(
-        `/item/search3?IdPuntoVenta=${API_CONFIG.IdPuntoVenta}&IdNivelPrecio=${API_CONFIG.IdNivelPrecio}`
-      );
+      const response = await fetchWithAuth('/item/search3');
 
       if (response.status === 404) {
         return [];
