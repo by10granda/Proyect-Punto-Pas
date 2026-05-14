@@ -27,8 +27,10 @@ export const ProductCarouselSection = ({
   onAddToCart 
 }: ProductCarouselSectionProps) => {
   const scrollRef = useRef<HTMLDivElement>(null);
-  const isFridgeAndFreezerSection = category.toUpperCase().trim() === "CONGELADORES Y NEVERAS";
+  const normalizedCategory = category.toUpperCase().trim();
+  const isFridgeAndFreezerSection = normalizedCategory === "CONGELADORES Y NEVERAS";
   const isWasherAndDryerSection = category.toUpperCase().trim() === "LAVADORAS Y SECADERAS";
+  const isTelevisionSection = normalizedCategory === "TELEVISORES";
 
   const getScrollAmount = () => {
     if (isWasherAndDryerSection) {
@@ -103,7 +105,7 @@ export const ProductCarouselSection = ({
                   {products.map((product) => (
                     <div
                       key={product.id}
-                      className={`w-[168px] md:w-[188px] ${isFridgeAndFreezerSection ? "h-[250px] md:h-[280px]" : ""}`}
+                      className={`w-[168px] md:w-[188px] ${isFridgeAndFreezerSection ? "h-[250px] md:h-[280px]" : ""} ${isTelevisionSection ? "h-[248px] md:h-[296px]" : ""}`}
                     >
                       <ProductCard
                         product={product}

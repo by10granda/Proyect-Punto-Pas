@@ -87,6 +87,7 @@ const Index = () => {
   // Estado independiente para WeeklyDeals
   const [weeklyDealsCategory, setWeeklyDealsCategory] = useState("all");
   const [envBannerParallax, setEnvBannerParallax] = useState(0);
+  const [isMobileViewport, setIsMobileViewport] = useState(false);
   const [cart, setCart] = useState<CartItem[]>(() => {
     const saved = localStorage.getItem("puntopas_cart");
     return saved ? JSON.parse(saved) : [];
@@ -128,6 +129,65 @@ const Index = () => {
   const categoriesRef = useRef<HTMLDivElement>(null);
   const productsRef = useRef<HTMLDivElement>(null);
   const envBannerRef = useRef<HTMLDivElement>(null);
+
+  const normalizeForMatch = (value: string) =>
+    (value || "")
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toUpperCase()
+      .trim();
+
+  const isTechAccessoriesFamilyProduct = (product: Product) => {
+    const normalizedType = normalizeForMatch(product.type || "");
+    const normalizedCategory = normalizeForMatch(product.category || "");
+    const normalizedName = normalizeForMatch(product.name || "");
+
+    const directTaxonomyMatch =
+      normalizedType.includes("ACCESORIOS TECNOLOGICOS") ||
+      normalizedCategory.includes("ACCESORIOS TECNOLOGICOS") ||
+      normalizedType.includes("LAPTOP") ||
+      normalizedCategory.includes("LAPTOP");
+
+    if (directTaxonomyMatch) return true;
+
+    const techKeywords = [
+      "LAPTOP",
+      "NOTEBOOK",
+      "ULTRABOOK",
+      "AURICULAR",
+      "TECLADO",
+      "MOUSE",
+      "WEBCAM",
+      "PARLANTE",
+      "CARGADOR",
+      "POWER BANK",
+      "MEMORIA USB",
+      "SSD",
+      "DISCO DURO",
+      "ROUTER",
+      "SWITCH",
+      "ADAPTADOR",
+    ];
+
+    return techKeywords.some((keyword) => normalizedName.includes(keyword));
+  };
+
+  const applyEnvBrandFilter = () => {
+    const normalizedBrand = "ENV";
+    setMainFilter({ mode: "brand", value: normalizedBrand });
+    setSelectedType("all");
+    setCarouselCategory("all");
+    setSelectedBrand(normalizedBrand);
+    setSelectedCategory("all");
+    setSearchQuery("");
+    setActiveTab("home");
+    setTimeout(() => {
+      const productsSection = document.getElementById('productos');
+      if (productsSection) {
+        productsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 100);
+  };
 
   const updateCart = (newCart: CartItem[]) => {
     setCart(newCart);
@@ -259,14 +319,22 @@ const Index = () => {
   }, []);
 
   useEffect(() => {
-    const handleScroll = () => {
-      const section = envBannerRef.current;
-      if (!section) return;
+    const handleViewport = () => {
+      setIsMobileViewport(window.innerWidth < 768);
+    };
 
-      const rect = section.getBoundingClientRect();
-      const viewportHeight = window.innerHeight || 1;
-      const progress = 1 - Math.max(0, Math.min(1, rect.top / viewportHeight));
-      const shift = (progress - 0.5) * 36;
+    handleViewport();
+    window.addEventListener('resize', handleViewport);
+
+    return () => {
+      window.removeEventListener('resize', handleViewport);
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const baseAmplitude = isMobileViewport ? 10 : 24;
+      const shift = Math.sin(window.scrollY / (isMobileViewport ? 120 : 180)) * baseAmplitude;
       setEnvBannerParallax(shift);
     };
 
@@ -278,7 +346,7 @@ const Index = () => {
       window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('resize', handleScroll);
     };
-  }, []);
+  }, [isMobileViewport]);
 
   const filteredProducts = useMemo(() => {
     const sourceProducts = allProducts;
@@ -319,6 +387,14 @@ const Index = () => {
   const displayedProducts = useMemo(() => {
     return filteredProducts;
   }, [filteredProducts]);
+
+  const showEnvLaptopBannerInSearch = useMemo(() => {
+    if (mainFilter.mode !== "search" || !searchQuery.trim()) {
+      return false;
+    }
+
+    return displayedProducts.some((product) => isTechAccessoriesFamilyProduct(product));
+  }, [mainFilter.mode, searchQuery, displayedProducts]);
 
   const cartItemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
@@ -649,6 +725,17 @@ const Index = () => {
       )}
 
       <div ref={productsRef} id="productos">
+        {showEnvLaptopBannerInSearch && (
+          <div className="mb-4 md:mb-6 w-full bg-white" style={{ backgroundColor: '#FFFFFF' }}>
+            <img
+              src="https://res.cloudinary.com/dbbkpdhze/image/upload/v1778709681/PORTADA_TEC1.png"
+              alt="Portada tecnologia ENV"
+              className="block w-full h-auto cursor-pointer"
+              onClick={applyEnvBrandFilter}
+            />
+          </div>
+        )}
+
         {searchQuery && searchSectionCategories.length > 0 && (
           <section className="bg-white px-3 md:px-4 pt-5 md:pt-6 pb-3 border-b border-slate-200">
             <div className="max-w-7xl mx-auto">
@@ -812,7 +899,50 @@ const Index = () => {
                 onProductClick={handleProductClick}
                 onAddToCart={(product) => handleAddToCart(product, 1)}
               />
-               
+
+              <ProductCarouselSection
+                products={allProducts
+                  .filter((p) => {
+                    const cat = (p.category || "").toUpperCase().trim();
+                    const type = (p.type || "").toUpperCase().trim();
+                    const name = (p.name || "").toUpperCase().trim();
+                    return (
+                      cat.includes("TELEVIS") ||
+                      type.includes("TELEVIS") ||
+                      type.includes("TV") ||
+                      name.includes("TELEVIS")
+                    );
+                  })
+                  .sort((a, b) => {
+                    const aInStock = (a.stock || 0) > 0 ? 1 : 0;
+                    const bInStock = (b.stock || 0) > 0 ? 1 : 0;
+                    return bInStock - aInStock;
+                  })}
+                category="TELEVISORES"
+                topTitle="TELEVISORES"
+                sectionTitle="TELEVISORES PARA TU HOGAR"
+                bannerImage="https://res.cloudinary.com/dbbkpdhze/image/upload/v1778731751/televisores_1.png"
+                layout="fridge"
+                onBannerClick={() => {
+                  setMainFilter({ mode: "carousel", value: "TELEVISORES" });
+                  setSelectedType("all");
+                  setCarouselCategory("TELEVISORES");
+                  setSearchQuery("");
+                  setSelectedCategory("all");
+                  setSelectedBrand("all");
+                  setOffersCategory("all");
+                  setActiveTab("home");
+                  setTimeout(() => {
+                    const productsSection = document.getElementById('productos');
+                    if (productsSection) {
+                      productsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                  }, 100);
+                }}
+                onProductClick={handleProductClick}
+                onAddToCart={(product) => handleAddToCart(product, 1)}
+              />
+                
               <div id="weeklydeals-section">
                <WeeklyDeals
                images={[
@@ -841,43 +971,16 @@ const Index = () => {
                 className="relative mt-4 md:mt-6 w-full overflow-hidden bg-white"
                 style={{ backgroundColor: '#FFFFFF' }}
               >
-                <div
-                  className="pointer-events-none absolute inset-0"
-                  style={{
-                    backgroundImage: "url('https://res.cloudinary.com/dbbkpdhze/image/upload/v1778709681/PORTADA_TEC1.png')",
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                    transform: `translateY(${envBannerParallax}px) scale(1.08)`,
-                    filter: 'blur(8px) saturate(1.1)',
-                    opacity: 0.22,
-                    transition: 'transform 140ms ease-out',
-                  }}
-                />
                 <img
                   src="https://res.cloudinary.com/dbbkpdhze/image/upload/v1778709681/PORTADA_TEC1.png"
                   alt="Portada tecnologia ENV"
                   className="relative z-10 block w-full h-auto cursor-pointer"
                   style={{
-                    transform: `translateY(${envBannerParallax * 0.35}px) scale(1.015)`,
-                    transition: 'transform 160ms ease-out',
+                    transform: `translateY(${envBannerParallax * -0.35}px) scale(${isMobileViewport ? 1.012 : 1.026})`,
+                    transition: 'transform 110ms linear',
                     willChange: 'transform',
                   }}
-                  onClick={() => {
-                    const normalizedBrand = "ENV";
-                    setMainFilter({ mode: "brand", value: normalizedBrand });
-                    setSelectedType("all");
-                    setCarouselCategory("all");
-                    setSelectedBrand(normalizedBrand);
-                    setSelectedCategory("all");
-                    setSearchQuery("");
-                    setActiveTab("home");
-                    setTimeout(() => {
-                      const productsSection = document.getElementById('productos');
-                      if (productsSection) {
-                        productsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                      }
-                    }, 100);
-                  }}
+                  onClick={applyEnvBrandFilter}
                 />
               </div>
 
