@@ -24,9 +24,12 @@ import {
   loadClassificationsFromAPI,
   Product,
   loadProductsFromAPI,
+  refreshInventario,
+  setInventoryUpdateCallback,
 } from "@/data/products";
 import { toast } from "sonner";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { Helmet } from "react-helmet";
 
 const Index = () => {
   const PRODUCTS_ALERT_COOLDOWN_MS = 15 * 60 * 1000;
@@ -319,6 +322,23 @@ const Index = () => {
   }, []);
 
   useEffect(() => {
+    setInventoryUpdateCallback((updatedProducts) => {
+      setAllProducts(updatedProducts);
+    });
+
+    const inventoryInterval = setInterval(() => {
+      if (document.visibilityState === 'visible') {
+        void refreshInventario();
+      }
+    }, 15000);
+
+    return () => {
+      clearInterval(inventoryInterval);
+      setInventoryUpdateCallback(() => {});
+    };
+  }, []);
+
+  useEffect(() => {
     const handleViewport = () => {
       setIsMobileViewport(window.innerWidth < 768);
     };
@@ -585,6 +605,13 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <Helmet>
+        <title>Distribuidor Punto Pas | Ferretería y Hogar en Ecuador</title>
+        <meta
+          name="description"
+          content="Distribuidor Punto Pas: ferretería, hogar, electrodomésticos y más. Compra online con entrega rápida en Ecuador."
+        />
+      </Helmet>
       <TopBar />
       <div className="h-[2px] bg-white/30 -mt-px relative z-40" />
        <Header 
@@ -609,6 +636,13 @@ const Index = () => {
         />
       {activeTab === "home" && !searchQuery && (
         <>
+          <section className="bg-white pt-4 pb-1">
+            <div className="max-w-[99vw] mx-auto px-2">
+              <h1 className="text-center text-xl md:text-2xl font-black tracking-tight text-slate-900">
+                Distribuidor Punto Pas
+              </h1>
+            </div>
+          </section>
           <section className="bg-white pt-3 pb-2">
             <div className="max-w-[99vw] mx-auto px-2">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-3">
@@ -835,6 +869,29 @@ const Index = () => {
           
           {activeTab === "home" && !searchQuery && (
             <>
+              <div id="weeklydeals-section">
+               <WeeklyDeals
+               images={[
+                  "https://res.cloudinary.com/dbbkpdhze/image/upload/v1778073484/Descuento1_s.png",
+                 "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777429432/Descuento2_s.png",
+                 "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777429429/Descuento3_s.png",
+                 "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777429442/Descuento4_s.png",
+                 "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777433322/Descuento5_s.png",
+                 "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777429436/Descuento6_s.png",
+                 "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777429439/Descuento7_s.png",
+                 "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777429448/Descuento8_s.png",
+               ]}
+               products={allProducts}
+                selectedCategory={weeklyDealsCategory}
+                onCategoryChange={(category) => {
+                  setWeeklyDealsCategory(category);
+                }}
+                 onProductClick={(product) => {
+                   navigate(`/product/${product.id}`);
+                 }}
+              />
+              </div>
+
               <ProductCarouselSection
                 products={allProducts.filter(p => {
                   const cat = (p.category || '').toUpperCase().trim();
@@ -943,29 +1000,6 @@ const Index = () => {
                 onAddToCart={(product) => handleAddToCart(product, 1)}
               />
                 
-              <div id="weeklydeals-section">
-               <WeeklyDeals
-               images={[
-                  "https://res.cloudinary.com/dbbkpdhze/image/upload/v1778073484/Descuento1_s.png",
-                 "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777429432/Descuento2_s.png",
-                 "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777429429/Descuento3_s.png",
-                 "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777429442/Descuento4_s.png",
-                 "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777433322/Descuento5_s.png",
-                 "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777429436/Descuento6_s.png",
-                 "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777429439/Descuento7_s.png",
-                 "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777429448/Descuento8_s.png",
-               ]}
-               products={allProducts}
-                selectedCategory={weeklyDealsCategory}
-                onCategoryChange={(category) => {
-                  setWeeklyDealsCategory(category);
-                }}
-                 onProductClick={(product) => {
-                   navigate(`/product/${product.id}`);
-                 }}
-              />
-              </div>
-
               <div
                 ref={envBannerRef}
                 className="relative mt-4 md:mt-6 w-full overflow-hidden bg-white"
