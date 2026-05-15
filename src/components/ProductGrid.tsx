@@ -1,5 +1,5 @@
 import { Product } from "@/data/products";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 
 const ProductCardGrid = ({ product, onAddToCart, onProductClick }: {
   product: Product;
@@ -8,6 +8,7 @@ const ProductCardGrid = ({ product, onAddToCart, onProductClick }: {
 }) => {
   const [imageError, setImageError] = useState(false);
   const [quantity, setQuantity] = useState(1);
+  const hasStock = product.stock > 0;
 
   const handleImageError = () => setImageError(true);
 
@@ -32,12 +33,12 @@ const ProductCardGrid = ({ product, onAddToCart, onProductClick }: {
       onClick={() => onProductClick(product)}
     >
         <div className="relative aspect-[4/5] bg-gray-50/60 overflow-hidden">
-        {product.stock === 0 && (
+        {!hasStock && (
           <div className="absolute inset-0 z-20 flex items-center justify-center bg-white/90">
             <span className="text-red-600 text-sm font-semibold px-4 py-2 bg-red-50 rounded-full">Sin stock</span>
           </div>
         )}
-        {hasPvpAndPuntoPas && product.stock > 0 && (
+        {hasPvpAndPuntoPas && hasStock && (
           <div className="absolute top-2 left-2 z-10">
             <span className="text-[10px] font-semibold px-2 py-1 rounded-lg" style={{ backgroundColor: '#FA003F', color: 'white' }}>
               -{discountPercent}%
@@ -75,7 +76,7 @@ const ProductCardGrid = ({ product, onAddToCart, onProductClick }: {
             <div className="flex items-center gap-1 justify-between sm:justify-start">
               <button
                 onClick={(e) => { e.stopPropagation(); setQuantity(q => Math.max(1, q - 1)); }}
-                disabled={product.stock === 0 || quantity <= 1}
+                disabled={!hasStock || quantity <= 1}
                 className="w-5.5 h-5.5 rounded-md flex items-center justify-center text-[10px] font-bold disabled:opacity-30"
                 style={{ backgroundColor: '#f3f4f6', color: '#374151' }}
               >
@@ -84,20 +85,20 @@ const ProductCardGrid = ({ product, onAddToCart, onProductClick }: {
               <input
                 type="number"
                 min={1}
-                max={product.stock}
+                max={Math.max(1, product.stock)}
                 value={quantity}
                 onChange={(e) => {
                   e.stopPropagation();
                   const val = parseInt(e.target.value) || 1;
-                  setQuantity(Math.max(1, Math.min(val, product.stock || 999)));
+                  setQuantity(Math.max(1, Math.min(val, Math.max(1, product.stock))));
                 }}
                 onClick={(e) => e.stopPropagation()}
                 className="w-8 h-5.5 rounded-md text-center text-[11px] font-semibold border"
                 style={{ borderColor: '#e5e7eb' }}
               />
               <button
-                onClick={(e) => { e.stopPropagation(); setQuantity(q => Math.min(product.stock || 999, q + 1)); }}
-                disabled={product.stock === 0 || quantity >= (product.stock || 999)}
+                onClick={(e) => { e.stopPropagation(); setQuantity(q => Math.min(Math.max(1, product.stock), q + 1)); }}
+                disabled={!hasStock || quantity >= Math.max(1, product.stock)}
                 className="w-5.5 h-5.5 rounded-md flex items-center justify-center text-[10px] font-bold disabled:opacity-30"
                 style={{ backgroundColor: '#f3f4f6', color: '#374151' }}
               >
@@ -108,11 +109,11 @@ const ProductCardGrid = ({ product, onAddToCart, onProductClick }: {
 
           <button
             onClick={handleAdd}
-            disabled={product.stock === 0}
+            disabled={!hasStock}
             className="w-full py-2 rounded-md text-[10px] font-semibold disabled:opacity-40 transition hover:brightness-110"
             style={{ backgroundColor: '#FF0000', color: 'white' }}
           >
-            {product.stock === 0 ? 'Sin stock' : 'Agregar'}
+            {!hasStock ? 'Sin stock' : 'Agregar'}
           </button>
         </div>
       </div>
@@ -131,10 +132,14 @@ export const ProductGrid = ({ products, onAddToCart, onProductClick, title, show
   isLoading?: boolean;
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
+  const productIdentityKey = useMemo(
+    () => products.map((product) => product.id).join("|"),
+    [products]
+  );
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [products, showPagination]);
+  }, [productIdentityKey, showPagination]);
 
   if (isLoading) {
     return (
