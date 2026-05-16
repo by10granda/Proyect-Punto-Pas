@@ -28,6 +28,24 @@ const fetchItemByCode = async (authorization, code) => {
   };
 };
 
+const fetchItemsFromSearch3 = async (authorization) => {
+  const base = normalizeBaseUrl();
+  const targetUrl = `${base}/item/search3`;
+  const headers = {};
+  if (authorization) headers.Authorization = authorization;
+
+  const upstream = await fetch(targetUrl, {
+    method: "GET",
+    headers,
+  });
+
+  return {
+    status: upstream.status,
+    contentType: upstream.headers.get("content-type") || "application/json",
+    body: await upstream.json().catch(() => null),
+  };
+};
+
 export default async function handler(req, res) {
   if (req.method !== "GET") {
     res.status(405).json({ error: "Method not allowed" });
@@ -62,6 +80,23 @@ export default async function handler(req, res) {
     }
 
     if (lastResponse) {
+      const search3 = await fetchItemsFromSearch3(req.headers.authorization);
+      if (search3.status < 400 && Array.isArray(search3.body)) {
+        const item = search3.body.find((entry) => {
+          const rawCode = String(entry?.codigo || "").trim();
+          const normalizedEntryCode = normalizeCodeVariants(rawCode);
+          return variants.some((candidate) => normalizedEntryCode.includes(candidate));
+        });
+
+        if (item) {
+          res.status(200);
+          res.setHeader("Content-Type", "application/json");
+          res.setHeader("Cache-Control", "no-store");
+          res.send(Buffer.from(JSON.stringify(item)));
+          return;
+        }
+      }
+
       res.status(lastResponse.status);
       res.setHeader("Content-Type", lastResponse.contentType);
       res.setHeader("Cache-Control", "no-store");
