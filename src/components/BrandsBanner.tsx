@@ -99,12 +99,12 @@ return (
             <button
               key={`${brand}-${index}`}
               onClick={() => handleBrandClick(brand)}
-              className="flex-shrink-0 h-16 w-36 flex items-center justify-center overflow-hidden"
+              className="flex-shrink-0 h-16 w-36 flex items-center justify-center overflow-hidden rounded-xl"
             >
               <img
                 src={getLogoUrl(brand)}
                 alt={brand}
-                className="h-full w-auto object-contain transition-transform duration-200 hover:scale-125"
+                className="h-full w-auto object-contain rounded-xl transition-transform duration-200 hover:scale-125"
                 onError={(e) => {
                   const img = e.target as HTMLImageElement;
                   img.style.display = 'none';
