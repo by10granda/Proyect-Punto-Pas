@@ -612,6 +612,7 @@ const Index = () => {
           content="Distribuidor Punto Pas: ferretería, hogar, electrodomésticos y más. Compra online con entrega rápida en Ecuador."
         />
       </Helmet>
+      <p className="sr-only">Distribuidor Punto Pas: ferretería y hogar en Ecuador.</p>
       <TopBar />
       <div className="h-[2px] bg-white/30 -mt-px relative z-40" />
        <Header 
@@ -858,6 +859,7 @@ const Index = () => {
             title={getTitle()}
             showPagination={!searchQuery}
             isLoading={isLoadingProducts}
+            resetPageKey={`${activeTab}|${mainFilter.mode}|${mainFilter.value}|${selectedCategory}|${selectedType}|${selectedBrand}|${offersCategory}|${searchQuery}`}
           />
           
           {activeTab === "home" && !searchQuery && (

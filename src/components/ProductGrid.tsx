@@ -1,5 +1,5 @@
 import { Product } from "@/data/products";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 
 const ProductCardGrid = ({ product, onAddToCart, onProductClick }: {
   product: Product;
@@ -123,23 +123,20 @@ const ProductCardGrid = ({ product, onAddToCart, onProductClick }: {
 
 const ITEMS_PER_PAGE = 18;
 
-export const ProductGrid = ({ products, onAddToCart, onProductClick, title, showPagination = true, isLoading = false }: {
+export const ProductGrid = ({ products, onAddToCart, onProductClick, title, showPagination = true, isLoading = false, resetPageKey = "" }: {
   products: Product[];
   onAddToCart: (product: Product, quantity: number) => void;
   onProductClick: (product: Product) => void;
   title?: string;
   showPagination?: boolean;
   isLoading?: boolean;
+  resetPageKey?: string;
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
-  const productIdentityKey = useMemo(
-    () => products.map((product) => product.id).join("|"),
-    [products]
-  );
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [productIdentityKey, showPagination]);
+  }, [showPagination, resetPageKey]);
 
   if (isLoading) {
     return (
