@@ -8,7 +8,8 @@ interface BrandsBannerProps {
   onBrandClick: (brand: string) => void;
 }
 
-const CLOUDINARY_BASE = "https://res.cloudinary.com/dbbkpdhze/image/upload/v1775830755";
+const CLOUDINARY_BASE = "https://res.cloudinary.com/dbbkpdhze/image/upload";
+const BRAND_LOGO_VERSION = "v1778950354";
 
 export const BrandsBanner = memo(({ products, onBrandClick }: BrandsBannerProps) => {
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -59,7 +60,8 @@ export const BrandsBanner = memo(({ products, onBrandClick }: BrandsBannerProps)
   };
 
   const getLogoUrl = (brand: string) => {
-    return `${CLOUDINARY_BASE}/${brand.toUpperCase().replace(/\s+/g, "_")}_1.png`;
+    const normalizedBrand = brand.toUpperCase().replace(/\s+/g, "_");
+    return `${CLOUDINARY_BASE}/${BRAND_LOGO_VERSION}/${normalizedBrand}_1.png`;
   };
 
   const handleBrandClick = (brand: string) => {
