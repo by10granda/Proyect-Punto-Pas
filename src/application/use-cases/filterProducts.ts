@@ -95,21 +95,25 @@ export const filterProductsUseCase = ({
 
   if (searchQuery) {
     const query = normalizeText(searchQuery);
+    const queryTerms = query.split(' ').filter(Boolean);
     const laptopIntent = hasLaptopIntent(query);
     filtered = filtered.filter(
       (p) => {
         const normalizedName = normalizeText(p.name);
         const normalizedCode = normalizeText(p.code);
-        const normalizedBrand = normalizeText(p.brand);
-        const normalizedCategory = normalizeText(p.category);
-        const normalizedType = normalizeText(p.type);
+        const normalizedDescription = normalizeText(p.description);
+        const searchableText = [
+          normalizedName,
+          normalizedDescription,
+          normalizedCode,
+        ].join(' ');
+
+        const hasAllQueryFragments =
+          queryTerms.length > 0 &&
+          queryTerms.every((term) => searchableText.includes(term));
 
         const directMatch =
-          normalizedName.includes(query) ||
-          normalizedCode.includes(query) ||
-          normalizedBrand.includes(query) ||
-          normalizedCategory.includes(query) ||
-          normalizedType.includes(query);
+          hasAllQueryFragments;
 
         if (directMatch) return true;
 

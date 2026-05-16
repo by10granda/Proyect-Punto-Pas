@@ -26,6 +26,7 @@ interface HeaderProps {
 }
 
 export const Header = ({ cartCount, searchQuery: propSearchQuery, onSearch, onCartClick, onGoToHome, onClearSearch, products = [], onProductClick, onTypeSelect, filters = defaultAdvancedProductFilters, onFiltersChange, productsCount = 0, popularSearches = [], nivel2Categories = [], nivel3ByParent }: HeaderProps) => {
+  const BRAND_LOGO_BASE_URL = "https://res.cloudinary.com/dbbkpdhze/image/upload/v1778950354";
   // Local state for input (allows typing), synced with parent
   const [searchQuery, setSearchQuery] = useState(propSearchQuery || "");
   const [isListening, setIsListening] = useState(false);
@@ -72,6 +73,10 @@ export const Header = ({ cartCount, searchQuery: propSearchQuery, onSearch, onCa
   }, [filters]);
 
   const filterOptions = useMemo(() => getAdvancedFilterOptions(products), [products]);
+  const brandSuggestions = useMemo(
+    () => filterOptions.brands.filter((brand) => Boolean(brand && brand.trim())),
+    [filterOptions.brands]
+  );
   const previewCount = useMemo(() => applyAdvancedProductFilters(products.filter((p) => p.isActive), draftFilters).length, [draftFilters, products]);
   const priceBounds = useMemo(() => {
     const prices = products
@@ -251,6 +256,39 @@ export const Header = ({ cartCount, searchQuery: propSearchQuery, onSearch, onCa
     [debouncedQuery, products]
   );
 
+  const groupedSuggestions = useMemo(() => {
+    const queryLength = (searchQuery || "").trim().length;
+    if (queryLength < 3) {
+      return {
+        taxonomy: [] as SearchSuggestion[],
+        productItems: [] as SearchSuggestion[],
+        combined: [] as SearchSuggestion[],
+      };
+    }
+
+    const taxonomy = suggestions.filter(
+      (item) => item.type === "category" || item.type === "brand"
+    );
+
+    const productItems = suggestions.filter(
+      (item) => item.type === "product" || item.type === "code"
+    );
+
+    const seenProductIds = new Set<string>();
+    const uniqueProductItems = productItems.filter((item) => {
+      const key = item.product?.id ? `product:${item.product.id}` : item.id;
+      if (seenProductIds.has(key)) return false;
+      seenProductIds.add(key);
+      return true;
+    });
+
+    return {
+      taxonomy,
+      productItems: uniqueProductItems,
+      combined: [...taxonomy, ...uniqueProductItems],
+    };
+  }, [suggestions, searchQuery]);
+
   // Handle click outside to close suggestions
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -271,11 +309,13 @@ export const Header = ({ cartCount, searchQuery: propSearchQuery, onSearch, onCa
       case 'ArrowDown':
         e.preventDefault();
         setSelectedSuggestion(prev => {
-          const newIndex = Math.min(prev + 1, suggestions.length - 1);
+          const newIndex = Math.min(prev + 1, groupedSuggestions.combined.length - 1);
           // Scroll to show the selected suggestion
           setTimeout(() => {
             if (suggestionsRef.current) {
-              const selectedElement = suggestionsRef.current.children[newIndex] as HTMLElement;
+              const selectedElement = suggestionsRef.current.querySelector(
+                `[data-suggestion-index="${newIndex}"]`
+              ) as HTMLElement | null;
               if (selectedElement) {
                 selectedElement.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
               }
@@ -292,7 +332,9 @@ export const Header = ({ cartCount, searchQuery: propSearchQuery, onSearch, onCa
             // Scroll to show the selected suggestion
             setTimeout(() => {
               if (suggestionsRef.current) {
-                const selectedElement = suggestionsRef.current.children[newIndex] as HTMLElement;
+                const selectedElement = suggestionsRef.current.querySelector(
+                  `[data-suggestion-index="${newIndex}"]`
+                ) as HTMLElement | null;
                 if (selectedElement) {
                   selectedElement.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
                 }
@@ -304,8 +346,8 @@ export const Header = ({ cartCount, searchQuery: propSearchQuery, onSearch, onCa
         break;
       case 'Enter':
         e.preventDefault();
-        if (selectedSuggestion >= 0 && suggestions[selectedSuggestion]) {
-          selectSuggestion(suggestions[selectedSuggestion]);
+        if (selectedSuggestion >= 0 && groupedSuggestions.combined[selectedSuggestion]) {
+          selectSuggestion(groupedSuggestions.combined[selectedSuggestion]);
         } else {
           handleSearchSubmit();
         }
@@ -347,7 +389,7 @@ export const Header = ({ cartCount, searchQuery: propSearchQuery, onSearch, onCa
     // Update local state immediately (allows typing)
     setSearchQuery(value);
     setSelectedSuggestion(-1);
-    if (value.length >= 2) {
+    if (value.length >= 3) {
       setShowSuggestions(true);
     } else if (value.length === 0) {
       // Clear search
@@ -678,7 +720,7 @@ export const Header = ({ cartCount, searchQuery: propSearchQuery, onSearch, onCa
                 onChange={handleSearchChange}
                 onFocus={() => {
                   setIsSearchFocused(true);
-                  if (searchQuery.length >= 1) setShowSuggestions(true);
+                  setShowSuggestions(true);
                 }}
                 onBlur={handleSearchBlur}
                 onKeyDown={handleKeyDown}
@@ -721,70 +763,116 @@ export const Header = ({ cartCount, searchQuery: propSearchQuery, onSearch, onCa
                   </div>
                 )}
 
-                {!isSearching && suggestions.length > 0 && (
-                  <div ref={suggestionsRef} className="max-h-72 overflow-y-auto">
-                    {suggestions.map((suggestion, index) => {
+                {!isSearching && groupedSuggestions.combined.length > 0 && (
+                  <div ref={suggestionsRef} className="max-h-[72vh] overflow-y-auto overscroll-contain">
+                    {groupedSuggestions.taxonomy.length > 0 && (
+                      <div className="px-3 py-2 text-xs font-semibold uppercase tracking-wide text-slate-500 bg-slate-50 border-b border-slate-100">
+                        Categorias y marcas
+                      </div>
+                    )}
+                    {groupedSuggestions.combined.map((suggestion, index) => {
                       const query = debouncedQuery.toLowerCase();
                       const text = suggestion.text;
                       const lowerText = text.toLowerCase();
                       const matchIndex = lowerText.indexOf(query);
+                      const isProduct = suggestion.type === "product" || suggestion.type === "code";
+                      const firstProductIndex = groupedSuggestions.taxonomy.length;
+                      const showProductsHeader =
+                        groupedSuggestions.productItems.length > 0 && index === firstProductIndex;
 
                       return (
-                        <button
-                          key={suggestion.id}
-                          onClick={() => selectSuggestion(suggestion)}
-                          onMouseEnter={() => setSelectedSuggestion(index)}
-                          className={`w-full text-left px-3 py-2.5 flex items-center gap-3 transition-colors border-b border-slate-100 last:border-b-0 ${
-                            index === selectedSuggestion ? 'bg-slate-100' : 'hover:bg-slate-50'
-                          }`}
-                        >
-                          <img
-                            src={suggestion.product?.image || "https://placehold.co/64x64?text=IMG"}
-                            alt={suggestion.text}
-                            className="w-10 h-10 object-contain flex-shrink-0 rounded-md bg-slate-50"
-                          />
-
-                          <div className="flex-1 min-w-0">
-                            <span className="text-sm block truncate text-slate-800">
-                              {matchIndex >= 0 ? (
-                                <>
-                                  {text.slice(0, matchIndex)}
-                                  <span className="font-semibold text-primary">
-                                    {text.slice(matchIndex, matchIndex + query.length)}
-                                  </span>
-                                  {text.slice(matchIndex + query.length)}
-                                </>
-                              ) : (
-                                text
-                              )}
-                            </span>
-                            <div className="flex items-center gap-2 mt-0.5">
-                              {suggestion.product?.category && (
-                                <span className="text-[11px] text-slate-500 truncate max-w-[160px]">
-                                  {suggestion.product.category}
-                                </span>
-                              )}
-                              <span className="text-[10px] uppercase tracking-wide text-slate-400">{suggestion.type}</span>
+                        <div key={suggestion.id}>
+                          {showProductsHeader && (
+                            <div className="px-3 py-2 text-xs font-semibold uppercase tracking-wide text-slate-500 bg-slate-50 border-y border-slate-100">
+                              Productos
                             </div>
-                          </div>
-
-                          {suggestion.price !== undefined && (
-                            <span className="text-sm font-semibold text-slate-700 whitespace-nowrap">
-                              ${suggestion.price.toFixed(2)}
-                            </span>
                           )}
-                        </button>
+                          <button
+                            data-suggestion-index={index}
+                            onClick={() => selectSuggestion(suggestion)}
+                            onMouseEnter={() => setSelectedSuggestion(index)}
+                            className={`w-full text-left px-3 py-2.5 flex items-center gap-3 transition-colors border-b border-slate-100 last:border-b-0 ${
+                              index === selectedSuggestion ? 'bg-slate-100' : 'hover:bg-slate-50'
+                            }`}
+                          >
+                            <img
+                              src={suggestion.product?.image || "https://placehold.co/64x64?text=IMG"}
+                              alt={suggestion.text}
+                              className="w-10 h-10 object-contain flex-shrink-0 rounded-md bg-slate-50"
+                            />
+
+                            <div className="flex-1 min-w-0">
+                              <span className="text-sm block truncate text-slate-800">
+                                {matchIndex >= 0 ? (
+                                  <>
+                                    {text.slice(0, matchIndex)}
+                                    <span className="font-semibold text-primary">
+                                      {text.slice(matchIndex, matchIndex + query.length)}
+                                    </span>
+                                    {text.slice(matchIndex + query.length)}
+                                  </>
+                                ) : (
+                                  text
+                                )}
+                              </span>
+                              <div className="flex items-center gap-2 mt-0.5">
+                                {suggestion.product?.category && (
+                                  <span className="text-[11px] text-slate-500 truncate max-w-[160px]">
+                                    {suggestion.product.category}
+                                  </span>
+                                )}
+                                <span className="text-[10px] uppercase tracking-wide text-slate-400">{suggestion.type}</span>
+                              </div>
+                            </div>
+
+                            {isProduct && suggestion.price !== undefined && (
+                              <span className="text-sm font-semibold text-slate-700 whitespace-nowrap">
+                                ${suggestion.price.toFixed(2)}
+                              </span>
+                            )}
+                          </button>
+                        </div>
                       );
                     })}
                   </div>
                 )}
 
-                {!isSearching && suggestions.length === 0 && searchQuery.length >= 2 && (
+                {!isSearching && groupedSuggestions.combined.length === 0 && searchQuery.length >= 3 && (
                   <div className="p-3 text-sm text-slate-500">No encontramos resultados para "{searchQuery}".</div>
                 )}
 
-                {showSuggestions && searchQuery.length < 2 && (recentSearches.length > 0 || popularSearches.length > 0) && (
-                  <div className="p-3 border-t border-slate-100">
+                {showSuggestions && searchQuery.length < 3 && (brandSuggestions.length > 0 || recentSearches.length > 0 || popularSearches.length > 0) && (
+                  <div ref={suggestionsRef} className="p-3 border-t border-slate-100 max-h-[72vh] overflow-y-auto overscroll-contain">
+                    {brandSuggestions.length > 0 && (
+                      <>
+                        <p className="text-xs text-slate-500 mb-2">Marcas</p>
+                        <div className="flex flex-wrap gap-2 mb-3">
+                          {brandSuggestions.map((brand) => (
+                            <button
+                              key={`brand-suggestion-${brand}`}
+                              onClick={() => {
+                                setSearchQuery(brand);
+                                onSearch(brand);
+                                pushRecentSearch(brand);
+                                setShowSuggestions(false);
+                              }}
+                              className="text-xs bg-slate-100 hover:bg-slate-200 px-2.5 py-1 rounded-full transition-colors flex items-center gap-1.5"
+                            >
+                              <img
+                                src={`${BRAND_LOGO_BASE_URL}/${brand.toUpperCase().replace(/\s+/g, "_")}_1.png`}
+                                alt={brand}
+                                className="w-4 h-4 object-contain rounded-full bg-white"
+                                onError={(e) => {
+                                  (e.target as HTMLImageElement).style.display = "none";
+                                }}
+                              />
+                              <span>{brand}</span>
+                            </button>
+                          ))}
+                        </div>
+                      </>
+                    )}
+
                     {recentSearches.length > 0 && (
                       <>
                         <p className="text-xs text-slate-500 mb-2">Recientes</p>
