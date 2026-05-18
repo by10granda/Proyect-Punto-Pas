@@ -8,6 +8,8 @@ interface ProductMapperOptions {
   getFriendlyCategory: (category: string) => string;
 }
 
+const PRODUCTS_BASE_URL = (import.meta.env.VITE_PRODUCTS_BASE_URL as string | undefined) || '';
+
 const isPlaceholderBrand = (value: string) => {
   const cleaned = value.replace(/\s+/g, '');
   return cleaned.length > 0 && /^\.+$/.test(cleaned);
@@ -44,12 +46,25 @@ const resolveBrand = (item: ApiProductItem) => {
 const getProductImages = (codigo: string, imageVersion: string): string[] => {
   const paddedCode = codigo.padStart(8, '0').substring(0, 8);
   const images: string[] = [];
+  const baseUrl = PRODUCTS_BASE_URL.replace(/\/$/, '');
+
+  if (baseUrl) {
+    images.push(`${baseUrl}/${paddedCode}_E.png`);
+    for (let i = 2; i <= 10; i++) {
+      images.push(`${baseUrl}/${paddedCode}_E${i}.png`);
+    }
+    return images;
+  }
+
   for (let i = 1; i <= 10; i++) {
     const suffix = i === 1 ? '_E' : `_E${i}`;
     images.push(`https://res.cloudinary.com/dbbkpdhze/image/upload/${imageVersion}/${paddedCode}${suffix}.png`);
   }
   return images;
 };
+
+const normalizeProductCode = (value: string | undefined | null) =>
+  String(value || '').trim().padStart(8, '0').substring(0, 8);
 
 export const mapApiProductsToDomain = (
   data: ApiProductItem[],
@@ -74,7 +89,11 @@ export const mapApiProductsToDomain = (
       productImages = customImages;
     } else if (codigoInterno) {
       const paddedCode = codigoInterno.padStart(8, '0').substring(0, 8);
-      productImage = `https://res.cloudinary.com/dbbkpdhze/image/upload/${imageVersion}/${paddedCode}_E.png`;
+      if (PRODUCTS_BASE_URL) {
+        productImage = `${PRODUCTS_BASE_URL.replace(/\/$/, '')}/${paddedCode}_E.png`;
+      } else {
+        productImage = `https://res.cloudinary.com/dbbkpdhze/image/upload/${imageVersion}/${paddedCode}_E.png`;
+      }
       productImages = getProductImages(paddedCode, imageVersion);
     } else {
       productImage = `https://placehold.co/400x400?text=${encodeURIComponent(item.descripcionItem || codigoInterno)}`;
@@ -96,7 +115,7 @@ export const mapApiProductsToDomain = (
       description: itemDescription,
       brand: resolveBrand(item),
       unit: item.descripcionUnidadInventario || 'UNIDAD',
-      stock: inventarioMap[codigoInterno] || 0,
+      stock: inventarioMap[normalizeProductCode(codigoInterno)] || 0,
       price: finalPrice,
       originalPrice: hasBothPrices ? pvpPrice : undefined,
       discount,

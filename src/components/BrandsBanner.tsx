@@ -8,6 +8,7 @@ interface BrandsBannerProps {
   onBrandClick: (brand: string) => void;
 }
 
+const BRANDS_BASE_URL = (import.meta.env.VITE_BRANDS_BASE_URL as string | undefined) || "";
 const CLOUDINARY_BASE = "https://res.cloudinary.com/dbbkpdhze/image/upload";
 const BRAND_LOGO_VERSION = "v1778950354";
 
@@ -61,6 +62,9 @@ export const BrandsBanner = memo(({ products, onBrandClick }: BrandsBannerProps)
 
   const getLogoUrl = (brand: string) => {
     const normalizedBrand = brand.toUpperCase().replace(/\s+/g, "_");
+    if (BRANDS_BASE_URL) {
+      return `${BRANDS_BASE_URL.replace(/\/$/, "")}/${normalizedBrand}_1.png`;
+    }
     return `${CLOUDINARY_BASE}/${BRAND_LOGO_VERSION}/${normalizedBrand}_1.png`;
   };
 
