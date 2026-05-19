@@ -2,7 +2,14 @@ import type { SyntheticEvent } from "react";
 
 const stripAccents = (value: string): string => value.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
-const toSingleSpaces = (value: string): string => value.toUpperCase().trim().replace(/\s+/g, " ");
+const toSingleSpaces = (value: string): string => value.trim().replace(/\s+/g, " ");
+
+const toTitleCase = (value: string): string =>
+  value
+    .toLowerCase()
+    .split(" ")
+    .map((part) => (part ? `${part[0].toUpperCase()}${part.slice(1)}` : part))
+    .join(" ");
 
 const unique = (values: string[]): string[] => {
   const seen = new Set<string>();
@@ -15,22 +22,38 @@ const unique = (values: string[]): string[] => {
   });
 };
 
-const buildFileNameVariants = (categoryName: string): string[] => {
-  const base = toSingleSpaces(categoryName);
-  const noCommas = base.replace(/,/g, "");
-  const noAccents = stripAccents(base);
-  const noAccentsNoCommas = stripAccents(noCommas);
+const appendSuffixVariants = (baseName: string): string[] => [
+  `${baseName}_123.png`,
+  `${baseName} 123.png`,
+];
 
-  return unique([
-    `${base}_123.png`,
-    `${base.replace(/\s+/g, "_")}_123.png`,
-    `${noCommas}_123.png`,
-    `${noCommas.replace(/\s+/g, "_")}_123.png`,
-    `${noAccents}_123.png`,
-    `${noAccents.replace(/\s+/g, "_")}_123.png`,
-    `${noAccentsNoCommas}_123.png`,
-    `${noAccentsNoCommas.replace(/\s+/g, "_")}_123.png`,
-  ]);
+const buildFileNameVariants = (categoryName: string): string[] => {
+  const baseOriginal = toSingleSpaces(categoryName);
+  const baseUpper = baseOriginal.toUpperCase();
+  const baseTitle = toTitleCase(baseOriginal);
+
+  const baseForms = unique([baseOriginal, baseUpper, baseTitle]);
+
+  const variants = baseForms.flatMap((base) => {
+    const noCommas = base.replace(/,/g, "");
+    const noAccents = stripAccents(base);
+    const noAccentsNoCommas = stripAccents(noCommas);
+
+    const nameForms = unique([
+      base,
+      base.replace(/\s+/g, "_"),
+      noCommas,
+      noCommas.replace(/\s+/g, "_"),
+      noAccents,
+      noAccents.replace(/\s+/g, "_"),
+      noAccentsNoCommas,
+      noAccentsNoCommas.replace(/\s+/g, "_"),
+    ]);
+
+    return nameForms.flatMap((name) => appendSuffixVariants(name));
+  });
+
+  return unique(variants);
 };
 
 export const buildCategoryImageCandidates = (
