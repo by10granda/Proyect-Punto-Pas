@@ -12,6 +12,19 @@ const CLOUDINARY_VERSION = 'v1775785362';
 const CATEGORY_IMAGES_BASE_URL = (import.meta.env.VITE_CATEGORY_IMAGES_BASE_URL as string | undefined) || '';
 const ITEM_WIDTH = 350;
 
+const buildCategoryImageUrl = (categoryName: string): string => {
+  const categoryBase = CATEGORY_IMAGES_BASE_URL.replace(/\/$/, '');
+  const normalizedName = categoryName.toUpperCase().trim().replace(/\s+/g, ' ');
+
+  if (categoryBase) {
+    const fileName = `${normalizedName}_123.png`;
+    return `${categoryBase}/${encodeURIComponent(fileName)}`;
+  }
+
+  const cloudinaryName = normalizedName.replace(/\s+/g, '_');
+  return `https://res.cloudinary.com/dbbkpdhze/image/upload/${CLOUDINARY_VERSION}/${cloudinaryName}_123.png`;
+};
+
 export const CategoryBar = ({ selectedCategory, onSelectCategory, products = [] }: CategoryBarProps) => {
   const [showAllCategories, setShowAllCategories] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -21,16 +34,12 @@ export const CategoryBar = ({ selectedCategory, onSelectCategory, products = [] 
   const getCategoryImage = (categoryId: string): string => {
     const categoryBase = CATEGORY_IMAGES_BASE_URL.replace(/\/$/, '');
     if (categoryId === "all") {
-      if (categoryBase) {
+      if (CATEGORY_IMAGES_BASE_URL) {
         return `${categoryBase}/TODOS.png`;
       }
       return "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777335777/TODOS.png";
     }
-    const formattedName = categoryId.toUpperCase().trim().replace(/\s+/g, '_');
-    if (categoryBase) {
-      return `${categoryBase}/${formattedName}_123.png`;
-    }
-    return `https://res.cloudinary.com/dbbkpdhze/image/upload/${CLOUDINARY_VERSION}/${formattedName}_123.png`;
+    return buildCategoryImageUrl(categoryId);
   };
 
   const PRIORITY_CATEGORIES = [

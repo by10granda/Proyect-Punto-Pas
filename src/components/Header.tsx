@@ -28,6 +28,18 @@ interface HeaderProps {
 export const Header = ({ cartCount, searchQuery: propSearchQuery, onSearch, onCartClick, onGoToHome, onClearSearch, products = [], onProductClick, onTypeSelect, filters = defaultAdvancedProductFilters, onFiltersChange, productsCount = 0, popularSearches = [], nivel2Categories = [], nivel3ByParent }: HeaderProps) => {
   const BRAND_LOGO_BASE_URL = (import.meta.env.VITE_BRANDS_BASE_URL as string | undefined) || "https://res.cloudinary.com/dbbkpdhze/image/upload/v1778950354";
   const CATEGORY_IMAGES_BASE_URL = (import.meta.env.VITE_CATEGORY_IMAGES_BASE_URL as string | undefined) || "";
+
+  const buildCategoryImageUrl = (categoryName: string) => {
+    const normalizedName = categoryName.toUpperCase().trim().replace(/\s+/g, " ");
+
+    if (CATEGORY_IMAGES_BASE_URL) {
+      const fileName = `${normalizedName}_123.png`;
+      return `${CATEGORY_IMAGES_BASE_URL.replace(/\/$/, "")}/${encodeURIComponent(fileName)}`;
+    }
+
+    const cloudinaryName = normalizedName.replace(/\s+/g, "_");
+    return `https://res.cloudinary.com/dbbkpdhze/image/upload/v1775783635/${cloudinaryName}_123.png`;
+  };
   // Local state for input (allows typing), synced with parent
   const [searchQuery, setSearchQuery] = useState(propSearchQuery || "");
   const [isListening, setIsListening] = useState(false);
@@ -143,10 +155,7 @@ export const Header = ({ cartCount, searchQuery: propSearchQuery, onSearch, onCa
     
     return nivel3Types.map((typeName: string) => {
       // Generate image URL from type name
-      const imageName = typeName.toUpperCase().trim().replace(/\s+/g, '_');
-      const imageUrl = CATEGORY_IMAGES_BASE_URL
-        ? `${CATEGORY_IMAGES_BASE_URL.replace(/\/$/, '')}/${imageName}_123.png`
-        : `https://res.cloudinary.com/dbbkpdhze/image/upload/v1775783635/${imageName}_123.png`;
+      const imageUrl = buildCategoryImageUrl(typeName);
       
       return {
         name: typeName,
