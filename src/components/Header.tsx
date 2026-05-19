@@ -26,7 +26,8 @@ interface HeaderProps {
 }
 
 export const Header = ({ cartCount, searchQuery: propSearchQuery, onSearch, onCartClick, onGoToHome, onClearSearch, products = [], onProductClick, onTypeSelect, filters = defaultAdvancedProductFilters, onFiltersChange, productsCount = 0, popularSearches = [], nivel2Categories = [], nivel3ByParent }: HeaderProps) => {
-  const BRAND_LOGO_BASE_URL = "https://res.cloudinary.com/dbbkpdhze/image/upload/v1778950354";
+  const BRAND_LOGO_BASE_URL = (import.meta.env.VITE_BRANDS_BASE_URL as string | undefined) || "https://res.cloudinary.com/dbbkpdhze/image/upload/v1778950354";
+  const CATEGORY_IMAGES_BASE_URL = (import.meta.env.VITE_CATEGORY_IMAGES_BASE_URL as string | undefined) || "";
   // Local state for input (allows typing), synced with parent
   const [searchQuery, setSearchQuery] = useState(propSearchQuery || "");
   const [isListening, setIsListening] = useState(false);
@@ -140,12 +141,12 @@ export const Header = ({ cartCount, searchQuery: propSearchQuery, onSearch, onCa
     // Get Nivel 3 from nivel3ByParent Map using category ID
     const nivel3Types = nivel3ByParent?.get(category.id) || [];
     
-    const CLOUDINARY_VERSION = 'v1775783635';
-    
     return nivel3Types.map((typeName: string) => {
       // Generate image URL from type name
       const imageName = typeName.toUpperCase().trim().replace(/\s+/g, '_');
-      const imageUrl = `https://res.cloudinary.com/dbbkpdhze/image/upload/${CLOUDINARY_VERSION}/${imageName}_123.png`;
+      const imageUrl = CATEGORY_IMAGES_BASE_URL
+        ? `${CATEGORY_IMAGES_BASE_URL.replace(/\/$/, '')}/${imageName}_123.png`
+        : `https://res.cloudinary.com/dbbkpdhze/image/upload/v1775783635/${imageName}_123.png`;
       
       return {
         name: typeName,

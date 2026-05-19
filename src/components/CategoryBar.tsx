@@ -9,6 +9,7 @@ interface CategoryBarProps {
 }
 
 const CLOUDINARY_VERSION = 'v1775785362';
+const CATEGORY_IMAGES_BASE_URL = (import.meta.env.VITE_CATEGORY_IMAGES_BASE_URL as string | undefined) || '';
 const ITEM_WIDTH = 350;
 
 export const CategoryBar = ({ selectedCategory, onSelectCategory, products = [] }: CategoryBarProps) => {
@@ -18,10 +19,17 @@ export const CategoryBar = ({ selectedCategory, onSelectCategory, products = [] 
   const [canScrollRight, setCanScrollRight] = useState(true);
 
   const getCategoryImage = (categoryId: string): string => {
+    const categoryBase = CATEGORY_IMAGES_BASE_URL.replace(/\/$/, '');
     if (categoryId === "all") {
+      if (categoryBase) {
+        return `${categoryBase}/TODOS.png`;
+      }
       return "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777335777/TODOS.png";
     }
     const formattedName = categoryId.toUpperCase().trim().replace(/\s+/g, '_');
+    if (categoryBase) {
+      return `${categoryBase}/${formattedName}_123.png`;
+    }
     return `https://res.cloudinary.com/dbbkpdhze/image/upload/${CLOUDINARY_VERSION}/${formattedName}_123.png`;
   };
 

@@ -31,6 +31,8 @@ import { toast } from "sonner";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Helmet } from "react-helmet";
 
+const CATEGORY_IMAGES_BASE_URL = (import.meta.env.VITE_CATEGORY_IMAGES_BASE_URL as string | undefined) || "";
+
 const Index = () => {
   const PRODUCTS_ALERT_COOLDOWN_MS = 15 * 60 * 1000;
   const PRODUCTS_ALERT_LAST_SENT_KEY = "products_alert_last_sent_at";
@@ -774,7 +776,9 @@ const Index = () => {
                 <div className="flex items-center gap-3 min-w-max pb-2">
                   {searchSectionCategories.map((category) => {
                     const imageName = category.replace(/\s+/g, '_');
-                    const imageUrl = `https://res.cloudinary.com/dbbkpdhze/image/upload/v1775785362/${imageName}_123.png`;
+                    const imageUrl = CATEGORY_IMAGES_BASE_URL
+                      ? `${CATEGORY_IMAGES_BASE_URL.replace(/\/$/, '')}/${imageName}_123.png`
+                      : `https://res.cloudinary.com/dbbkpdhze/image/upload/v1775785362/${imageName}_123.png`;
 
                     return (
                       <button

@@ -11,6 +11,8 @@ import {
 import { toast } from "sonner";
 import { useLocation, useNavigate } from "react-router-dom";
 
+const BUSINESSES_BASE_URL = (import.meta.env.VITE_BUSINESSES_BASE_URL as string | undefined) || "";
+
 const milestones = [
   {
     year: "2000",
@@ -301,9 +303,24 @@ export const QuienesSomos = () => {
 
             <div className="mt-10 grid grid-cols-1 gap-5 items-center">
               {[
-                { image: "https://res.cloudinary.com/dbbkpdhze/image/upload/v1778108511/MADEDERA.png", href: "/emprendimientos/madedera" },
-                { image: "https://res.cloudinary.com/dbbkpdhze/image/upload/v1778108507/JARDIN_DE_LA_PAZ.png", href: "/emprendimientos/jardin-de-la-paz" },
-                { image: "https://res.cloudinary.com/dbbkpdhze/image/upload/v1778108503/Rincon_del_pac%C3%ADfico.png", href: "/emprendimientos/rincon-del-pacifico" },
+                {
+                  image: BUSINESSES_BASE_URL
+                    ? `${BUSINESSES_BASE_URL.replace(/\/$/, "")}/MADEDERA.png`
+                    : "https://res.cloudinary.com/dbbkpdhze/image/upload/v1778108511/MADEDERA.png",
+                  href: "/emprendimientos/madedera"
+                },
+                {
+                  image: BUSINESSES_BASE_URL
+                    ? `${BUSINESSES_BASE_URL.replace(/\/$/, "")}/JARDIN_DE_LA_PAZ.png`
+                    : "https://res.cloudinary.com/dbbkpdhze/image/upload/v1778108507/JARDIN_DE_LA_PAZ.png",
+                  href: "/emprendimientos/jardin-de-la-paz"
+                },
+                {
+                  image: BUSINESSES_BASE_URL
+                    ? `${BUSINESSES_BASE_URL.replace(/\/$/, "")}/Rincon_del_pacifico.png`
+                    : "https://res.cloudinary.com/dbbkpdhze/image/upload/v1778108503/Rincon_del_pac%C3%ADfico.png",
+                  href: "/emprendimientos/rincon-del-pacifico"
+                },
               ].map((item, index) => {
                 const card = (
                   <div className="group relative overflow-hidden rounded-[28px] cursor-pointer" style={{ animationDelay: `${index * 100}ms` }}>
