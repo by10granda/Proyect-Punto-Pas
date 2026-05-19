@@ -1,38 +1,58 @@
 import { useRef, useEffect, useState, useCallback } from "react";
 
+const HERO_BASE_URL = (import.meta.env.VITE_HERO_BASE_URL as string | undefined) || "";
+const heroBase = HERO_BASE_URL.replace(/\/$/, "");
+const heroAssetUrl = (fileName: string, cloudinaryFallback: string) =>
+  heroBase ? `${heroBase}/${encodeURIComponent(fileName)}` : cloudinaryFallback;
+
 const slides = [
   {
     id: 1,
     type: "image" as const,
-    src: "https://res.cloudinary.com/dbbkpdhze/image/upload/v1778687337/PORTADA_1-1.png",
+    src: heroAssetUrl(
+      "PORTADA_1-1.png",
+      "https://res.cloudinary.com/dbbkpdhze/image/upload/v1778687337/PORTADA_1-1.png",
+    ),
     action: "none" as const,
     value: "",
   },
   {
     id: 2,
     type: "video" as const,
-    src: "https://res.cloudinary.com/dbbkpdhze/video/upload/v1776308811/PORTADA_1.mp4",
+    src: heroAssetUrl(
+      "PORTADA_1.mp4",
+      "https://res.cloudinary.com/dbbkpdhze/video/upload/v1776308811/PORTADA_1.mp4",
+    ),
     action: "productCode" as const,
     value: "00000467",
   },
   {
     id: 3,
     type: "image" as const,
-    src: "https://res.cloudinary.com/dbbkpdhze/image/upload/v1776338344/PORTADA_2.png",
+    src: heroAssetUrl(
+      "PORTADA_2.png",
+      "https://res.cloudinary.com/dbbkpdhze/image/upload/v1776338344/PORTADA_2.png",
+    ),
     action: "category" as const,
     value: "TELEVISORES",
   },
   {
     id: 4,
     type: "image" as const,
-    src: "https://res.cloudinary.com/dbbkpdhze/image/upload/v1776346058/PORTADA_3.png",
+    src: heroAssetUrl(
+      "PORTADA_3.png",
+      "https://res.cloudinary.com/dbbkpdhze/image/upload/v1776346058/PORTADA_3.png",
+    ),
     action: "category" as const,
     value: "COLCHONES",
   },
   {
     id: 5,
     type: "image" as const,
-    src: "https://res.cloudinary.com/dbbkpdhze/image/upload/v1776786143/PORTADA_4.png",
+    src: heroAssetUrl(
+      "PORTADA_4.png",
+      "https://res.cloudinary.com/dbbkpdhze/image/upload/v1776786143/PORTADA_4.png",
+    ),
     action: "category" as const,
     value: "MUEBLERIA COMEDORES Y MESAS",
   },
