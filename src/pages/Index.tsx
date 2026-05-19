@@ -30,20 +30,9 @@ import {
 import { toast } from "sonner";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Helmet } from "react-helmet";
+import { buildCategoryImageCandidates, handleCategoryImageFallback } from "@/utils/categoryImage";
 
 const CATEGORY_IMAGES_BASE_URL = (import.meta.env.VITE_CATEGORY_IMAGES_BASE_URL as string | undefined) || "";
-
-const buildCategoryImageUrl = (categoryName: string): string => {
-  const normalizedName = categoryName.toUpperCase().trim().replace(/\s+/g, " ");
-
-  if (CATEGORY_IMAGES_BASE_URL) {
-    const fileName = `${normalizedName}_123.png`;
-    return `${CATEGORY_IMAGES_BASE_URL.replace(/\/$/, "")}/${encodeURIComponent(fileName)}`;
-  }
-
-  const cloudinaryName = normalizedName.replace(/\s+/g, "_");
-  return `https://res.cloudinary.com/dbbkpdhze/image/upload/v1775785362/${cloudinaryName}_123.png`;
-};
 
 const Index = () => {
   const PRODUCTS_ALERT_COOLDOWN_MS = 15 * 60 * 1000;
@@ -787,7 +776,8 @@ const Index = () => {
               <div className="overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
                 <div className="flex items-center gap-3 min-w-max pb-2">
                   {searchSectionCategories.map((category) => {
-                    const imageUrl = buildCategoryImageUrl(category);
+                    const imageCandidates = buildCategoryImageCandidates(category, CATEGORY_IMAGES_BASE_URL, "v1775785362");
+                    const imageUrl = imageCandidates[0];
 
                     return (
                       <button
@@ -811,6 +801,9 @@ const Index = () => {
                             alt={category}
                             className="w-full h-full object-cover"
                             loading="lazy"
+                            data-fallbacks={imageCandidates.join("|")}
+                            data-fallback-index="0"
+                            onError={handleCategoryImageFallback}
                           />
                         </span>
                         <span className="text-xl md:text-[28px] leading-none" style={{ color: '#0A2A7A' }}>•</span>

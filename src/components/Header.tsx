@@ -4,6 +4,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AdvancedProductFilters, applyAdvancedProductFilters, defaultAdvancedProductFilters, getAdvancedFilterOptions } from "@/application/use-cases/advancedProductFilters";
 import { buildSearchSuggestions, SearchSuggestion } from "@/application/use-cases/searchSuggestions";
 import { useRadio } from "@/contexts/RadioContext";
+import { buildCategoryImageCandidates, handleCategoryImageFallback } from "@/utils/categoryImage";
 const headerLogo = "/LOGO_DISTRIBUIDOR-PUNTOPAS.png";
 import { Level2Category, Product } from "@/data/products";
 
@@ -28,18 +29,6 @@ interface HeaderProps {
 export const Header = ({ cartCount, searchQuery: propSearchQuery, onSearch, onCartClick, onGoToHome, onClearSearch, products = [], onProductClick, onTypeSelect, filters = defaultAdvancedProductFilters, onFiltersChange, productsCount = 0, popularSearches = [], nivel2Categories = [], nivel3ByParent }: HeaderProps) => {
   const BRAND_LOGO_BASE_URL = (import.meta.env.VITE_BRANDS_BASE_URL as string | undefined) || "https://res.cloudinary.com/dbbkpdhze/image/upload/v1778950354";
   const CATEGORY_IMAGES_BASE_URL = (import.meta.env.VITE_CATEGORY_IMAGES_BASE_URL as string | undefined) || "";
-
-  const buildCategoryImageUrl = (categoryName: string) => {
-    const normalizedName = categoryName.toUpperCase().trim().replace(/\s+/g, " ");
-
-    if (CATEGORY_IMAGES_BASE_URL) {
-      const fileName = `${normalizedName}_123.png`;
-      return `${CATEGORY_IMAGES_BASE_URL.replace(/\/$/, "")}/${encodeURIComponent(fileName)}`;
-    }
-
-    const cloudinaryName = normalizedName.replace(/\s+/g, "_");
-    return `https://res.cloudinary.com/dbbkpdhze/image/upload/v1775783635/${cloudinaryName}_123.png`;
-  };
   // Local state for input (allows typing), synced with parent
   const [searchQuery, setSearchQuery] = useState(propSearchQuery || "");
   const [isListening, setIsListening] = useState(false);
@@ -155,11 +144,12 @@ export const Header = ({ cartCount, searchQuery: propSearchQuery, onSearch, onCa
     
     return nivel3Types.map((typeName: string) => {
       // Generate image URL from type name
-      const imageUrl = buildCategoryImageUrl(typeName);
+      const imageCandidates = buildCategoryImageCandidates(typeName, CATEGORY_IMAGES_BASE_URL, "v1775783635");
       
       return {
         name: typeName,
-        image: imageUrl
+        image: imageCandidates[0],
+        imageCandidates,
       };
     });
   };
@@ -694,10 +684,13 @@ export const Header = ({ cartCount, searchQuery: propSearchQuery, onSearch, onCa
                                 className="text-left p-2.5 rounded-xl border border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-slate-700 transition-colors flex flex-col items-center gap-1.5"
                               >
                                 {typeObj.image && (
-                                  <img 
-                                    src={typeObj.image} 
+                                  <img
+                                    src={typeObj.image}
                                     alt={typeObj.name}
                                     className="w-12 h-12 object-contain rounded-md"
+                                    data-fallbacks={typeObj.imageCandidates.join("|")}
+                                    data-fallback-index="0"
+                                    onError={handleCategoryImageFallback}
                                   />
                                 )}
                                 <span className="text-[11px] leading-tight text-center font-medium">{typeObj.name}</span>

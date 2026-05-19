@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Product } from "@/data/products";
+import { buildCategoryImageCandidates, handleCategoryImageFallback } from "@/utils/categoryImage";
 
 interface CategoryBarProps {
   selectedCategory: string;
@@ -11,19 +12,6 @@ interface CategoryBarProps {
 const CLOUDINARY_VERSION = 'v1775785362';
 const CATEGORY_IMAGES_BASE_URL = (import.meta.env.VITE_CATEGORY_IMAGES_BASE_URL as string | undefined) || '';
 const ITEM_WIDTH = 350;
-
-const buildCategoryImageUrl = (categoryName: string): string => {
-  const categoryBase = CATEGORY_IMAGES_BASE_URL.replace(/\/$/, '');
-  const normalizedName = categoryName.toUpperCase().trim().replace(/\s+/g, ' ');
-
-  if (categoryBase) {
-    const fileName = `${normalizedName}_123.png`;
-    return `${categoryBase}/${encodeURIComponent(fileName)}`;
-  }
-
-  const cloudinaryName = normalizedName.replace(/\s+/g, '_');
-  return `https://res.cloudinary.com/dbbkpdhze/image/upload/${CLOUDINARY_VERSION}/${cloudinaryName}_123.png`;
-};
 
 export const CategoryBar = ({ selectedCategory, onSelectCategory, products = [] }: CategoryBarProps) => {
   const [showAllCategories, setShowAllCategories] = useState(false);
@@ -39,7 +27,15 @@ export const CategoryBar = ({ selectedCategory, onSelectCategory, products = [] 
       }
       return "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777335777/TODOS.png";
     }
-    return buildCategoryImageUrl(categoryId);
+    return buildCategoryImageCandidates(categoryId, CATEGORY_IMAGES_BASE_URL, CLOUDINARY_VERSION)[0];
+  };
+
+  const getCategoryImageFallbacks = (categoryId: string): string[] => {
+    if (categoryId === "all") {
+      return [];
+    }
+
+    return buildCategoryImageCandidates(categoryId, CATEGORY_IMAGES_BASE_URL, CLOUDINARY_VERSION);
   };
 
   const PRIORITY_CATEGORIES = [
@@ -133,7 +129,8 @@ export const CategoryBar = ({ selectedCategory, onSelectCategory, products = [] 
               {displayTypes.map((type) => {
                 const isSelected = selectedCategory === type;
                 const count = getProductCount(type);
-                const imgSrc = getCategoryImage(type);
+                const imageCandidates = getCategoryImageFallbacks(type);
+                const imgSrc = imageCandidates[0] || getCategoryImage(type);
                 
                 return (
                   <button
@@ -145,7 +142,14 @@ export const CategoryBar = ({ selectedCategory, onSelectCategory, products = [] 
                       className="relative" 
                       style={{ width: "350px", height: "175px", minWidth: "340px", borderRadius: "12px" }}
                     >
-                      <img src={imgSrc} alt={type} className="w-full h-full object-contain" />
+                      <img
+                        src={imgSrc}
+                        alt={type}
+                        className="w-full h-full object-contain"
+                        data-fallbacks={imageCandidates.join("|")}
+                        data-fallback-index="0"
+                        onError={handleCategoryImageFallback}
+                      />
                     </div>
                     <span className="text-xs font-medium text-center max-w-[350px]" style={{ color: isSelected ? '#FF000B' : '#374151', fontWeight: isSelected ? 700 : 400 }}>
                       {type === "all" ? "TODOS" : type}
@@ -185,7 +189,14 @@ export const CategoryBar = ({ selectedCategory, onSelectCategory, products = [] 
                 {allTypes.map((type) => (
                   <button key={type} onClick={() => { onSelectCategory(type); setShowAllCategories(false); }} className="flex flex-col items-center gap-2 p-2 rounded-xl hover:bg-gray-50 transition-all">
                     <div className="relative rounded-full overflow-hidden shadow-md" style={{ width: "80px", height: "80px" }}>
-                      <img src={getCategoryImage(type)} alt={type} className="w-full h-full object-cover" />
+                      <img
+                        src={getCategoryImage(type)}
+                        alt={type}
+                        className="w-full h-full object-cover"
+                        data-fallbacks={getCategoryImageFallbacks(type).join("|")}
+                        data-fallback-index="0"
+                        onError={handleCategoryImageFallback}
+                      />
                     </div>
                     <span className="text-xs text-center font-medium">{type}</span>
                     <span className="text-[10px] text-gray-500">{getProductCount(type)}</span>
