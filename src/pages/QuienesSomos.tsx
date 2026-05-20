@@ -64,7 +64,7 @@ export const QuienesSomos = () => {
 
    const heroSlides = [
     {
-      image: "https://assets.distribuidor-puntopas.com/image/upload/v1777489090/Portada_Q.png",
+      image: "https://assets.distribuidor-puntopas.com/PORTADAS/PORTADA_QUIENESSOMOS.png",
       title: "Quiénes Somos",
       subtitle: "25 años de historia, compromiso y servicio",
       overlay: "from-primary via-primary/80 to-transparent"
