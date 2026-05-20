@@ -33,6 +33,28 @@ import { Helmet } from "react-helmet";
 import { buildCategoryImageCandidates, handleCategoryImageFallback } from "@/utils/categoryImage";
 
 const CATEGORY_IMAGES_BASE_URL = (import.meta.env.VITE_CATEGORY_IMAGES_BASE_URL as string | undefined) || "";
+const WEEKLY_DEALS_BASE_URL = (import.meta.env.VITE_WEEKLY_DEALS_BASE_URL as string | undefined) || "";
+
+const buildWeeklyDealsImages = (): string[] => {
+  const base = WEEKLY_DEALS_BASE_URL.replace(/\/$/, "");
+
+  if (base) {
+    return Array.from({ length: 8 }, (_, index) => `${base}/${encodeURIComponent(`Descuento${index + 1}_s.png`)}`);
+  }
+
+  return [
+    "https://res.cloudinary.com/dbbkpdhze/image/upload/v1778073484/Descuento1_s.png",
+    "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777429432/Descuento2_s.png",
+    "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777429429/Descuento3_s.png",
+    "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777429442/Descuento4_s.png",
+    "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777433322/Descuento5_s.png",
+    "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777429436/Descuento6_s.png",
+    "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777429439/Descuento7_s.png",
+    "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777429448/Descuento8_s.png",
+  ];
+};
+
+const weeklyDealsImages = buildWeeklyDealsImages();
 
 const Index = () => {
   const PRODUCTS_ALERT_COOLDOWN_MS = 15 * 60 * 1000;
@@ -872,16 +894,7 @@ const Index = () => {
             <>
               <div id="weeklydeals-section">
                <WeeklyDeals
-               images={[
-                  "https://res.cloudinary.com/dbbkpdhze/image/upload/v1778073484/Descuento1_s.png",
-                 "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777429432/Descuento2_s.png",
-                 "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777429429/Descuento3_s.png",
-                 "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777429442/Descuento4_s.png",
-                 "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777433322/Descuento5_s.png",
-                 "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777429436/Descuento6_s.png",
-                 "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777429439/Descuento7_s.png",
-                 "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777429448/Descuento8_s.png",
-               ]}
+               images={weeklyDealsImages}
                products={allProducts}
                 selectedCategory={weeklyDealsCategory}
                 onCategoryChange={(category) => {
