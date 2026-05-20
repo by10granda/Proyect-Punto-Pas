@@ -47,20 +47,20 @@ const getProductImages = (codigo: string, imageVersion: string): string[] => {
   const paddedCode = codigo.padStart(8, '0').substring(0, 8);
   const images: string[] = [];
   const baseUrl = PRODUCTS_BASE_URL.replace(/\/$/, '');
+  const suffixes = ['_E', '_E1', ...Array.from({ length: 9 }, (_, index) => `_E${index + 2}`), 'E', 'E1', ...Array.from({ length: 9 }, (_, index) => `E${index + 2}`)];
 
   if (baseUrl) {
-    images.push(`${baseUrl}/${paddedCode}_E.png`);
-    for (let i = 2; i <= 10; i++) {
-      images.push(`${baseUrl}/${paddedCode}_E${i}.png`);
-    }
-    return images;
+    suffixes.forEach((suffix) => {
+      images.push(`${baseUrl}/${paddedCode}${suffix}.png`);
+    });
+    return Array.from(new Set(images));
   }
 
-  for (let i = 1; i <= 10; i++) {
-    const suffix = i === 1 ? '_E' : `_E${i}`;
+  suffixes.forEach((suffix) => {
     images.push(`https://res.cloudinary.com/dbbkpdhze/image/upload/${imageVersion}/${paddedCode}${suffix}.png`);
-  }
-  return images;
+  });
+
+  return Array.from(new Set(images));
 };
 
 const normalizeProductCode = (value: string | undefined | null) =>
@@ -89,12 +89,12 @@ export const mapApiProductsToDomain = (
       productImages = customImages;
     } else if (codigoInterno) {
       const paddedCode = codigoInterno.padStart(8, '0').substring(0, 8);
-      if (PRODUCTS_BASE_URL) {
-        productImage = `${PRODUCTS_BASE_URL.replace(/\/$/, '')}/${paddedCode}_E.png`;
-      } else {
-        productImage = `https://res.cloudinary.com/dbbkpdhze/image/upload/${imageVersion}/${paddedCode}_E.png`;
-      }
       productImages = getProductImages(paddedCode, imageVersion);
+      if (PRODUCTS_BASE_URL) {
+        productImage = productImages[0];
+      } else {
+        productImage = productImages[0];
+      }
     } else {
       productImage = `https://placehold.co/400x400?text=${encodeURIComponent(item.descripcionItem || codigoInterno)}`;
       productImages = [productImage];

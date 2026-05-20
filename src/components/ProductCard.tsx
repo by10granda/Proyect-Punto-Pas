@@ -1,5 +1,5 @@
 import { Product } from "@/data/products";
-import { useState, memo } from "react";
+import { useEffect, useState, memo } from "react";
 
 interface ProductCardProps {
   product: Product;
@@ -10,9 +10,22 @@ interface ProductCardProps {
 
 export const ProductCard = memo(({ product, onAddToCart, onProductClick, compact = false }: ProductCardProps) => {
   const [imageError, setImageError] = useState(false);
+  const [imageIndex, setImageIndex] = useState(0);
+  const hasStock = product.stock > 0;
+  const imageCandidates = (product.images && product.images.length > 0 ? product.images : [product.image]).filter(Boolean);
+  const currentImage = imageCandidates[imageIndex] || product.image;
+
+  useEffect(() => {
+    setImageError(false);
+    setImageIndex(0);
+  }, [product.id, product.image]);
 
 
   const handleImageError = () => {
+    if (imageIndex < imageCandidates.length - 1) {
+      setImageIndex((prev) => prev + 1);
+      return;
+    }
     setImageError(true);
   };
 
@@ -31,7 +44,7 @@ export const ProductCard = memo(({ product, onAddToCart, onProductClick, compact
       onClick={() => onProductClick(product)}
     >
       <div className={`relative ${compact ? "aspect-[4/3]" : "aspect-[4/5]"} bg-gray-50 overflow-hidden`}>
-        {product.stock === 0 && (
+        {!hasStock && (
           <div className="absolute inset-0 z-20 flex items-center justify-center bg-white/90">
             <span className="text-red-600 text-sm font-semibold px-4 py-2 bg-red-50 rounded-full">
               Sin stock
@@ -39,7 +52,7 @@ export const ProductCard = memo(({ product, onAddToCart, onProductClick, compact
           </div>
         )}
 
-        {hasDiscount && product.stock > 0 && (
+        {hasDiscount && hasStock && (
           <div className="absolute top-3 left-3 z-10">
             <span 
               className="text-xs font-semibold px-2 py-1 rounded-full"
@@ -58,7 +71,7 @@ export const ProductCard = memo(({ product, onAddToCart, onProductClick, compact
             </div>
           ) : (
             <img
-              src={product.image}
+              src={currentImage}
               alt={product.name}
               className="max-w-full max-h-full object-contain transition-transform duration-300 sm:group-hover:scale-105"
               onError={handleImageError}
@@ -96,11 +109,11 @@ export const ProductCard = memo(({ product, onAddToCart, onProductClick, compact
               e.stopPropagation();
               onAddToCart(product);
             }}
-            disabled={product.stock === 0}
+            disabled={!hasStock}
             className={`w-full ${compact ? "py-1.5 text-[10px]" : "py-2 text-xs"} rounded-lg font-semibold transition hover:brightness-110 disabled:opacity-40`}
             style={{ backgroundColor: '#FF0000', color: 'white' }}
           >
-            {product.stock === 0 ? 'Sin stock' : 'Agregar al carrito'}
+            {!hasStock ? 'Sin stock' : 'Agregar al carrito'}
           </button>
         </div>
       </div>
