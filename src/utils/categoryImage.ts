@@ -59,7 +59,7 @@ const buildFileNameVariants = (categoryName: string): string[] => {
 export const buildCategoryImageCandidates = (
   categoryName: string,
   categoryBaseUrl: string,
-  cloudinaryVersion: string,
+  assetVersion: string,
 ): string[] => {
   const fileNameVariants = buildFileNameVariants(categoryName);
   const base = categoryBaseUrl.replace(/\/$/, "");
@@ -70,7 +70,7 @@ export const buildCategoryImageCandidates = (
 
   return fileNameVariants.map(
     (fileName) =>
-      `https://res.cloudinary.com/dbbkpdhze/image/upload/${cloudinaryVersion}/${encodeURIComponent(fileName)}`,
+      `https://assets.distribuidor-puntopas.com/image/upload/${assetVersion}/${encodeURIComponent(fileName)}`,
   );
 };
 

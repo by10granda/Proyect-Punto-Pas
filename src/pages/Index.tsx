@@ -44,14 +44,14 @@ const buildWeeklyDealsImages = (): string[] => {
   }
 
   return [
-    "https://res.cloudinary.com/dbbkpdhze/image/upload/v1778073484/Descuento1_s.png",
-    "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777429432/Descuento2_s.png",
-    "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777429429/Descuento3_s.png",
-    "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777429442/Descuento4_s.png",
-    "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777433322/Descuento5_s.png",
-    "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777429436/Descuento6_s.png",
-    "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777429439/Descuento7_s.png",
-    "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777429448/Descuento8_s.png",
+    "https://assets.distribuidor-puntopas.com/image/upload/v1778073484/Descuento1_s.png",
+    "https://assets.distribuidor-puntopas.com/image/upload/v1777429432/Descuento2_s.png",
+    "https://assets.distribuidor-puntopas.com/image/upload/v1777429429/Descuento3_s.png",
+    "https://assets.distribuidor-puntopas.com/image/upload/v1777429442/Descuento4_s.png",
+    "https://assets.distribuidor-puntopas.com/image/upload/v1777433322/Descuento5_s.png",
+    "https://assets.distribuidor-puntopas.com/image/upload/v1777429436/Descuento6_s.png",
+    "https://assets.distribuidor-puntopas.com/image/upload/v1777429439/Descuento7_s.png",
+    "https://assets.distribuidor-puntopas.com/image/upload/v1777429448/Descuento8_s.png",
   ];
 };
 
@@ -674,7 +674,7 @@ const Index = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-3">
                 <div className="overflow-hidden rounded-[28px] bg-transparent">
                   <video
-                    src="https://res.cloudinary.com/dbbkpdhze/video/upload/v1778689011/PUBLICIDAD_PAGOS_2.mp4"
+                    src="https://assets.distribuidor-puntopas.com/video/upload/v1778689011/PUBLICIDAD_PAGOS_2.mp4"
                     autoPlay
                     muted
                     loop
@@ -689,7 +689,7 @@ const Index = () => {
                   className="overflow-hidden rounded-[28px] bg-transparent text-left"
                 >
                   <video
-                    src="https://res.cloudinary.com/dbbkpdhze/video/upload/v1778703220/PUBLICIDAD_OTROS_NEGOCIOS_2.mp4"
+                    src="https://assets.distribuidor-puntopas.com/video/upload/v1778703220/PUBLICIDAD_OTROS_NEGOCIOS_2.mp4"
                     autoPlay
                     muted
                     loop
@@ -733,7 +733,7 @@ const Index = () => {
           <section className="py-4 bg-white">
             <div className="max-w-[98vw] mx-auto px-2 md:px-0">
               <img
-                src="https://res.cloudinary.com/dbbkpdhze/image/upload/v1777323714/PORTADA_SECCION_2.png"
+                src="https://assets.distribuidor-puntopas.com/image/upload/v1777323714/PORTADA_SECCION_2.png"
                 alt="Sección Principal"
                 className="w-full h-auto rounded-xl md:rounded-2xl"
               />
@@ -788,7 +788,7 @@ const Index = () => {
         {showEnvLaptopBannerInSearch && (
           <div className="mb-4 md:mb-6 w-full bg-white" style={{ backgroundColor: '#FFFFFF' }}>
             <img
-              src="https://res.cloudinary.com/dbbkpdhze/image/upload/v1778709681/PORTADA_TEC1.png"
+              src="https://assets.distribuidor-puntopas.com/image/upload/v1778709681/PORTADA_TEC1.png"
               alt="Portada tecnologia ENV"
               className="block w-full h-auto cursor-pointer"
               onClick={applyEnvBrandFilter}
@@ -922,7 +922,7 @@ const Index = () => {
                          type.includes("LAVADORAS") || type.includes("SECADERAS");
                 })}
                 category="LAVADORAS Y SECADERAS"
-                bannerImage={buildSectionPoster("PORTADA_LAVADORAS.png", "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777756850/IMAGEN_SECCION_LAVADORAS.png")}
+                bannerImage={buildSectionPoster("PORTADA_LAVADORAS.png", "https://assets.distribuidor-puntopas.com/image/upload/v1777756850/IMAGEN_SECCION_LAVADORAS.png")}
                 onBannerClick={() => {
                   setMainFilter({ mode: "carousel", value: "LAVADORAS Y SECADERAS" });
                   setSelectedType("all");
@@ -965,7 +965,7 @@ const Index = () => {
                 category="CONGELADORES Y NEVERAS"
                 topTitle="CONGELADORES Y NEVERAS"
                 sectionTitle="REFRIGERADORAS Y CONGELADORES PARA TU HOGAR"
-                bannerImage={buildSectionPoster("PORTADA_NEVERAS.png", "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777823224/Seccion_Neveras_1.png")}
+                bannerImage={buildSectionPoster("PORTADA_NEVERAS.png", "https://assets.distribuidor-puntopas.com/image/upload/v1777823224/Seccion_Neveras_1.png")}
                 layout="fridge"
                 onBannerClick={() => {
                   const sourceProducts = allProducts;
@@ -999,7 +999,7 @@ const Index = () => {
                 category="TELEVISORES"
                 topTitle="TELEVISORES"
                 sectionTitle="TELEVISORES PARA TU HOGAR"
-                bannerImage={buildSectionPoster("PORTADA_TELEVISOR.png", "https://res.cloudinary.com/dbbkpdhze/image/upload/v1778731751/televisores_1.png")}
+                bannerImage={buildSectionPoster("PORTADA_TELEVISOR.png", "https://assets.distribuidor-puntopas.com/image/upload/v1778731751/televisores_1.png")}
                 layout="fridge"
                 onBannerClick={() => {
                   setMainFilter({ mode: "carousel", value: "TELEVISORES" });
@@ -1027,7 +1027,7 @@ const Index = () => {
                 style={{ backgroundColor: '#FFFFFF' }}
               >
                 <img
-                  src="https://res.cloudinary.com/dbbkpdhze/image/upload/v1778709681/PORTADA_TEC1.png"
+                  src="https://assets.distribuidor-puntopas.com/image/upload/v1778709681/PORTADA_TEC1.png"
                   alt="Portada tecnologia ENV"
                   className="relative z-10 block w-full h-auto cursor-pointer"
                   style={{
@@ -1064,12 +1064,12 @@ const Index = () => {
              <div id="imagecollage-section" className="mb-10 md:mb-14">
               <ImageCollage
                images={[
-                 "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777305703/IMAGEN_1.png",
-                 "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777305710/IMAGEN_2.png",
-                 "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777306355/IMAGEN_3.png",
-                 "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777301931/IMAGEN_4.png",
-                 "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777413591/IMAGEN_5.png",
-                 "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777301925/IMAGEN_6.png",
+                 "https://assets.distribuidor-puntopas.com/image/upload/v1777305703/IMAGEN_1.png",
+                 "https://assets.distribuidor-puntopas.com/image/upload/v1777305710/IMAGEN_2.png",
+                 "https://assets.distribuidor-puntopas.com/image/upload/v1777306355/IMAGEN_3.png",
+                 "https://assets.distribuidor-puntopas.com/image/upload/v1777301931/IMAGEN_4.png",
+                 "https://assets.distribuidor-puntopas.com/image/upload/v1777413591/IMAGEN_5.png",
+                 "https://assets.distribuidor-puntopas.com/image/upload/v1777301925/IMAGEN_6.png",
                ]}
                onImageClick={(index) => {
                  const brands = ["INDURAMA", "MABE", "TCL", "RCA", "HONOR", "PHILIPS"];

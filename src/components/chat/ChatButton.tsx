@@ -10,7 +10,7 @@ export const ChatButton = ({ onClick }: ChatButtonProps) => {
       aria-label="Abrir asistente Russo"
     >
       <img
-        src="https://res.cloudinary.com/dbbkpdhze/image/upload/v1777752695/1.png"
+        src="https://assets.distribuidor-puntopas.com/image/upload/v1777752695/1.png"
         alt="Russo asistente"
         className="w-full h-full object-cover"
       />

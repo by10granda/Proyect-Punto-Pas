@@ -18,25 +18,25 @@ const milestones = [
     year: "2000",
     title: "Nuestros Inicios",
     description: "Punto Pas inicia sus actividades en el año 2000 bajo la dirección del Empresario Franco Becerra, dedicándose a la comercialización de madera. Gracias al esfuerzo, trabajo constante y compromiso con sus clientes, la empresa logra posicionarse como un proveedor confiable en su sector.",
-     image: "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777489083/Madedera_Q.png"
+     image: "https://assets.distribuidor-puntopas.com/image/upload/v1777489083/Madedera_Q.png"
   },
   {
     year: "2007",
     title: "Primer Local Stihl",
     description: "Con el valioso apoyo y respaldo incondicional de su esposa Marlene Ambuldi, El empresario Franco Becerra materializa una visión empresarial estratégica al fundar el primer local Stihl, marcando así el inicio de una alianza comercial con una de las marcas más prestigiosas del sector de maquinaria y equipos de exterior.",
-     image: "https://res.cloudinary.com/dbbkpdhze/image/upload/v1778102905/Stihl_Q.png"
+     image: "https://assets.distribuidor-puntopas.com/image/upload/v1778102905/Stihl_Q.png"
   },
   {
     year: "2008",
     title: "Expansión y Diversificación",
     description: "Con una visión de crecimiento y diversificación, Punto Pas abre su primera sucursal en San Lorenzo, incorporando la franquicia Disensa, ampliando así su oferta hacia productos de ferretería, construcción y maquinaria.",
-     image: "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777489087/Disensa_Q.png"
+     image: "https://assets.distribuidor-puntopas.com/image/upload/v1777489087/Disensa_Q.png"
   },
   {
     year: "2025",
     title: "Consolidación Regional",
     description: "Con el apoyo de sus hijos y continuando con su proceso de expansión, Punto Pas abre una nueva sucursal en Esmeraldas, consolidándose como una empresa comercial que ofrece una amplia variedad de productos, desde ferretería y materiales de construcción hasta electrodomésticos y artículos para el hogar.",
-     image: "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777489086/Almacenes_Q.png"
+     image: "https://assets.distribuidor-puntopas.com/image/upload/v1777489086/Almacenes_Q.png"
   }
 ];
 
@@ -64,7 +64,7 @@ export const QuienesSomos = () => {
 
    const heroSlides = [
     {
-      image: "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777489090/Portada_Q.png",
+      image: "https://assets.distribuidor-puntopas.com/image/upload/v1777489090/Portada_Q.png",
       title: "Quiénes Somos",
       subtitle: "25 años de historia, compromiso y servicio",
       overlay: "from-primary via-primary/80 to-transparent"
@@ -306,19 +306,19 @@ export const QuienesSomos = () => {
                 {
                   image: BUSINESSES_BASE_URL
                     ? `${BUSINESSES_BASE_URL.replace(/\/$/, "")}/MADEDERA.png`
-                    : "https://res.cloudinary.com/dbbkpdhze/image/upload/v1778108511/MADEDERA.png",
+                    : "https://assets.distribuidor-puntopas.com/image/upload/v1778108511/MADEDERA.png",
                   href: "/emprendimientos/madedera"
                 },
                 {
                   image: BUSINESSES_BASE_URL
                     ? `${BUSINESSES_BASE_URL.replace(/\/$/, "")}/JARDIN_DE_LA_PAZ.png`
-                    : "https://res.cloudinary.com/dbbkpdhze/image/upload/v1778108507/JARDIN_DE_LA_PAZ.png",
+                    : "https://assets.distribuidor-puntopas.com/image/upload/v1778108507/JARDIN_DE_LA_PAZ.png",
                   href: "/emprendimientos/jardin-de-la-paz"
                 },
                 {
                   image: BUSINESSES_BASE_URL
                     ? `${BUSINESSES_BASE_URL.replace(/\/$/, "")}/Rincon_del_pacifico.png`
-                    : "https://res.cloudinary.com/dbbkpdhze/image/upload/v1778108503/Rincon_del_pac%C3%ADfico.png",
+                    : "https://assets.distribuidor-puntopas.com/image/upload/v1778108503/Rincon_del_pac%C3%ADfico.png",
                   href: "/emprendimientos/rincon-del-pacifico"
                 },
               ].map((item, index) => {

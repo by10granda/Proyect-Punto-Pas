@@ -3,14 +3,14 @@ import { ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 const portadaImages = [
-  "https://res.cloudinary.com/dbbkpdhze/image/upload/v1778181571/PORTADA_RINCON_1.png",
-  "https://res.cloudinary.com/dbbkpdhze/image/upload/v1778181575/PORTAD_RINCON_2.png",
+  "https://assets.distribuidor-puntopas.com/image/upload/v1778181571/PORTADA_RINCON_1.png",
+  "https://assets.distribuidor-puntopas.com/image/upload/v1778181575/PORTAD_RINCON_2.png",
 ];
 
 const cuerpoImages = [
-  "https://res.cloudinary.com/dbbkpdhze/image/upload/v1778181570/RINCON_1.png",
-  "https://res.cloudinary.com/dbbkpdhze/image/upload/v1778181572/RINCON_2.png",
-  "https://res.cloudinary.com/dbbkpdhze/image/upload/v1778181567/RINCON_3.png",
+  "https://assets.distribuidor-puntopas.com/image/upload/v1778181570/RINCON_1.png",
+  "https://assets.distribuidor-puntopas.com/image/upload/v1778181572/RINCON_2.png",
+  "https://assets.distribuidor-puntopas.com/image/upload/v1778181567/RINCON_3.png",
 ];
 
 const EmprendimientoRinconPacifico = () => {

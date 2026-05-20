@@ -9,7 +9,7 @@ interface CategoryBarProps {
   products?: Product[];
 }
 
-const CLOUDINARY_VERSION = 'v1775785362';
+const CATEGORY_IMAGE_VERSION = 'v1775785362';
 const CATEGORY_IMAGES_BASE_URL = (import.meta.env.VITE_CATEGORY_IMAGES_BASE_URL as string | undefined) || '';
 const ITEM_WIDTH = 350;
 
@@ -25,9 +25,9 @@ export const CategoryBar = ({ selectedCategory, onSelectCategory, products = [] 
       if (CATEGORY_IMAGES_BASE_URL) {
         return `${categoryBase}/TODOS.png`;
       }
-      return "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777335777/TODOS.png";
+      return "https://assets.distribuidor-puntopas.com/image/upload/v1777335777/TODOS.png";
     }
-    return buildCategoryImageCandidates(categoryId, CATEGORY_IMAGES_BASE_URL, CLOUDINARY_VERSION)[0];
+    return buildCategoryImageCandidates(categoryId, CATEGORY_IMAGES_BASE_URL, CATEGORY_IMAGE_VERSION)[0];
   };
 
   const getCategoryImageFallbacks = (categoryId: string): string[] => {
@@ -35,7 +35,7 @@ export const CategoryBar = ({ selectedCategory, onSelectCategory, products = [] 
       return [];
     }
 
-    return buildCategoryImageCandidates(categoryId, CATEGORY_IMAGES_BASE_URL, CLOUDINARY_VERSION);
+    return buildCategoryImageCandidates(categoryId, CATEGORY_IMAGES_BASE_URL, CATEGORY_IMAGE_VERSION);
   };
 
   const PRIORITY_CATEGORIES = [

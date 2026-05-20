@@ -27,7 +27,7 @@ interface HeaderProps {
 }
 
 export const Header = ({ cartCount, searchQuery: propSearchQuery, onSearch, onCartClick, onGoToHome, onClearSearch, products = [], onProductClick, onTypeSelect, filters = defaultAdvancedProductFilters, onFiltersChange, productsCount = 0, popularSearches = [], nivel2Categories = [], nivel3ByParent }: HeaderProps) => {
-  const BRAND_LOGO_BASE_URL = (import.meta.env.VITE_BRANDS_BASE_URL as string | undefined) || "https://res.cloudinary.com/dbbkpdhze/image/upload/v1778950354";
+  const BRAND_LOGO_BASE_URL = (import.meta.env.VITE_BRANDS_BASE_URL as string | undefined) || "https://assets.distribuidor-puntopas.com/image/upload/v1778950354";
   const CATEGORY_IMAGES_BASE_URL = (import.meta.env.VITE_CATEGORY_IMAGES_BASE_URL as string | undefined) || "";
   // Local state for input (allows typing), synced with parent
   const [searchQuery, setSearchQuery] = useState(propSearchQuery || "");
@@ -1190,7 +1190,7 @@ export const Header = ({ cartCount, searchQuery: propSearchQuery, onSearch, onCa
           aria-label="Abrir radio"
         >
           <img
-            src="https://res.cloudinary.com/dbbkpdhze/image/upload/v1777752695/2.png"
+            src="https://assets.distribuidor-puntopas.com/image/upload/v1777752695/2.png"
             alt="Radio Punto Pas"
             className="w-full h-full object-cover"
           />

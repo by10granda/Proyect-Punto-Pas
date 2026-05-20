@@ -2,13 +2,13 @@ import { Link } from "react-router-dom";
 import { ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react";
 import { useState } from "react";
 
-const portadaVideo = "https://res.cloudinary.com/dbbkpdhze/video/upload/v1778172145/Jardin_de_la_paz.mp4";
-const portadaImagen = "https://res.cloudinary.com/dbbkpdhze/image/upload/v1778171856/Jardin_de_la_Paz_Portada1.png";
+const portadaVideo = "https://assets.distribuidor-puntopas.com/video/upload/v1778172145/Jardin_de_la_paz.mp4";
+const portadaImagen = "https://assets.distribuidor-puntopas.com/image/upload/v1778171856/Jardin_de_la_Paz_Portada1.png";
 
 const cuerpoImages = [
-  "https://res.cloudinary.com/dbbkpdhze/image/upload/v1778171831/CUERPO_1.png",
-  "https://res.cloudinary.com/dbbkpdhze/image/upload/v1778171825/CUERPO_2.png",
-  "https://res.cloudinary.com/dbbkpdhze/image/upload/v1778171860/CUERPO_3.png",
+  "https://assets.distribuidor-puntopas.com/image/upload/v1778171831/CUERPO_1.png",
+  "https://assets.distribuidor-puntopas.com/image/upload/v1778171825/CUERPO_2.png",
+  "https://assets.distribuidor-puntopas.com/image/upload/v1778171860/CUERPO_3.png",
 ];
 
 const EmprendimientoJardinPaz = () => {

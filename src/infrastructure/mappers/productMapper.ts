@@ -57,7 +57,7 @@ const getProductImages = (codigo: string, imageVersion: string): string[] => {
   }
 
   suffixes.forEach((suffix) => {
-    images.push(`https://res.cloudinary.com/dbbkpdhze/image/upload/${imageVersion}/${paddedCode}${suffix}.png`);
+    images.push(`https://assets.distribuidor-puntopas.com/image/upload/${imageVersion}/${paddedCode}${suffix}.png`);
   });
 
   return Array.from(new Set(images));

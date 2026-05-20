@@ -6,12 +6,12 @@ interface ImageCollageProps {
 }
 
 const DEFAULT_IMAGES = [
-  "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777305703/IMAGEN_1.png",
-  "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777305710/IMAGEN_2.png",
-  "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777306355/IMAGEN_3.png",
-  "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777301931/IMAGEN_4.png",
-  "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777302069/IMAGEN_5.png",
-  "https://res.cloudinary.com/dbbkpdhze/image/upload/v1777301925/IMAGEN_6.png",
+  "https://assets.distribuidor-puntopas.com/image/upload/v1777305703/IMAGEN_1.png",
+  "https://assets.distribuidor-puntopas.com/image/upload/v1777305710/IMAGEN_2.png",
+  "https://assets.distribuidor-puntopas.com/image/upload/v1777306355/IMAGEN_3.png",
+  "https://assets.distribuidor-puntopas.com/image/upload/v1777301931/IMAGEN_4.png",
+  "https://assets.distribuidor-puntopas.com/image/upload/v1777302069/IMAGEN_5.png",
+  "https://assets.distribuidor-puntopas.com/image/upload/v1777301925/IMAGEN_6.png",
 ];
 
 export const ImageCollage = memo(({ images = DEFAULT_IMAGES, onImageClick }: ImageCollageProps) => {

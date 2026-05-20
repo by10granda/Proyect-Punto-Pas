@@ -5,9 +5,6 @@ import { mapApiProductsToDomain } from '@/infrastructure/mappers/productMapper';
 
 export type { Product, Level2Category, ClassificationItem } from '@/domain/product';
 
-const CLOUDINARY_BASE_URL = 'https://res.cloudinary.com/dbbkpdhze/image/upload/';
-const CLOUDINARY_VERSION = 'v1774530743';
-
 const normalizeProductCode = (value: string | number | undefined | null) =>
   String(value || '').trim().padStart(8, '0').substring(0, 8);
 
@@ -76,10 +73,10 @@ const categoryMap: Record<string, { name: string; icon: string }> = {
 
 const customProductImages: Record<string, string[]> = {
   '00000041': [
-    'https://res.cloudinary.com/dbbkpdhze/image/upload/v1776195792/00000041_E.png',
+    'https://assets.distribuidor-puntopas.com/image/upload/v1776195792/00000041_E.png',
   ],
   '00000349': [
-    'https://res.cloudinary.com/dbbkpdhze/image/upload/v1776202043/00000349_E.png',
+    'https://assets.distribuidor-puntopas.com/image/upload/v1776202043/00000349_E.png',
   ],
 };
 

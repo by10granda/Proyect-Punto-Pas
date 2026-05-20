@@ -10,7 +10,7 @@ interface BrandsBannerProps {
 
 const BRANDS_BASE_URL = (import.meta.env.VITE_BRANDS_BASE_URL as string | undefined) || "";
 const SECTION_BRANDS_BASE_URL = (import.meta.env.VITE_SECTION_BRANDS_BASE_URL as string | undefined) || "";
-const CLOUDINARY_BASE = "https://res.cloudinary.com/dbbkpdhze/image/upload";
+const DEFAULT_BRANDS_BASE = "https://assets.distribuidor-puntopas.com/image/upload";
 const BRAND_LOGO_VERSION = "v1778950354";
 
 const featuredBrands = [
@@ -84,7 +84,7 @@ export const BrandsBanner = memo(({ products, onBrandClick }: BrandsBannerProps)
       return `${BRANDS_BASE_URL.replace(/\/$/, "")}/${normalizedBrand}_1.png`;
     }
 
-    return `${CLOUDINARY_BASE}/${BRAND_LOGO_VERSION}/${normalizedBrand}_1.png`;
+    return `${DEFAULT_BRANDS_BASE}/${BRAND_LOGO_VERSION}/${normalizedBrand}_1.png`;
   };
 
   const handleBrandClick = (brand: string) => {

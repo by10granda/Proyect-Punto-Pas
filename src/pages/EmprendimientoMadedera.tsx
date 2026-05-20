@@ -3,19 +3,19 @@ import { ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react";
 import { useState } from "react";
 
 const portadaImages = [
-  "https://res.cloudinary.com/dbbkpdhze/image/upload/v1778108826/Portada_Madedera_2.png",
-  "https://res.cloudinary.com/dbbkpdhze/image/upload/v1778108823/Portada_Madedera_1.png",
+  "https://assets.distribuidor-puntopas.com/image/upload/v1778108826/Portada_Madedera_2.png",
+  "https://assets.distribuidor-puntopas.com/image/upload/v1778108823/Portada_Madedera_1.png",
 ];
 
 const cuerpoImages = [
-  "https://res.cloudinary.com/dbbkpdhze/image/upload/v1778108829/Portada_Madedera_3.png",
-  "https://res.cloudinary.com/dbbkpdhze/image/upload/v1778108827/Portada_Madedera_4.png",
-  "https://res.cloudinary.com/dbbkpdhze/image/upload/v1778108830/Portada_Madedera_5.png",
-  "https://res.cloudinary.com/dbbkpdhze/image/upload/v1778108824/Portada_Madedera_6.png",
-  "https://res.cloudinary.com/dbbkpdhze/image/upload/v1778108831/Portada_Madedera_7.png",
-  "https://res.cloudinary.com/dbbkpdhze/image/upload/v1778108830/Portada_Madedera_8.png",
-  "https://res.cloudinary.com/dbbkpdhze/image/upload/v1778108833/Portada_Madedera_9.png",
-  "https://res.cloudinary.com/dbbkpdhze/image/upload/v1778108826/Portada_Madedera_10.png",
+  "https://assets.distribuidor-puntopas.com/image/upload/v1778108829/Portada_Madedera_3.png",
+  "https://assets.distribuidor-puntopas.com/image/upload/v1778108827/Portada_Madedera_4.png",
+  "https://assets.distribuidor-puntopas.com/image/upload/v1778108830/Portada_Madedera_5.png",
+  "https://assets.distribuidor-puntopas.com/image/upload/v1778108824/Portada_Madedera_6.png",
+  "https://assets.distribuidor-puntopas.com/image/upload/v1778108831/Portada_Madedera_7.png",
+  "https://assets.distribuidor-puntopas.com/image/upload/v1778108830/Portada_Madedera_8.png",
+  "https://assets.distribuidor-puntopas.com/image/upload/v1778108833/Portada_Madedera_9.png",
+  "https://assets.distribuidor-puntopas.com/image/upload/v1778108826/Portada_Madedera_10.png",
 ];
 
 const EmprendimientoMadedera = () => {
