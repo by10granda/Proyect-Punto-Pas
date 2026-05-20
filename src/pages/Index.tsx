@@ -685,12 +685,9 @@ const Index = () => {
             <div className="max-w-[99vw] mx-auto px-2">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-3">
                 <div className="overflow-hidden rounded-[28px] bg-transparent">
-                  <video
-                    src="https://assets.distribuidor-puntopas.com/video/upload/v1778689011/PUBLICIDAD_PAGOS_2.mp4"
-                    autoPlay
-                    muted
-                    loop
-                    playsInline
+                  <img
+                    src="https://assets.distribuidor-puntopas.com/VIDEOS_PRINCIPALES/VIDEOS%20PRINCIPALES.gif"
+                    alt="Promocion compras online"
                     className="w-full h-[82px] md:h-[95px] object-contain"
                   />
                 </div>
@@ -700,12 +697,9 @@ const Index = () => {
                   onClick={() => navigate("/quienes-somos#otros-emprendimientos")}
                   className="overflow-hidden rounded-[28px] bg-transparent text-left"
                 >
-                  <video
-                    src="https://assets.distribuidor-puntopas.com/video/upload/v1778703220/PUBLICIDAD_OTROS_NEGOCIOS_2.mp4"
-                    autoPlay
-                    muted
-                    loop
-                    playsInline
+                  <img
+                    src="https://assets.distribuidor-puntopas.com/VIDEOS_PRINCIPALES/VIDEOS%20PRINCIPALES2.gif"
+                    alt="Promocion otros emprendimientos"
                     className="w-full h-[82px] md:h-[95px] object-contain"
                   />
                 </button>
@@ -745,7 +739,7 @@ const Index = () => {
           <section className="py-4 bg-white">
             <div className="max-w-[98vw] mx-auto px-2 md:px-0">
               <img
-                src="https://assets.distribuidor-puntopas.com/image/upload/v1777323714/PORTADA_SECCION_2.png"
+                src="https://assets.distribuidor-puntopas.com/VIDEOS_PRINCIPALES/FIFIERE%20TODAS%20TUS%20COMPRAS%20ONLINE.png"
                 alt="Sección Principal"
                 className="w-full h-auto rounded-xl md:rounded-2xl"
               />
