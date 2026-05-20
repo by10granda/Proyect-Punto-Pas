@@ -2,13 +2,15 @@ import { Link } from "react-router-dom";
 import { ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react";
 import { useState } from "react";
 
-const portadaVideo = "https://assets.distribuidor-puntopas.com/video/upload/v1778172145/Jardin_de_la_paz.mp4";
-const portadaImagen = "https://assets.distribuidor-puntopas.com/image/upload/v1778171856/Jardin_de_la_Paz_Portada1.png";
+const JARDIN_IMAGES_BASE_URL = "https://assets.distribuidor-puntopas.com/EMPRENDIMIENTOS_PRESENTACIONES";
+
+const portadaVideo = `${JARDIN_IMAGES_BASE_URL}/JARDIN_DE_LA_PAZ_PORTADA2.mp4`;
+const portadaImagen = `${JARDIN_IMAGES_BASE_URL}/Jardin_de_la_Paz_Portada1.png`;
 
 const cuerpoImages = [
-  "https://assets.distribuidor-puntopas.com/image/upload/v1778171831/CUERPO_1.png",
-  "https://assets.distribuidor-puntopas.com/image/upload/v1778171825/CUERPO_2.png",
-  "https://assets.distribuidor-puntopas.com/image/upload/v1778171860/CUERPO_3.png",
+  `${JARDIN_IMAGES_BASE_URL}/CUERPO_1.png`,
+  `${JARDIN_IMAGES_BASE_URL}/CUERPO_2.png`,
+  `${JARDIN_IMAGES_BASE_URL}/CUERPO_3.png`,
 ];
 
 const EmprendimientoJardinPaz = () => {
