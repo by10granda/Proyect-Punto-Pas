@@ -30,8 +30,7 @@ export const Header = ({ cartCount, searchQuery: propSearchQuery, onSearch, onCa
   const BRAND_LOGO_BASE_URL = (import.meta.env.VITE_BRANDS_BASE_URL as string | undefined) || "https://assets.distribuidor-puntopas.com/image/upload/v1778950354";
   const CATEGORY_IMAGES_BASE_URL = (import.meta.env.VITE_CATEGORY_IMAGES_BASE_URL as string | undefined) || "";
   const russoRadioImageCandidates = [
-    "https://assets.distribuidor-puntopas.com/MARCAS_SECCION_MARCAS/RUSSO2",
-    "https://assets.distribuidor-puntopas.com/MARCAS_SECCION_MARCAS/RUSSO2.png",
+    "https://assets.distribuidor-puntopas.com/PERRO/RUSSO2.png",
     "https://assets.distribuidor-puntopas.com/image/upload/v1777752695/2.png",
   ];
   // Local state for input (allows typing), synced with parent
