@@ -28,16 +28,23 @@ const normalizeBrandFileName = (brand: string) =>
     .replace(/[^A-Z0-9]+/g, "_")
     .replace(/^_+|_+$/g, "");
 
+const isGenericBrand = (brand: string) => normalizeBrandFileName(brand) === "GENERICA";
+
 export const BrandsBanner = memo(({ products, onBrandClick }: BrandsBannerProps) => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const [isScrolling, setIsScrolling] = useState(false);
+  const [brandsWithoutImage, setBrandsWithoutImage] = useState<Set<string>>(() => new Set());
   const scrollIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const availableBrands = Array.from(
     new Set(products.map((p) => String(p.brand || "").toUpperCase().trim()).filter(Boolean)),
   ).sort((a, b) => a.localeCompare(b));
-  const brandsToRender = availableBrands.length > 0 ? availableBrands : featuredBrands;
+  const sourceBrands = availableBrands.length > 0 ? availableBrands : featuredBrands;
+  const brandsToRender = sourceBrands.filter((brand) => {
+    const normalizedBrand = normalizeBrandFileName(brand);
+    return isGenericBrand(brand) || !brandsWithoutImage.has(normalizedBrand);
+  });
   const duplicatedBrands = [...brandsToRender, ...brandsToRender];
 
   const startScrolling = (direction: "left" | "right") => {
@@ -123,19 +130,26 @@ return (
               onClick={() => handleBrandClick(brand)}
               className="flex-shrink-0 h-16 w-36 flex items-center justify-center overflow-hidden rounded-xl"
             >
-              <img
-                src={getLogoUrl(brand)}
-                alt={brand}
-                className="h-full w-auto object-contain rounded-xl transition-transform duration-200 hover:scale-125"
-                onError={(e) => {
-                  const img = e.target as HTMLImageElement;
-                  img.style.display = 'none';
-                  img.nextElementSibling?.classList.remove('hidden');
-                }}
-              />
-              <span className="hidden font-bold text-gray-700 text-sm uppercase tracking-wide">
-                {brand}
-              </span>
+              {isGenericBrand(brand) ? (
+                <span className="font-bold text-gray-700 text-sm uppercase tracking-wide">
+                  {brand}
+                </span>
+              ) : (
+                <img
+                  src={getLogoUrl(brand)}
+                  alt={brand}
+                  className="h-full w-auto object-contain rounded-xl transition-transform duration-200 hover:scale-125"
+                  onError={() => {
+                    const normalizedBrand = normalizeBrandFileName(brand);
+                    setBrandsWithoutImage((current) => {
+                      if (current.has(normalizedBrand)) return current;
+                      const next = new Set(current);
+                      next.add(normalizedBrand);
+                      return next;
+                    });
+                  }}
+                />
+              )}
             </button>
           ))}
         </div>
