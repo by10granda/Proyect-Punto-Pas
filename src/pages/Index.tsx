@@ -794,7 +794,7 @@ const Index = () => {
         {showEnvLaptopBannerInSearch && (
           <div className="mb-4 md:mb-6 w-full bg-white" style={{ backgroundColor: '#FFFFFF' }}>
             <img
-              src="https://assets.distribuidor-puntopas.com/image/upload/v1778709681/PORTADA_TEC1.png"
+              src="https://assets.distribuidor-puntopas.com/PORTADAS/PORTADA_TEC1.png"
               alt="Portada tecnologia ENV"
               className="block w-full h-auto cursor-pointer"
               onClick={applyEnvBrandFilter}
@@ -1033,7 +1033,7 @@ const Index = () => {
                 style={{ backgroundColor: '#FFFFFF' }}
               >
                 <img
-                  src="https://assets.distribuidor-puntopas.com/image/upload/v1778709681/PORTADA_TEC1.png"
+                  src="https://assets.distribuidor-puntopas.com/PORTADAS/PORTADA_TEC1.png"
                   alt="Portada tecnologia ENV"
                   className="relative z-10 block w-full h-auto cursor-pointer"
                   style={{
