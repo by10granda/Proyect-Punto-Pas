@@ -11,7 +11,7 @@ import {
 import { toast } from "sonner";
 import { useLocation, useNavigate } from "react-router-dom";
 
-const OTHER_BUSINESSES_BASE_URL = "https://assets.distribuidor-puntopas.com/NEGOSCIOS_PUNTOPAS";
+const OTHER_BUSINESSES_BASE_URL = "https://assets.distribuidor-puntopas.com/NEGOCIOS_PUNTOPAS";
 
 const milestones = [
   {
