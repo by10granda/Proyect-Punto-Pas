@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { X, Minus, Plus, ShoppingCart, Check, ChevronLeft, ChevronRight } from "lucide-react";
 import { Product } from "@/data/products";
+import { paymentBadges } from "@/utils/paymentBadges";
 
 interface ProductModalProps {
   product: Product | null;
@@ -10,14 +11,6 @@ interface ProductModalProps {
   relatedProducts?: Product[];
   onProductSelect?: (product: Product) => void;
 }
-
-const paymentBadges = [
-  "https://res.cloudinary.com/dbbkpdhze/image/upload/v1778348731/TARJETA1.png",
-  "https://res.cloudinary.com/dbbkpdhze/image/upload/v1778348732/TARJETA2.png",
-  "https://res.cloudinary.com/dbbkpdhze/image/upload/v1778348732/TARJETA3.png",
-  "https://res.cloudinary.com/dbbkpdhze/image/upload/v1778348732/TARJETA4.png",
-  "https://res.cloudinary.com/dbbkpdhze/image/upload/v1778348732/TARJETA5.png",
-];
 
 export const ProductModal = ({ product, isOpen, onClose, onAddToCart, relatedProducts = [], onProductSelect }: ProductModalProps) => {
   const [quantity, setQuantity] = useState(1);

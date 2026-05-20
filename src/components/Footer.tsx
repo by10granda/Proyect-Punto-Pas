@@ -1,20 +1,13 @@
 import { MapPin, Phone, Mail, Clock, Shield, Home, Info, ShoppingCart, FileText, PackageSearch } from "lucide-react";
 import { Link } from "react-router-dom";
 import logoPuntoPas from "@/assets/logo-punto-pas.png";
+import { paymentBadges } from "@/utils/paymentBadges";
 
 interface FooterProps {
   onCartClick?: () => void;
 }
 
 export const Footer = ({ onCartClick }: FooterProps) => {
-  const paymentBadges = [
-    "https://res.cloudinary.com/dbbkpdhze/image/upload/v1778348731/TARJETA1.png",
-    "https://res.cloudinary.com/dbbkpdhze/image/upload/v1778348732/TARJETA2.png",
-    "https://res.cloudinary.com/dbbkpdhze/image/upload/v1778348732/TARJETA3.png",
-    "https://res.cloudinary.com/dbbkpdhze/image/upload/v1778348732/TARJETA4.png",
-    "https://res.cloudinary.com/dbbkpdhze/image/upload/v1778348732/TARJETA5.png",
-  ];
-
   return (
     <footer id="contacto" className="bg-primary text-white">
       <div className="max-w-7xl mx-auto px-4 py-12">

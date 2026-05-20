@@ -7,14 +7,7 @@ import { TopBar } from "@/components/TopBar";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { WhatsAppButton } from "@/components/WhatsAppButton";
-
-const paymentBadges = [
-  "https://res.cloudinary.com/dbbkpdhze/image/upload/v1778348731/TARJETA1.png",
-  "https://res.cloudinary.com/dbbkpdhze/image/upload/v1778348732/TARJETA2.png",
-  "https://res.cloudinary.com/dbbkpdhze/image/upload/v1778348732/TARJETA3.png",
-  "https://res.cloudinary.com/dbbkpdhze/image/upload/v1778348732/TARJETA4.png",
-  "https://res.cloudinary.com/dbbkpdhze/image/upload/v1778348732/TARJETA5.png",
-];
+import { paymentBadges } from "@/utils/paymentBadges";
 
 const normalizeCategory = (value: string) =>
   (value || "")
@@ -91,14 +84,14 @@ const ProductPage = () => {
     const interval = setInterval(async () => {
       if (document.visibilityState !== 'visible') return;
       try {
-        const all = await loadProductsFromAPI({ maxAgeMs: 120000 });
+        const all = await loadProductsFromAPI({ forceRefresh: true });
         setProducts(all);
         const found = all.find((p) => p.id === id) || null;
         setProduct(found);
       } catch {
         // silent refresh
       }
-    }, 60000);
+    }, 15000);
 
     return () => clearInterval(interval);
   }, [id]);
