@@ -11,7 +11,7 @@ import {
 import { toast } from "sonner";
 import { useLocation, useNavigate } from "react-router-dom";
 
-const BUSINESSES_BASE_URL = (import.meta.env.VITE_BUSINESSES_BASE_URL as string | undefined) || "";
+const OTHER_BUSINESSES_BASE_URL = "https://assets.distribuidor-puntopas.com/NEGOSCIOS_PUNTOPAS";
 
 const milestones = [
   {
@@ -304,21 +304,15 @@ export const QuienesSomos = () => {
             <div className="mt-10 grid grid-cols-1 gap-5 items-center">
               {[
                 {
-                  image: BUSINESSES_BASE_URL
-                    ? `${BUSINESSES_BASE_URL.replace(/\/$/, "")}/MADEDERA.png`
-                    : "https://assets.distribuidor-puntopas.com/image/upload/v1778108511/MADEDERA.png",
+                  image: `${OTHER_BUSINESSES_BASE_URL}/MADEDERA.PNG`,
                   href: "/emprendimientos/madedera"
                 },
                 {
-                  image: BUSINESSES_BASE_URL
-                    ? `${BUSINESSES_BASE_URL.replace(/\/$/, "")}/JARDIN_DE_LA_PAZ.png`
-                    : "https://assets.distribuidor-puntopas.com/image/upload/v1778108507/JARDIN_DE_LA_PAZ.png",
+                  image: `${OTHER_BUSINESSES_BASE_URL}/JARDIN_DE_LA_PAZ.PNG`,
                   href: "/emprendimientos/jardin-de-la-paz"
                 },
                 {
-                  image: BUSINESSES_BASE_URL
-                    ? `${BUSINESSES_BASE_URL.replace(/\/$/, "")}/Rincon_del_pacifico.png`
-                    : "https://assets.distribuidor-puntopas.com/image/upload/v1778108503/Rincon_del_pac%C3%ADfico.png",
+                  image: `${OTHER_BUSINESSES_BASE_URL}/RINCON.PNG`,
                   href: "/emprendimientos/rincon-del-pacifico"
                 },
               ].map((item, index) => {
