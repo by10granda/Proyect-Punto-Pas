@@ -18,25 +18,25 @@ const milestones = [
     year: "2000",
     title: "Nuestros Inicios",
     description: "Punto Pas inicia sus actividades en el año 2000 bajo la dirección del Empresario Franco Becerra, dedicándose a la comercialización de madera. Gracias al esfuerzo, trabajo constante y compromiso con sus clientes, la empresa logra posicionarse como un proveedor confiable en su sector.",
-     image: "https://assets.distribuidor-puntopas.com/image/upload/v1777489083/Madedera_Q.png"
+     image: "https://assets.distribuidor-puntopas.com/EMPRENDIMIENTOS_PRESENTACIONES/MADEDERA_Q1.png"
   },
   {
     year: "2007",
     title: "Primer Local Stihl",
     description: "Con el valioso apoyo y respaldo incondicional de su esposa Marlene Ambuldi, El empresario Franco Becerra materializa una visión empresarial estratégica al fundar el primer local Stihl, marcando así el inicio de una alianza comercial con una de las marcas más prestigiosas del sector de maquinaria y equipos de exterior.",
-     image: "https://assets.distribuidor-puntopas.com/image/upload/v1778102905/Stihl_Q.png"
+     image: "https://assets.distribuidor-puntopas.com/EMPRENDIMIENTOS_PRESENTACIONES/QUIENES_SOMOS_2.png"
   },
   {
     year: "2008",
     title: "Expansión y Diversificación",
     description: "Con una visión de crecimiento y diversificación, Punto Pas abre su primera sucursal en San Lorenzo, incorporando la franquicia Disensa, ampliando así su oferta hacia productos de ferretería, construcción y maquinaria.",
-     image: "https://assets.distribuidor-puntopas.com/image/upload/v1777489087/Disensa_Q.png"
+     image: "https://assets.distribuidor-puntopas.com/EMPRENDIMIENTOS_PRESENTACIONES/DISENSA_1.png"
   },
   {
     year: "2025",
     title: "Consolidación Regional",
     description: "Con el apoyo de sus hijos y continuando con su proceso de expansión, Punto Pas abre una nueva sucursal en Esmeraldas, consolidándose como una empresa comercial que ofrece una amplia variedad de productos, desde ferretería y materiales de construcción hasta electrodomésticos y artículos para el hogar.",
-     image: "https://assets.distribuidor-puntopas.com/image/upload/v1777489086/Almacenes_Q.png"
+     image: "https://assets.distribuidor-puntopas.com/PORTADAS/PORTADA_QUIENESSOMOS.png"
   }
 ];
 
