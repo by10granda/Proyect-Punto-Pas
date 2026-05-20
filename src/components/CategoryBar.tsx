@@ -10,9 +10,8 @@ interface CategoryBarProps {
 }
 
 const CATEGORY_IMAGE_VERSION = 'v1775785362';
-const CATEGORY_IMAGES_BASE_URL =
-  (import.meta.env.VITE_CATEGORY_IMAGES_BASE_URL as string | undefined) ||
-  'https://assets.distribuidor-puntopas.com/CATEGORIAS_PRINCIPAL';
+const CATEGORY_IMAGES_BASE_URL = 'https://assets.distribuidor-puntopas.com/CATEGORIAS_PRINCIPAL';
+const CATEGORY_IMAGES_ENV_BASE_URL = (import.meta.env.VITE_CATEGORY_IMAGES_BASE_URL as string | undefined) || '';
 const ITEM_WIDTH = 350;
 
 export const CategoryBar = ({ selectedCategory, onSelectCategory, products = [] }: CategoryBarProps) => {
@@ -21,20 +20,31 @@ export const CategoryBar = ({ selectedCategory, onSelectCategory, products = [] 
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
 
+  const buildCombinedCategoryFallbacks = (categoryName: string): string[] => {
+    const primary = buildCategoryImageCandidates(categoryName, CATEGORY_IMAGES_BASE_URL, CATEGORY_IMAGE_VERSION);
+
+    if (!CATEGORY_IMAGES_ENV_BASE_URL || CATEGORY_IMAGES_ENV_BASE_URL === CATEGORY_IMAGES_BASE_URL) {
+      return primary;
+    }
+
+    const secondary = buildCategoryImageCandidates(categoryName, CATEGORY_IMAGES_ENV_BASE_URL, CATEGORY_IMAGE_VERSION);
+    return Array.from(new Set([...primary, ...secondary]));
+  };
+
   const getCategoryImage = (categoryId: string): string => {
     if (categoryId === "all") {
-      const allCandidates = buildCategoryImageCandidates('TODOS', CATEGORY_IMAGES_BASE_URL, CATEGORY_IMAGE_VERSION);
+      const allCandidates = buildCombinedCategoryFallbacks('TODOS');
       return allCandidates[0];
     }
-    return buildCategoryImageCandidates(categoryId, CATEGORY_IMAGES_BASE_URL, CATEGORY_IMAGE_VERSION)[0];
+    return buildCombinedCategoryFallbacks(categoryId)[0];
   };
 
   const getCategoryImageFallbacks = (categoryId: string): string[] => {
     if (categoryId === "all") {
-      return buildCategoryImageCandidates('TODOS', CATEGORY_IMAGES_BASE_URL, CATEGORY_IMAGE_VERSION);
+      return buildCombinedCategoryFallbacks('TODOS');
     }
 
-    return buildCategoryImageCandidates(categoryId, CATEGORY_IMAGES_BASE_URL, CATEGORY_IMAGE_VERSION);
+    return buildCombinedCategoryFallbacks(categoryId);
   };
 
   const PRIORITY_CATEGORIES = [
