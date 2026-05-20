@@ -29,6 +29,11 @@ interface HeaderProps {
 export const Header = ({ cartCount, searchQuery: propSearchQuery, onSearch, onCartClick, onGoToHome, onClearSearch, products = [], onProductClick, onTypeSelect, filters = defaultAdvancedProductFilters, onFiltersChange, productsCount = 0, popularSearches = [], nivel2Categories = [], nivel3ByParent }: HeaderProps) => {
   const BRAND_LOGO_BASE_URL = (import.meta.env.VITE_BRANDS_BASE_URL as string | undefined) || "https://assets.distribuidor-puntopas.com/image/upload/v1778950354";
   const CATEGORY_IMAGES_BASE_URL = (import.meta.env.VITE_CATEGORY_IMAGES_BASE_URL as string | undefined) || "";
+  const russoRadioImageCandidates = [
+    "https://assets.distribuidor-puntopas.com/MARCAS_SECCION_MARCAS/RUSSO2",
+    "https://assets.distribuidor-puntopas.com/MARCAS_SECCION_MARCAS/RUSSO2.png",
+    "https://assets.distribuidor-puntopas.com/image/upload/v1777752695/2.png",
+  ];
   // Local state for input (allows typing), synced with parent
   const [searchQuery, setSearchQuery] = useState(propSearchQuery || "");
   const [isListening, setIsListening] = useState(false);
@@ -1186,13 +1191,25 @@ export const Header = ({ cartCount, searchQuery: propSearchQuery, onSearch, onCa
       {showMiniPlayer && isRadioMinimized && (
         <button
           onClick={() => setIsRadioMinimized(false)}
-          className="fixed bottom-40 right-4 z-50 w-16 h-16 rounded-full overflow-hidden shadow-[0_14px_28px_-12px_rgba(0,0,0,0.55)] border-2 border-white bg-white"
+          className="fixed bottom-40 right-4 z-50 w-16 h-16 rounded-full overflow-hidden shadow-[0_14px_28px_-12px_rgba(0,0,0,0.55)]"
           aria-label="Abrir radio"
         >
           <img
-            src="https://assets.distribuidor-puntopas.com/image/upload/v1777752695/2.png"
+            src={russoRadioImageCandidates[0]}
             alt="Radio Punto Pas"
-            className="w-full h-full object-cover"
+            className="w-full h-full object-contain"
+            onError={(event) => {
+              const image = event.currentTarget;
+              const currentIndex = Number(image.dataset.fallbackIndex || "0");
+              const nextIndex = currentIndex + 1;
+
+              if (nextIndex >= russoRadioImageCandidates.length) {
+                return;
+              }
+
+              image.dataset.fallbackIndex = String(nextIndex);
+              image.src = russoRadioImageCandidates[nextIndex];
+            }}
           />
           <span className={`absolute top-1 right-1 w-2.5 h-2.5 rounded-full border border-white ${isPlaying ? 'bg-emerald-400' : 'bg-amber-400'}`}></span>
         </button>

@@ -3,6 +3,12 @@ interface ChatButtonProps {
 }
 
 export const ChatButton = ({ onClick }: ChatButtonProps) => {
+  const russoPrimaryImageCandidates = [
+    "https://assets.distribuidor-puntopas.com/MARCAS_SECCION_MARCAS/RUSSO1",
+    "https://assets.distribuidor-puntopas.com/MARCAS_SECCION_MARCAS/RUSSO1.png",
+    "https://assets.distribuidor-puntopas.com/image/upload/v1777752695/1.png",
+  ];
+
   return (
     <button
       onClick={onClick}
@@ -10,9 +16,21 @@ export const ChatButton = ({ onClick }: ChatButtonProps) => {
       aria-label="Abrir asistente Russo"
     >
       <img
-        src="https://assets.distribuidor-puntopas.com/image/upload/v1777752695/1.png"
+        src={russoPrimaryImageCandidates[0]}
         alt="Russo asistente"
-        className="w-full h-full object-cover"
+        className="w-full h-full object-contain"
+        onError={(event) => {
+          const image = event.currentTarget;
+          const currentIndex = Number(image.dataset.fallbackIndex || "0");
+          const nextIndex = currentIndex + 1;
+
+          if (nextIndex >= russoPrimaryImageCandidates.length) {
+            return;
+          }
+
+          image.dataset.fallbackIndex = String(nextIndex);
+          image.src = russoPrimaryImageCandidates[nextIndex];
+        }}
       />
     </button>
   );
