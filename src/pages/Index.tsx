@@ -35,6 +35,15 @@ import { buildCategoryImageCandidates, handleCategoryImageFallback } from "@/uti
 const CATEGORY_IMAGES_BASE_URL = (import.meta.env.VITE_CATEGORY_IMAGES_BASE_URL as string | undefined) || "";
 const WEEKLY_DEALS_BASE_URL = (import.meta.env.VITE_WEEKLY_DEALS_BASE_URL as string | undefined) || "";
 const SECTION_BRANDS_BASE_URL = (import.meta.env.VITE_SECTION_BRANDS_BASE_URL as string | undefined) || "";
+const BRAND_SECTION_POSTERS_BASE_URL = "https://assets.distribuidor-puntopas.com/MARCAS_SECCION_MARCAS";
+const brandSectionPosters = [
+  { brand: "HONOR", fileName: "MARCA HONOR.png" },
+  { brand: "INDURAMA", fileName: "MARCA INDURAMA.png" },
+  { brand: "MABE", fileName: "MARCA MABE.png" },
+  { brand: "PHILIPS", fileName: "MARCA PHILIPS.png" },
+  { brand: "RCA", fileName: "MARCA RCA.png" },
+  { brand: "TCL", fileName: "MARCA TCL.png" },
+];
 
 const buildWeeklyDealsImages = (): string[] => {
   const base = WEEKLY_DEALS_BASE_URL.replace(/\/$/, "");
@@ -62,6 +71,9 @@ const buildSectionPoster = (fileName: string, fallbackUrl: string): string => {
   if (!base) return fallbackUrl;
   return `${base}/${encodeURIComponent(fileName)}`;
 };
+
+const buildBrandSectionPoster = (fileName: string): string =>
+  `${BRAND_SECTION_POSTERS_BASE_URL}/${encodeURIComponent(fileName)}`;
 
 const Index = () => {
   const PRODUCTS_ALERT_COOLDOWN_MS = 15 * 60 * 1000;
@@ -1063,18 +1075,11 @@ const Index = () => {
 
              <div id="imagecollage-section" className="mb-10 md:mb-14">
               <ImageCollage
-               images={[
-                 "https://assets.distribuidor-puntopas.com/image/upload/v1777305703/IMAGEN_1.png",
-                 "https://assets.distribuidor-puntopas.com/image/upload/v1777305710/IMAGEN_2.png",
-                 "https://assets.distribuidor-puntopas.com/image/upload/v1777306355/IMAGEN_3.png",
-                 "https://assets.distribuidor-puntopas.com/image/upload/v1777301931/IMAGEN_4.png",
-                 "https://assets.distribuidor-puntopas.com/image/upload/v1777413591/IMAGEN_5.png",
-                 "https://assets.distribuidor-puntopas.com/image/upload/v1777301925/IMAGEN_6.png",
-               ]}
+               images={brandSectionPosters.map(({ fileName }) => buildBrandSectionPoster(fileName))}
                onImageClick={(index) => {
-                 const brands = ["INDURAMA", "MABE", "TCL", "RCA", "HONOR", "PHILIPS"];
-                 if (brands[index]) {
-                   const normalizedBrand = brands[index].toUpperCase().trim();
+                  const brand = brandSectionPosters[index]?.brand;
+                  if (brand) {
+                    const normalizedBrand = brand.toUpperCase().trim();
                    setMainFilter({ mode: "brand", value: normalizedBrand });
                     setSelectedType("all");
                     setSelectedBrand(normalizedBrand);

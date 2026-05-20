@@ -9,9 +9,7 @@ interface BrandsBannerProps {
 }
 
 const BRANDS_BASE_URL = (import.meta.env.VITE_BRANDS_BASE_URL as string | undefined) || "";
-const SECTION_BRANDS_BASE_URL = (import.meta.env.VITE_SECTION_BRANDS_BASE_URL as string | undefined) || "";
-const DEFAULT_BRANDS_BASE = "https://assets.distribuidor-puntopas.com/image/upload";
-const BRAND_LOGO_VERSION = "v1778950354";
+const DEFAULT_BRANDS_BASE = "https://assets.distribuidor-puntopas.com/MARCAS";
 
 const featuredBrands = [
   { imageName: "MARCA HONOR.png", brand: "HONOR" },
@@ -74,17 +72,9 @@ export const BrandsBanner = memo(({ products, onBrandClick }: BrandsBannerProps)
 
   const getLogoUrl = (brand: { imageName: string; brand: string }) => {
     const normalizedBrand = brand.brand.toUpperCase().replace(/\s+/g, "_");
-    const sectionBase = SECTION_BRANDS_BASE_URL.replace(/\/$/, "");
+    const base = BRANDS_BASE_URL.replace(/\/$/, "") || DEFAULT_BRANDS_BASE;
 
-    if (sectionBase) {
-      return `${sectionBase}/${encodeURIComponent(brand.imageName)}`;
-    }
-
-    if (BRANDS_BASE_URL) {
-      return `${BRANDS_BASE_URL.replace(/\/$/, "")}/${normalizedBrand}_1.png`;
-    }
-
-    return `${DEFAULT_BRANDS_BASE}/${BRAND_LOGO_VERSION}/${normalizedBrand}_1.png`;
+    return `${base}/${normalizedBrand}_1.png`;
   };
 
   const handleBrandClick = (brand: string) => {
