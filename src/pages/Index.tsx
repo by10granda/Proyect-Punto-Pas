@@ -37,10 +37,10 @@ const WEEKLY_DEALS_BASE_URL = (import.meta.env.VITE_WEEKLY_DEALS_BASE_URL as str
 const SECTION_BRANDS_BASE_URL = (import.meta.env.VITE_SECTION_BRANDS_BASE_URL as string | undefined) || "";
 const BRAND_SECTION_POSTERS_BASE_URL = "https://assets.distribuidor-puntopas.com/MARCAS_SECCION_MARCAS";
 const brandSectionPosters = [
-  { brand: "HONOR", fileName: "MARCA HONOR.png" },
   { brand: "INDURAMA", fileName: "MARCA INDURAMA.png" },
-  { brand: "MABE", fileName: "MARCA MABE.png" },
   { brand: "PHILIPS", fileName: "MARCA PHILIPS.png" },
+  { brand: "MABE", fileName: "MARCA MABE.png" },
+  { brand: "HONOR", fileName: "MARCA HONOR.png" },
   { brand: "RCA", fileName: "MARCA RCA.png" },
   { brand: "TCL", fileName: "MARCA TCL.png" },
 ];

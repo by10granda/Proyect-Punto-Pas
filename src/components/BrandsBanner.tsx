@@ -12,13 +12,21 @@ const BRANDS_BASE_URL = (import.meta.env.VITE_BRANDS_BASE_URL as string | undefi
 const DEFAULT_BRANDS_BASE = "https://assets.distribuidor-puntopas.com/MARCAS";
 
 const featuredBrands = [
-  { imageName: "MARCA HONOR.png", brand: "HONOR" },
-  { imageName: "MARCA INDURAMA.png", brand: "INDURAMA" },
-  { imageName: "MARCA MABE.png", brand: "MABE" },
-  { imageName: "MARCA PHILIPS.png", brand: "PHILIPS" },
-  { imageName: "MARCA RCA.png", brand: "RCA" },
-  { imageName: "MARCA TCL.png", brand: "TCL" },
+  "HONOR",
+  "INDURAMA",
+  "MABE",
+  "PHILIPS",
+  "RCA",
+  "TCL",
 ];
+
+const normalizeBrandFileName = (brand: string) =>
+  brand
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toUpperCase()
+    .replace(/[^A-Z0-9]+/g, "_")
+    .replace(/^_+|_+$/g, "");
 
 export const BrandsBanner = memo(({ products, onBrandClick }: BrandsBannerProps) => {
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -26,9 +34,10 @@ export const BrandsBanner = memo(({ products, onBrandClick }: BrandsBannerProps)
   const [isScrolling, setIsScrolling] = useState(false);
   const scrollIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  const availableBrands = new Set(products.map((p) => String(p.brand || "").toUpperCase().trim()).filter(Boolean));
-  const sectionBrands = featuredBrands.filter(({ brand }) => availableBrands.has(brand));
-  const brandsToRender = sectionBrands.length > 0 ? sectionBrands : featuredBrands;
+  const availableBrands = Array.from(
+    new Set(products.map((p) => String(p.brand || "").toUpperCase().trim()).filter(Boolean)),
+  ).sort((a, b) => a.localeCompare(b));
+  const brandsToRender = availableBrands.length > 0 ? availableBrands : featuredBrands;
   const duplicatedBrands = [...brandsToRender, ...brandsToRender];
 
   const startScrolling = (direction: "left" | "right") => {
@@ -70,8 +79,8 @@ export const BrandsBanner = memo(({ products, onBrandClick }: BrandsBannerProps)
     }
   };
 
-  const getLogoUrl = (brand: { imageName: string; brand: string }) => {
-    const normalizedBrand = brand.brand.toUpperCase().replace(/\s+/g, "_");
+  const getLogoUrl = (brand: string) => {
+    const normalizedBrand = normalizeBrandFileName(brand);
     const base = BRANDS_BASE_URL.replace(/\/$/, "") || DEFAULT_BRANDS_BASE;
 
     return `${base}/${normalizedBrand}_1.png`;
@@ -110,13 +119,13 @@ return (
         >
           {duplicatedBrands.map((brand, index) => (
             <button
-              key={`${brand.brand}-${index}`}
-              onClick={() => handleBrandClick(brand.brand)}
+              key={`${brand}-${index}`}
+              onClick={() => handleBrandClick(brand)}
               className="flex-shrink-0 h-16 w-36 flex items-center justify-center overflow-hidden rounded-xl"
             >
               <img
                 src={getLogoUrl(brand)}
-                alt={brand.brand}
+                alt={brand}
                 className="h-full w-auto object-contain rounded-xl transition-transform duration-200 hover:scale-125"
                 onError={(e) => {
                   const img = e.target as HTMLImageElement;
@@ -125,7 +134,7 @@ return (
                 }}
               />
               <span className="hidden font-bold text-gray-700 text-sm uppercase tracking-wide">
-                {brand.brand}
+                {brand}
               </span>
             </button>
           ))}
