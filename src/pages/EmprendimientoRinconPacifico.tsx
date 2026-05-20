@@ -1,24 +1,19 @@
 import { Link } from "react-router-dom";
-import { ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
-const portadaImages = [
-  "https://assets.distribuidor-puntopas.com/image/upload/v1778181571/PORTADA_RINCON_1.png",
-  "https://assets.distribuidor-puntopas.com/image/upload/v1778181575/PORTAD_RINCON_2.png",
-];
+const RINCON_IMAGES_BASE_URL = "https://assets.distribuidor-puntopas.com/EMPRENDIMIENTOS_PRESENTACIONES";
+const portadaImage = `${RINCON_IMAGES_BASE_URL}/RINCON_PORTADA.png`;
 
 const cuerpoImages = [
-  "https://assets.distribuidor-puntopas.com/image/upload/v1778181570/RINCON_1.png",
-  "https://assets.distribuidor-puntopas.com/image/upload/v1778181572/RINCON_2.png",
-  "https://assets.distribuidor-puntopas.com/image/upload/v1778181567/RINCON_3.png",
+  `${RINCON_IMAGES_BASE_URL}/RINCON_1.png`,
+  `${RINCON_IMAGES_BASE_URL}/RINCON_2.png`,
+  `${RINCON_IMAGES_BASE_URL}/RINCON_3.png`,
 ];
 
 const EmprendimientoRinconPacifico = () => {
-  const [activePortada, setActivePortada] = useState(0);
   const imageRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [visibleImages, setVisibleImages] = useState<number[]>([]);
-  const nextPortada = () => setActivePortada((prev) => (prev + 1) % portadaImages.length);
-  const prevPortada = () => setActivePortada((prev) => (prev - 1 + portadaImages.length) % portadaImages.length);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -63,28 +58,11 @@ const EmprendimientoRinconPacifico = () => {
         <section className="w-full">
           <div className="relative overflow-hidden">
             <img
-              key={portadaImages[activePortada]}
-              src={portadaImages[activePortada]}
+              src={portadaImage}
               alt="Portada Rincón del Pacífico"
               className="block w-full h-auto bg-black animate-in fade-in zoom-in-95 duration-500"
               loading="lazy"
             />
-
-            <button onClick={prevPortada} className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/45 text-white flex items-center justify-center hover:bg-black/60 transition-colors">
-              <ChevronLeft className="w-5 h-5" />
-            </button>
-            <button onClick={nextPortada} className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/45 text-white flex items-center justify-center hover:bg-black/60 transition-colors">
-              <ChevronRight className="w-5 h-5" />
-            </button>
-            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-2">
-              {portadaImages.map((_, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => setActivePortada(idx)}
-                  className={`h-2.5 rounded-full transition-all ${activePortada === idx ? "w-7 bg-white" : "w-2.5 bg-white/70"}`}
-                />
-              ))}
-            </div>
           </div>
         </section>
 
