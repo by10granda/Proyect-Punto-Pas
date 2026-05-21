@@ -1,18 +1,17 @@
 interface CheckoutStepsProps {
-  activeStep: 1 | 2 | 3 | 4;
+  activeStep: 1 | 2 | 3;
 }
 
 const STEPS = [
   { id: 1, label: "Revisar orden" },
   { id: 2, label: "Datos personales" },
-  { id: 3, label: "Entrega" },
-  { id: 4, label: "Datos de pago" },
+  { id: 3, label: "Datos de pago" },
 ];
 
 export const CheckoutSteps = ({ activeStep }: CheckoutStepsProps) => {
   return (
     <div className="bg-white border border-slate-200 rounded-2xl px-2 sm:px-4 py-3 sm:py-4 mb-5 sm:mb-6 overflow-hidden">
-      <div className="grid grid-cols-4 gap-1 sm:gap-2 items-start">
+      <div className="grid grid-cols-3 gap-1 sm:gap-2 items-start">
         {STEPS.map((step, index) => {
           const isActive = step.id === activeStep;
           const isDone = step.id < activeStep;
