@@ -41,6 +41,7 @@ export const Header = ({ cartCount, searchQuery: propSearchQuery, onSearch, onCa
   const [isRadioMinimized, setIsRadioMinimized] = useState(true);
   const [showVolumeSlider, setShowVolumeSlider] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [suppressSuggestions, setSuppressSuggestions] = useState(false);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [selectedSuggestion, setSelectedSuggestion] = useState(-1);
   const [debouncedQuery, setDebouncedQuery] = useState("");
@@ -217,6 +218,7 @@ export const Header = ({ cartCount, searchQuery: propSearchQuery, onSearch, onCa
     if (propSearchQuery !== undefined && propSearchQuery !== searchQueryRef.current) {
       setSearchQuery(propSearchQuery || "");
       if (!propSearchQuery) {
+        setSuppressSuggestions(false);
         setShowSuggestions(false);
       }
     }
@@ -233,7 +235,7 @@ export const Header = ({ cartCount, searchQuery: propSearchQuery, onSearch, onCa
     const timer = setTimeout(() => {
       setDebouncedQuery(searchQuery || "");
       // Trigger real-time search when typing
-      if (isSearchFocused && (searchQuery || "").trim().length >= 2) {
+      if (!suppressSuggestions && isSearchFocused && (searchQuery || "").trim().length >= 2) {
         setShowSuggestions(true);
       } else if ((searchQuery || "").trim().length === 0 || !isSearchFocused) {
         setShowSuggestions(false);
@@ -241,7 +243,7 @@ export const Header = ({ cartCount, searchQuery: propSearchQuery, onSearch, onCa
       setIsSearching(false);
     }, 300);
     return () => clearTimeout(timer);
-  }, [searchQuery, isSearchFocused]);
+  }, [searchQuery, isSearchFocused, suppressSuggestions]);
 
   const handleSearchBlur = () => {
     setTimeout(() => {
@@ -366,6 +368,7 @@ export const Header = ({ cartCount, searchQuery: propSearchQuery, onSearch, onCa
   const selectSuggestion = (suggestion: SearchSuggestion) => {
     setSearchQuery(suggestion.text);
     setShowSuggestions(false);
+    setSuppressSuggestions(true);
     setSelectedSuggestion(-1);
     pushRecentSearch(suggestion.text);
     
@@ -384,6 +387,7 @@ export const Header = ({ cartCount, searchQuery: propSearchQuery, onSearch, onCa
       setDebouncedQuery(submittedQuery);
       pushRecentSearch(submittedQuery);
       setShowSuggestions(false);
+      setSuppressSuggestions(true);
       setSelectedSuggestion(-1);
     }
   };
@@ -391,6 +395,7 @@ export const Header = ({ cartCount, searchQuery: propSearchQuery, onSearch, onCa
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     // Update local state immediately (allows typing)
+    setSuppressSuggestions(false);
     setSearchQuery(value);
     setSelectedSuggestion(-1);
     if (value.length >= 3) {
@@ -407,6 +412,7 @@ export const Header = ({ cartCount, searchQuery: propSearchQuery, onSearch, onCa
   };
 
   const clearSearchInput = () => {
+    setSuppressSuggestions(false);
     setSearchQuery("");
     setDebouncedQuery("");
     setShowSuggestions(false);
@@ -727,7 +733,9 @@ export const Header = ({ cartCount, searchQuery: propSearchQuery, onSearch, onCa
                 onChange={handleSearchChange}
                 onFocus={() => {
                   setIsSearchFocused(true);
-                  setShowSuggestions(true);
+                  if (!suppressSuggestions) {
+                    setShowSuggestions(true);
+                  }
                 }}
                 onBlur={handleSearchBlur}
                 onKeyDown={handleKeyDown}
