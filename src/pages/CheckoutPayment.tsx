@@ -95,10 +95,10 @@ export const CheckoutPayment = () => {
               <h1 className="text-xl sm:text-2xl md:text-3xl font-black text-slate-900 mb-2" style={{ fontFamily: "Nunito, sans-serif" }}>
                 Elige tu metodo de pago
               </h1>
-              <p className="text-sm sm:text-base text-slate-600 mb-5 sm:mb-6">Selecciona como deseas completar tu compra con Payphone o transferencia.</p>
+              <p className="text-sm sm:text-base text-slate-600 mb-5 sm:mb-6">Selecciona como deseas completar tu compra con Datafast o transferencia.</p>
 
               <div className="space-y-3">
-                {[{ id: "transferencia", label: "Transferencia bancaria", desc: "Proximamente" }, { id: "tarjeta", label: "Pago en linea con Payphone", desc: "Proximamente" }].map((metodo) => (
+                {[{ id: "transferencia", label: "Transferencia bancaria", desc: "Proximamente" }, { id: "tarjeta", label: "Pago en linea con Datafast", desc: "Proximamente" }].map((metodo) => (
                   <label
                     key={metodo.id}
                     className={`flex items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl border-2 cursor-not-allowed opacity-70 transition-all ${
@@ -131,7 +131,7 @@ export const CheckoutPayment = () => {
 
               <div className="mt-6 rounded-xl border border-slate-200 bg-slate-50 p-4">
                 <p className="text-base font-semibold text-slate-800">Proximamente</p>
-                <p className="mt-1 text-sm text-slate-600">Estamos habilitando los metodos de pago. Muy pronto podras pagar con Payphone o transferencia.</p>
+                <p className="mt-1 text-sm text-slate-600">Estamos habilitando los metodos de pago. Muy pronto podras pagar con Datafast o transferencia.</p>
               </div>
             </div>
           </div>

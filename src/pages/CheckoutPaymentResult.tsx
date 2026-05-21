@@ -68,7 +68,7 @@ const CheckoutPaymentResult = () => {
 
       if (!idParam || !clientTransactionId) {
         setStatus("failed");
-        setMessage("No llegaron los datos de confirmacion de Payphone.");
+        setMessage("No llegaron los datos de confirmacion de Datafast.");
         return;
       }
 
@@ -85,7 +85,7 @@ const CheckoutPaymentResult = () => {
 
         if (!isApproved) {
           setStatus("failed");
-          setMessage(paymentStatus?.message || "Pago no aprobado por Payphone.");
+          setMessage(paymentStatus?.message || "Pago no aprobado por Datafast.");
           return;
         }
 
@@ -126,7 +126,7 @@ const CheckoutPaymentResult = () => {
         {status === "failed" && <XCircle className="w-12 h-12 text-rose-600 mx-auto" />}
         {status === "invoice_failed" && <CheckCircle2 className="w-12 h-12 text-amber-500 mx-auto" />}
 
-        <h1 className="mt-4 text-2xl font-black text-slate-900">Resultado del pago Payphone</h1>
+        <h1 className="mt-4 text-2xl font-black text-slate-900">Resultado del pago Datafast</h1>
         <p className="mt-2 text-slate-600">{message}</p>
 
         <div className="mt-6 flex justify-center gap-3">
