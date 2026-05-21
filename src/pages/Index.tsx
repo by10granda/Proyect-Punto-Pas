@@ -570,11 +570,9 @@ const Index = () => {
     setActiveTab("home");
   };
 
-  // Clear search and go to home (for Header synchronization)
+  // Clear search while staying on current page (for Header synchronization)
   const clearSearch = () => {
     resetAllFilters();
-    navigate('/');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleTabChange = (tab: string) => {
