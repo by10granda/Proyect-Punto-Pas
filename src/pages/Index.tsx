@@ -573,6 +573,7 @@ const Index = () => {
   // Clear search while staying on current page (for Header synchronization)
   const clearSearch = () => {
     resetAllFilters();
+    navigate('/', { replace: true });
   };
 
   const handleTabChange = (tab: string) => {
