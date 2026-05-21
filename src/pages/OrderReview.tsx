@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, ShoppingBag, Trash2 } from "lucide-react";
 import { Header } from "@/components/Header";
@@ -24,11 +24,20 @@ const OrderReview = () => {
     return raw ? JSON.parse(raw) : [];
   });
   const [stockByCode, setStockByCode] = useState<Record<string, number>>({});
+  const contentTopRef = useRef<HTMLElement | null>(null);
 
   const persistItems = (next: CartItem[]) => {
     setItems(next);
     localStorage.setItem("puntopas_cart", JSON.stringify(next));
   };
+
+  useEffect(() => {
+    const raf = window.requestAnimationFrame(() => {
+      contentTopRef.current?.scrollIntoView({ behavior: "auto", block: "start" });
+    });
+
+    return () => window.cancelAnimationFrame(raf);
+  }, []);
 
   useEffect(() => {
     let active = true;
@@ -120,7 +129,7 @@ const OrderReview = () => {
         onCartClick={() => {}}
       />
 
-      <main className="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-4 py-5 sm:py-8 pb-14 sm:pb-16">
+      <main ref={contentTopRef} className="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-4 py-5 sm:py-8 pb-14 sm:pb-16">
         <CheckoutSteps activeStep={1} />
         <div className="flex items-center justify-between gap-3 mb-5 sm:mb-8">
           <Link to="/" className="inline-flex items-center gap-2 text-slate-600 hover:text-slate-900 transition-colors">
@@ -210,7 +219,7 @@ const OrderReview = () => {
               disabled={items.length === 0}
               className="mt-6 w-full h-12 rounded-xl bg-[#132a86] hover:bg-[#0f226d] text-white font-semibold disabled:opacity-50 shadow-md"
             >
-              Finalizar compra
+              Continuar
             </button>
 
             <button onClick={() => navigate("/")} className="mt-4 w-full text-sm text-slate-500 hover:text-slate-900">
