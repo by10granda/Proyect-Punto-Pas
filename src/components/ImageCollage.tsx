@@ -18,6 +18,25 @@ const collageCandidates = [1, 2, 3, 4, 5, 6].map((index) => [
 
 const DEFAULT_IMAGES = collageCandidates.map((candidates) => candidates[0]);
 
+const unique = (values: string[]) => Array.from(new Set(values.filter(Boolean)));
+
+const buildImageFallbacks = (sourceUrl: string | undefined, index: number): string[] => {
+  const fallbackPool = collageCandidates[index] || [];
+  if (!sourceUrl) return fallbackPool;
+
+  const decoded = decodeURIComponent(sourceUrl);
+  const variants = unique([
+    sourceUrl,
+    decoded,
+    decoded.replace(/HONOR/g, "HONNOR"),
+    decoded.replace(/HONNOR/g, "HONOR"),
+    decoded.replace(/_/g, " "),
+    decoded.replace(/\s/g, "%20"),
+  ]);
+
+  return unique([...variants, ...fallbackPool]);
+};
+
 const handleCollageFallback = (event: React.SyntheticEvent<HTMLImageElement>) => {
   const image = event.currentTarget;
   const fallbackValue = image.dataset.fallbacks;
@@ -38,6 +57,7 @@ const handleCollageFallback = (event: React.SyntheticEvent<HTMLImageElement>) =>
 
 export const ImageCollage = memo(({ images = DEFAULT_IMAGES, onImageClick }: ImageCollageProps) => {
   const displayImages = images.slice(0, 6);
+  const displayFallbacks = displayImages.map((image, index) => buildImageFallbacks(image, index));
   
   return (
     <section className="w-full" style={{ marginTop: 0, paddingTop: 0 }}>
@@ -59,7 +79,7 @@ export const ImageCollage = memo(({ images = DEFAULT_IMAGES, onImageClick }: Ima
         <div style={{ gridRow: "1 / span 2", position: "relative", backgroundColor: "white", overflow: "hidden" }}>
             <img
               src={displayImages[0]}
-              data-fallbacks={collageCandidates[0].join("|")}
+              data-fallbacks={displayFallbacks[0].join("|")}
               data-fallback-index="0"
               alt="Marca 1"
               onClick={() => onImageClick?.(0)}
@@ -79,7 +99,7 @@ export const ImageCollage = memo(({ images = DEFAULT_IMAGES, onImageClick }: Ima
         <div style={{ position: "relative", backgroundColor: "white", overflow: "hidden" }}>
           <img
             src={displayImages[1]}
-            data-fallbacks={collageCandidates[1].join("|")}
+            data-fallbacks={displayFallbacks[1].join("|")}
             data-fallback-index="0"
             alt="Marca 2"
             onClick={() => onImageClick?.(1)}
@@ -99,7 +119,7 @@ export const ImageCollage = memo(({ images = DEFAULT_IMAGES, onImageClick }: Ima
         <div style={{ position: "relative", backgroundColor: "white", overflow: "hidden" }}>
           <img
             src={displayImages[2]}
-            data-fallbacks={collageCandidates[2].join("|")}
+            data-fallbacks={displayFallbacks[2].join("|")}
             data-fallback-index="0"
             alt="Marca 3"
             onClick={() => onImageClick?.(2)}
@@ -120,7 +140,7 @@ export const ImageCollage = memo(({ images = DEFAULT_IMAGES, onImageClick }: Ima
           <div style={{ position: "relative", backgroundColor: "white", overflow: "hidden" }}>
             <img
               src={displayImages[3]}
-              data-fallbacks={collageCandidates[3].join("|")}
+              data-fallbacks={displayFallbacks[3].join("|")}
               data-fallback-index="0"
               alt="Marca 4"
               onClick={() => onImageClick?.(3)}
@@ -138,7 +158,7 @@ export const ImageCollage = memo(({ images = DEFAULT_IMAGES, onImageClick }: Ima
           <div style={{ position: "relative", backgroundColor: "white", overflow: "hidden" }}>
             <img
               src={displayImages[4]}
-              data-fallbacks={collageCandidates[4].join("|")}
+              data-fallbacks={displayFallbacks[4].join("|")}
               data-fallback-index="0"
               alt="Marca 5"
               onClick={() => onImageClick?.(4)}
@@ -156,7 +176,7 @@ export const ImageCollage = memo(({ images = DEFAULT_IMAGES, onImageClick }: Ima
           <div style={{ position: "relative", backgroundColor: "white", overflow: "hidden" }}>
             <img
               src={displayImages[5]}
-              data-fallbacks={collageCandidates[5].join("|")}
+              data-fallbacks={displayFallbacks[5].join("|")}
               data-fallback-index="0"
               alt="Marca 6"
               onClick={() => onImageClick?.(5)}
