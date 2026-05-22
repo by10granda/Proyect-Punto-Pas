@@ -18,10 +18,10 @@ const CATEGORY_FIXED_FILES: Record<string, string> = {
   all: 'TODOS_123.png',
   TELEVISORES: 'TELEVISORES_123.png',
   'MUEBLERIA COMEDORES Y MESAS': 'MUEBLERIA_COMEDORES_Y_MESAS_123.png',
-  'LAVADORAS Y SECADORAS': 'LAVADORAS_Y_SECADORAS_123.png',
+  'LAVADORAS Y SECADORAS': 'LAVADORAS Y SECADORAS_123.png',
   'COCINAS Y CAMPANAS': 'COCINAS_Y_CAMPANAS_123.png',
   CELULARES: 'CELULARES_123.png',
-  'CONGELADORES Y NEVERAS': 'CONGELADORES_Y_NEVERAS_123.png',
+  'CONGELADORES Y NEVERAS': 'CONGELADORES Y NEVERAS 123.png',
 };
 const ITEM_WIDTH = 350;
 
@@ -34,19 +34,16 @@ export const CategoryBar = ({ selectedCategory, onSelectCategory, products = [] 
   const buildCombinedCategoryFallbacks = (categoryName: string): string[] => {
     const normalizedCategory = categoryName === 'all' ? 'all' : categoryName.toUpperCase().trim();
     const fixedFile = CATEGORY_FIXED_FILES[normalizedCategory];
-    const fixedCandidates = fixedFile
-      ? [
-          `${CATEGORY_IMAGES_BASE_URL}/${encodeURIComponent(fixedFile)}`,
-          ...(CATEGORY_IMAGES_ENV_BASE_URL && CATEGORY_IMAGES_ENV_BASE_URL !== CATEGORY_IMAGES_BASE_URL
-            ? [`${CATEGORY_IMAGES_ENV_BASE_URL.replace(/\/$/, '')}/${encodeURIComponent(fixedFile)}`]
-            : []),
-        ]
-      : [];
+    const fixedCandidates = fixedFile ? [`${CATEGORY_IMAGES_BASE_URL}/${encodeURIComponent(fixedFile)}`] : [];
 
     const primary = buildCategoryImageCandidates(categoryName, CATEGORY_IMAGES_BASE_URL, CATEGORY_IMAGE_VERSION);
 
     const localFallback = categoryName === "TODOS" ? [allProductsImage] : [];
     const sharedFallback = [CATEGORY_DEFAULT_FALLBACK];
+
+    if (fixedCandidates.length > 0) {
+      return Array.from(new Set([...fixedCandidates, ...localFallback, ...sharedFallback]));
+    }
 
     if (!CATEGORY_IMAGES_ENV_BASE_URL || CATEGORY_IMAGES_ENV_BASE_URL === CATEGORY_IMAGES_BASE_URL) {
       return Array.from(new Set([...fixedCandidates, ...primary, ...localFallback, ...sharedFallback]));
