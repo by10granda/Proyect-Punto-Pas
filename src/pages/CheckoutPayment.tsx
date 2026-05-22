@@ -27,7 +27,8 @@ declare global {
 
 export const CheckoutPayment = () => {
   const navigate = useNavigate();
-  const [metodoPago] = useState<"transferencia" | "tarjeta">("tarjeta");
+  const [metodoPago, setMetodoPago] = useState<"transferencia" | "tarjeta">("transferencia");
+  const [whatsappSent, setWhatsappSent] = useState(false);
 
   const cartItems = useMemo(() => {
     const cartData = localStorage.getItem("puntopas_cart");
@@ -50,6 +51,68 @@ export const CheckoutPayment = () => {
       style: "currency",
       currency: "USD",
     });
+
+  const getIdentificationLabel = (tipo: TipoIdentificacionCliente) => {
+    switch (tipo) {
+      case 1:
+        return "RUC";
+      case 2:
+        return "CEDULA";
+      case 3:
+        return "PASAPORTE";
+      default:
+        return "IDENTIFICACION";
+    }
+  };
+
+  const buildWhatsappMessage = () => {
+    const customerName = customer ? `${customer.nombre} ${customer.apellido}`.trim() : "";
+    const identificationType = customer ? getIdentificationLabel(customer.tipoIdentificacion) : "";
+    const identificationNumber = customer?.numIdentificacion?.trim() || "";
+    const phone = customer?.telefono?.trim() || "";
+    const email = customer?.email?.trim() || "";
+    const branch = customer?.sucursal || "";
+
+    const productLines = cartItems.map((item: { code?: string; quantity: number; name: string }) => {
+      const code = String(item.code || "").trim() || "SIN_CODIGO";
+      return `- CODIGO: ${code} | CANTIDAD: ${item.quantity} | DESCRIPCION: ${item.name}`;
+    });
+
+    return [
+      "Hola, quiero finalizar mi compra por deposito/transferencia.",
+      "",
+      "PRODUCTOS:",
+      ...productLines,
+      "",
+      `TOTAL: ${formatPrice(total)}`,
+      "",
+      "DATOS DE FACTURACION:",
+      `NOMBRE: ${customerName}`,
+      `${identificationType}: ${identificationNumber}`,
+      `TELEFONO: ${phone}`,
+      `EMAIL: ${email || "NO REGISTRADO"}`,
+      `SUCURSAL DE RETIRO: ${branch || "NO REGISTRADA"}`,
+    ].join("\n");
+  };
+
+  const handleTransferencia = () => {
+    if (!customer) {
+      toast.error("Primero completa tus datos para continuar.");
+      navigate("/checkout");
+      return;
+    }
+
+    if (!cartItems.length) {
+      toast.error("Tu carrito esta vacio.");
+      return;
+    }
+
+    const WHATSAPP_NUMBER = "593959990999";
+    const message = buildWhatsappMessage();
+    const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, "_blank", "noopener,noreferrer");
+    setWhatsappSent(true);
+  };
 
 
   useEffect(() => {
@@ -98,10 +161,13 @@ export const CheckoutPayment = () => {
               <p className="text-sm sm:text-base text-slate-600 mb-5 sm:mb-6">Selecciona como deseas completar tu compra con Datafast o transferencia.</p>
 
               <div className="space-y-3">
-                {[{ id: "transferencia", label: "Transferencia bancaria", desc: "Proximamente" }, { id: "tarjeta", label: "Pago en linea con Datafast", desc: "Proximamente" }].map((metodo) => (
+                {[
+                  { id: "transferencia", label: "Deposito o transferencia", desc: "Completa tu venta por WhatsApp" },
+                  { id: "tarjeta", label: "Pago en linea con Datafast", desc: "Proximamente" },
+                ].map((metodo) => (
                   <label
                     key={metodo.id}
-                    className={`flex items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl border-2 cursor-not-allowed opacity-70 transition-all ${
+                    className={`flex items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl border-2 cursor-pointer transition-all ${
                       metodoPago === metodo.id ? "border-primary bg-primary/5" : "border-slate-200 hover:border-primary/50"
                     }`}
                   >
@@ -110,7 +176,7 @@ export const CheckoutPayment = () => {
                       name="metodoPago"
                       value={metodo.id}
                       checked={metodoPago === metodo.id}
-                      disabled
+                      onChange={() => setMetodoPago(metodo.id as "transferencia" | "tarjeta")}
                       className="sr-only"
                     />
                     <CreditCard className="w-5 h-5 text-primary flex-shrink-0" />
@@ -129,10 +195,31 @@ export const CheckoutPayment = () => {
                 ))}
               </div>
 
-              <div className="mt-6 rounded-xl border border-slate-200 bg-slate-50 p-4">
-                <p className="text-base font-semibold text-slate-800">Proximamente</p>
-                <p className="mt-1 text-sm text-slate-600">Estamos habilitando los metodos de pago. Muy pronto podras pagar con Datafast o transferencia.</p>
-              </div>
+              {metodoPago === "transferencia" ? (
+                <div className="mt-6 rounded-xl border border-slate-200 bg-slate-50 p-4">
+                  <p className="text-base font-semibold text-slate-800">Compra por WhatsApp</p>
+                  <p className="mt-1 text-sm text-slate-600">
+                    Enviaremos al vendedor tu pedido con codigo, cantidad, descripcion y tus datos de facturacion para continuar la venta por deposito o transferencia.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={handleTransferencia}
+                    className="mt-4 inline-flex items-center justify-center px-4 py-2.5 rounded-xl bg-[#25D366] hover:bg-[#1fb45a] text-white font-semibold"
+                  >
+                    Continuar por WhatsApp
+                  </button>
+                  {whatsappSent && (
+                    <p className="mt-3 text-sm font-medium text-emerald-700">
+                      Dentro de las proximas 3 horas un vendedor te contactara personalmente y la venta se realizara por WhatsApp.
+                    </p>
+                  )}
+                </div>
+              ) : (
+                <div className="mt-6 rounded-xl border border-slate-200 bg-slate-50 p-4">
+                  <p className="text-base font-semibold text-slate-800">Proximamente</p>
+                  <p className="mt-1 text-sm text-slate-600">Estamos habilitando el pago en linea con Datafast.</p>
+                </div>
+              )}
             </div>
           </div>
 
