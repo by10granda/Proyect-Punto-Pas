@@ -86,8 +86,14 @@ const withAssetFallback = (event: { currentTarget: HTMLImageElement }, fallbackS
   target.src = fallbackSrc;
 };
 
-const topBanner1Candidates = buildAssetCandidates(ASSETS_BASE_URL, "VIDEOS_PRINCIPALES", "VIDEOS PRINCIPALES.gif");
-const topBanner2Candidates = buildAssetCandidates(ASSETS_BASE_URL, "VIDEOS_PRINCIPALES", "VIDEOS PRINCIPALES2.gif");
+const topBanner1Candidates = [
+  "https://assets.distribuidor-puntopas.com/VIDEOS_PRINCIPALES/VIDEOS%20PRINCIPALES.gif",
+  ...buildAssetCandidates(ASSETS_BASE_URL, "VIDEOS_PRINCIPALES", "VIDEOS PRINCIPALES.gif"),
+];
+const topBanner2Candidates = [
+  "https://assets.distribuidor-puntopas.com/VIDEOS_PRINCIPALES/VIDEOS%20PRINCIPALES2.gif",
+  ...buildAssetCandidates(ASSETS_BASE_URL, "VIDEOS_PRINCIPALES", "VIDEOS PRINCIPALES2.gif"),
+];
 const secondBannerCandidates = [
   ...buildAssetCandidates(ASSETS_BASE_URL, "VIDEOS_PRINCIPALES", "FIFIERE TODAS TUS COMPRAS ONLINE.png"),
   ...buildAssetCandidates(ASSETS_BASE_URL, "VIDEOS_PRINCIPALES", "DIFIERE TODAS TUS COMPRAS ONLINE.png"),
