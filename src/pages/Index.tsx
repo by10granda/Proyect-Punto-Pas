@@ -709,10 +709,7 @@ const Index = () => {
                     data-fallback-index="0"
                     alt="Promocion compras online"
                     className="w-full h-[82px] md:h-[95px] object-contain"
-                    onError={(event) => {
-                      handleAssetFallback(event);
-                      withAssetFallback(event, publicidadImage);
-                    }}
+                    onError={handleAssetFallback}
                   />
                 </div>
 
@@ -727,10 +724,7 @@ const Index = () => {
                     data-fallback-index="0"
                     alt="Promocion otros emprendimientos"
                     className="w-full h-[82px] md:h-[95px] object-contain"
-                    onError={(event) => {
-                      handleAssetFallback(event);
-                      withAssetFallback(event, categoriasImage);
-                    }}
+                    onError={handleAssetFallback}
                   />
                 </button>
               </div>
@@ -774,10 +768,7 @@ const Index = () => {
                 data-fallback-index="0"
                 alt="Sección Principal"
                 className="w-full h-auto rounded-xl md:rounded-2xl"
-                onError={(event) => {
-                  handleAssetFallback(event);
-                  withAssetFallback(event, publicidadImage);
-                }}
+                onError={handleAssetFallback}
               />
             </div>
           </section>
@@ -836,10 +827,7 @@ const Index = () => {
               alt="Portada tecnologia ENV"
               className="block w-full h-auto cursor-pointer"
               onClick={applyEnvBrandFilter}
-              onError={(event) => {
-                handleAssetFallback(event);
-                withAssetFallback(event, categoriasImage);
-              }}
+              onError={handleAssetFallback}
             />
           </div>
         )}
@@ -1086,10 +1074,7 @@ const Index = () => {
                     willChange: 'transform',
                   }}
                   onClick={applyEnvBrandFilter}
-                  onError={(event) => {
-                    handleAssetFallback(event);
-                    withAssetFallback(event, categoriasImage);
-                  }}
+                  onError={handleAssetFallback}
                 />
               </div>
 
