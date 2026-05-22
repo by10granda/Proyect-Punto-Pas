@@ -14,6 +14,15 @@ const CATEGORY_IMAGE_VERSION = 'v1775785362';
 const CATEGORY_IMAGES_BASE_URL = 'https://assets.distribuidor-puntopas.com/CATEGORIAS_PRINCIPAL';
 const CATEGORY_IMAGES_ENV_BASE_URL = (import.meta.env.VITE_CATEGORY_IMAGES_BASE_URL as string | undefined) || '';
 const CATEGORY_DEFAULT_FALLBACK = 'https://assets.distribuidor-puntopas.com/CATEGORIAS_PRINCIPAL/MUEBLERIA_COMEDORES_Y_MESAS_123.png';
+const CATEGORY_FIXED_FILES: Record<string, string> = {
+  all: 'TODOS_123.png',
+  TELEVISORES: 'TELEVISORES_123.png',
+  'MUEBLERIA COMEDORES Y MESAS': 'MUEBLERIA_COMEDORES_Y_MESAS_123.png',
+  'LAVADORAS Y SECADORAS': 'LAVADORAS_Y_SECADORAS_123.png',
+  'COCINAS Y CAMPANAS': 'COCINAS_Y_CAMPANAS_123.png',
+  CELULARES: 'CELULARES_123.png',
+  'CONGELADORES Y NEVERAS': 'CONGELADORES_Y_NEVERAS_123.png',
+};
 const ITEM_WIDTH = 350;
 
 export const CategoryBar = ({ selectedCategory, onSelectCategory, products = [] }: CategoryBarProps) => {
@@ -23,17 +32,28 @@ export const CategoryBar = ({ selectedCategory, onSelectCategory, products = [] 
   const [canScrollRight, setCanScrollRight] = useState(true);
 
   const buildCombinedCategoryFallbacks = (categoryName: string): string[] => {
+    const normalizedCategory = categoryName === 'all' ? 'all' : categoryName.toUpperCase().trim();
+    const fixedFile = CATEGORY_FIXED_FILES[normalizedCategory];
+    const fixedCandidates = fixedFile
+      ? [
+          `${CATEGORY_IMAGES_BASE_URL}/${encodeURIComponent(fixedFile)}`,
+          ...(CATEGORY_IMAGES_ENV_BASE_URL && CATEGORY_IMAGES_ENV_BASE_URL !== CATEGORY_IMAGES_BASE_URL
+            ? [`${CATEGORY_IMAGES_ENV_BASE_URL.replace(/\/$/, '')}/${encodeURIComponent(fixedFile)}`]
+            : []),
+        ]
+      : [];
+
     const primary = buildCategoryImageCandidates(categoryName, CATEGORY_IMAGES_BASE_URL, CATEGORY_IMAGE_VERSION);
 
     const localFallback = categoryName === "TODOS" ? [allProductsImage] : [];
     const sharedFallback = [CATEGORY_DEFAULT_FALLBACK];
 
     if (!CATEGORY_IMAGES_ENV_BASE_URL || CATEGORY_IMAGES_ENV_BASE_URL === CATEGORY_IMAGES_BASE_URL) {
-      return Array.from(new Set([...primary, ...localFallback, ...sharedFallback]));
+      return Array.from(new Set([...fixedCandidates, ...primary, ...localFallback, ...sharedFallback]));
     }
 
     const secondary = buildCategoryImageCandidates(categoryName, CATEGORY_IMAGES_ENV_BASE_URL, CATEGORY_IMAGE_VERSION);
-    return Array.from(new Set([...primary, ...secondary, ...localFallback, ...sharedFallback]));
+    return Array.from(new Set([...fixedCandidates, ...primary, ...secondary, ...localFallback, ...sharedFallback]));
   };
 
   const getCategoryImage = (categoryId: string): string => {
