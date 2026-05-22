@@ -10,8 +10,8 @@ const slides = [
     id: 1,
     type: "image" as const,
     src: heroAssetUrl(
-      "PORTADA_1PRINCIPAL.png",
-      "https://assets.distribuidor-puntopas.com/PORTADAS/PORTADA_1PRINCIPAL.png",
+      "PORTADA_1-1.png",
+      "https://assets.distribuidor-puntopas.com/PORTADAS/PORTADA_1-1.png",
     ),
     action: "none" as const,
     value: "",
