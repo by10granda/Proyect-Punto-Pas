@@ -31,11 +31,15 @@ import { toast } from "sonner";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import { buildCategoryImageCandidates, handleCategoryImageFallback } from "@/utils/categoryImage";
+import publicidadImage from "@/assets/PUBLICIDAD.png";
+import categoriasImage from "@/assets/Categorias.png";
+import { buildAssetCandidates, handleAssetFallback } from "@/utils/assetFallback";
 
 const CATEGORY_IMAGES_BASE_URL = (import.meta.env.VITE_CATEGORY_IMAGES_BASE_URL as string | undefined) || "";
 const WEEKLY_DEALS_BASE_URL = (import.meta.env.VITE_WEEKLY_DEALS_BASE_URL as string | undefined) || "";
 const SECTION_BRANDS_BASE_URL = (import.meta.env.VITE_SECTION_BRANDS_BASE_URL as string | undefined) || "";
 const BRAND_SECTION_POSTERS_BASE_URL = "https://assets.distribuidor-puntopas.com/MARCAS_SECCION_MARCAS";
+const ASSETS_BASE_URL = "https://assets.distribuidor-puntopas.com";
 const brandSectionPosters = [
   { brand: "INDURAMA", fileName: "MARCA INDURAMA.png" },
   { brand: "PHILIPS", fileName: "MARCA PHILIPS.png" },
@@ -53,14 +57,14 @@ const buildWeeklyDealsImages = (): string[] => {
   }
 
   return [
-    "https://assets.distribuidor-puntopas.com/image/upload/v1778073484/Descuento1_s.png",
-    "https://assets.distribuidor-puntopas.com/image/upload/v1777429432/Descuento2_s.png",
-    "https://assets.distribuidor-puntopas.com/image/upload/v1777429429/Descuento3_s.png",
-    "https://assets.distribuidor-puntopas.com/image/upload/v1777429442/Descuento4_s.png",
-    "https://assets.distribuidor-puntopas.com/image/upload/v1777433322/Descuento5_s.png",
-    "https://assets.distribuidor-puntopas.com/image/upload/v1777429436/Descuento6_s.png",
-    "https://assets.distribuidor-puntopas.com/image/upload/v1777429439/Descuento7_s.png",
-    "https://assets.distribuidor-puntopas.com/image/upload/v1777429448/Descuento8_s.png",
+    "https://assets.distribuidor-puntopas.com/IMPERDIBLES%20DE%20LA%20SEMANA/Descuento1_s.png",
+    "https://assets.distribuidor-puntopas.com/IMPERDIBLES%20DE%20LA%20SEMANA/Descuento2_s.png",
+    "https://assets.distribuidor-puntopas.com/IMPERDIBLES%20DE%20LA%20SEMANA/Descuento3_s.png",
+    "https://assets.distribuidor-puntopas.com/IMPERDIBLES%20DE%20LA%20SEMANA/Descuento4_s.png",
+    "https://assets.distribuidor-puntopas.com/IMPERDIBLES%20DE%20LA%20SEMANA/Descuento5_s.png",
+    "https://assets.distribuidor-puntopas.com/IMPERDIBLES%20DE%20LA%20SEMANA/Descuento6_s.png",
+    "https://assets.distribuidor-puntopas.com/IMPERDIBLES%20DE%20LA%20SEMANA/Descuento7_s.png",
+    "https://assets.distribuidor-puntopas.com/IMPERDIBLES%20DE%20LA%20SEMANA/Descuento8_s.png",
   ];
 };
 
@@ -74,6 +78,21 @@ const buildSectionPoster = (fileName: string, fallbackUrl: string): string => {
 
 const buildBrandSectionPoster = (fileName: string): string =>
   `${BRAND_SECTION_POSTERS_BASE_URL}/${encodeURIComponent(fileName)}`;
+
+const withAssetFallback = (event: { currentTarget: HTMLImageElement }, fallbackSrc: string) => {
+  const target = event.currentTarget;
+  if (target.dataset.fallbackApplied === "1") return;
+  target.dataset.fallbackApplied = "1";
+  target.src = fallbackSrc;
+};
+
+const topBanner1Candidates = buildAssetCandidates(ASSETS_BASE_URL, "VIDEOS_PRINCIPALES", "VIDEOS PRINCIPALES.gif");
+const topBanner2Candidates = buildAssetCandidates(ASSETS_BASE_URL, "VIDEOS_PRINCIPALES", "VIDEOS PRINCIPALES2.gif");
+const secondBannerCandidates = [
+  ...buildAssetCandidates(ASSETS_BASE_URL, "VIDEOS_PRINCIPALES", "FIFIERE TODAS TUS COMPRAS ONLINE.png"),
+  ...buildAssetCandidates(ASSETS_BASE_URL, "VIDEOS_PRINCIPALES", "DIFIERE TODAS TUS COMPRAS ONLINE.png"),
+];
+const portadaTecCandidates = buildAssetCandidates(ASSETS_BASE_URL, "PORTADAS", "PORTADA_TEC1.png");
 
 const Index = () => {
   const PRODUCTS_ALERT_COOLDOWN_MS = 15 * 60 * 1000;
@@ -685,9 +704,15 @@ const Index = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-3">
                 <div className="overflow-hidden rounded-[28px] bg-transparent">
                   <img
-                    src="https://assets.distribuidor-puntopas.com/VIDEOS_PRINCIPALES/VIDEOS%20PRINCIPALES.gif"
+                    src={topBanner1Candidates[0]}
+                    data-fallbacks={topBanner1Candidates.join("|")}
+                    data-fallback-index="0"
                     alt="Promocion compras online"
                     className="w-full h-[82px] md:h-[95px] object-contain"
+                    onError={(event) => {
+                      handleAssetFallback(event);
+                      withAssetFallback(event, publicidadImage);
+                    }}
                   />
                 </div>
 
@@ -697,9 +722,15 @@ const Index = () => {
                   className="overflow-hidden rounded-[28px] bg-transparent text-left"
                 >
                   <img
-                    src="https://assets.distribuidor-puntopas.com/VIDEOS_PRINCIPALES/VIDEOS%20PRINCIPALES2.gif"
+                    src={topBanner2Candidates[0]}
+                    data-fallbacks={topBanner2Candidates.join("|")}
+                    data-fallback-index="0"
                     alt="Promocion otros emprendimientos"
                     className="w-full h-[82px] md:h-[95px] object-contain"
+                    onError={(event) => {
+                      handleAssetFallback(event);
+                      withAssetFallback(event, categoriasImage);
+                    }}
                   />
                 </button>
               </div>
@@ -738,9 +769,15 @@ const Index = () => {
           <section className="py-4 bg-white">
             <div className="max-w-[98vw] mx-auto px-2 md:px-0">
               <img
-                src="https://assets.distribuidor-puntopas.com/VIDEOS_PRINCIPALES/FIFIERE%20TODAS%20TUS%20COMPRAS%20ONLINE.png"
+                src={secondBannerCandidates[0]}
+                data-fallbacks={secondBannerCandidates.join("|")}
+                data-fallback-index="0"
                 alt="Sección Principal"
                 className="w-full h-auto rounded-xl md:rounded-2xl"
+                onError={(event) => {
+                  handleAssetFallback(event);
+                  withAssetFallback(event, publicidadImage);
+                }}
               />
             </div>
           </section>
@@ -793,10 +830,16 @@ const Index = () => {
         {showEnvLaptopBannerInSearch && (
           <div className="mb-4 md:mb-6 w-full bg-white" style={{ backgroundColor: '#FFFFFF' }}>
             <img
-              src="https://assets.distribuidor-puntopas.com/PORTADAS/PORTADA_TEC1.png"
+              src={portadaTecCandidates[0]}
+              data-fallbacks={portadaTecCandidates.join("|")}
+              data-fallback-index="0"
               alt="Portada tecnologia ENV"
               className="block w-full h-auto cursor-pointer"
               onClick={applyEnvBrandFilter}
+              onError={(event) => {
+                handleAssetFallback(event);
+                withAssetFallback(event, categoriasImage);
+              }}
             />
           </div>
         )}
@@ -927,7 +970,7 @@ const Index = () => {
                          type.includes("LAVADORAS") || type.includes("SECADERAS");
                 })}
                 category="LAVADORAS Y SECADERAS"
-                bannerImage={buildSectionPoster("PORTADA_LAVADORAS.png", "https://assets.distribuidor-puntopas.com/image/upload/v1777756850/IMAGEN_SECCION_LAVADORAS.png")}
+                bannerImage={buildSectionPoster("PORTADA_LAVADORAS.png", "https://assets.distribuidor-puntopas.com/PORTADAS/PORTADA_LAVADORAS.png")}
                 onBannerClick={() => {
                   setMainFilter({ mode: "carousel", value: "LAVADORAS Y SECADERAS" });
                   setSelectedType("all");
@@ -970,7 +1013,7 @@ const Index = () => {
                 category="CONGELADORES Y NEVERAS"
                 topTitle="CONGELADORES Y NEVERAS"
                 sectionTitle="REFRIGERADORAS Y CONGELADORES PARA TU HOGAR"
-                bannerImage={buildSectionPoster("PORTADA_NEVERAS.png", "https://assets.distribuidor-puntopas.com/image/upload/v1777823224/Seccion_Neveras_1.png")}
+                bannerImage={buildSectionPoster("PORTADA_NEVERAS.png", "https://assets.distribuidor-puntopas.com/PORTADAS/PORTADA_NEVERAS.png")}
                 layout="fridge"
                 onBannerClick={() => {
                   const sourceProducts = allProducts;
@@ -1004,7 +1047,7 @@ const Index = () => {
                 category="TELEVISORES"
                 topTitle="TELEVISORES"
                 sectionTitle="TELEVISORES PARA TU HOGAR"
-                bannerImage={buildSectionPoster("PORTADA_TELEVISOR.png", "https://assets.distribuidor-puntopas.com/image/upload/v1778731751/televisores_1.png")}
+                bannerImage={buildSectionPoster("PORTADA_TELEVISOR.png", "https://assets.distribuidor-puntopas.com/PORTADAS/PORTADA_TELEVISOR.png")}
                 layout="fridge"
                 onBannerClick={() => {
                   setMainFilter({ mode: "carousel", value: "TELEVISORES" });
@@ -1032,7 +1075,9 @@ const Index = () => {
                 style={{ backgroundColor: '#FFFFFF' }}
               >
                 <img
-                  src="https://assets.distribuidor-puntopas.com/PORTADAS/PORTADA_TEC1.png"
+                  src={portadaTecCandidates[0]}
+                  data-fallbacks={portadaTecCandidates.join("|")}
+                  data-fallback-index="0"
                   alt="Portada tecnologia ENV"
                   className="relative z-10 block w-full h-auto cursor-pointer"
                   style={{
@@ -1041,6 +1086,10 @@ const Index = () => {
                     willChange: 'transform',
                   }}
                   onClick={applyEnvBrandFilter}
+                  onError={(event) => {
+                    handleAssetFallback(event);
+                    withAssetFallback(event, categoriasImage);
+                  }}
                 />
               </div>
 

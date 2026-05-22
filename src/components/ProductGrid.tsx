@@ -7,10 +7,24 @@ const ProductCardGrid = ({ product, onAddToCart, onProductClick }: {
   onProductClick: (product: Product) => void;
 }) => {
   const [imageError, setImageError] = useState(false);
+  const [imageIndex, setImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const hasStock = product.stock > 0;
+  const imageCandidates = (product.images && product.images.length > 0 ? product.images : [product.image]).filter(Boolean);
+  const currentImage = imageCandidates[imageIndex] || product.image;
 
-  const handleImageError = () => setImageError(true);
+  useEffect(() => {
+    setImageError(false);
+    setImageIndex(0);
+  }, [product.id, product.image]);
+
+  const handleImageError = () => {
+    if (imageIndex < imageCandidates.length - 1) {
+      setImageIndex((prev) => prev + 1);
+      return;
+    }
+    setImageError(true);
+  };
 
   const hasPvpAndPuntoPas = product.pvpPrice && product.puntoPasPrice && product.pvpPrice > product.puntoPasPrice;
   const hasDiscount = hasPvpAndPuntoPas || (product.originalPrice && product.originalPrice > product.price);
@@ -49,7 +63,7 @@ const ProductCardGrid = ({ product, onAddToCart, onProductClick }: {
           {imageError ? (
             <span className="text-4xl">📦</span>
           ) : (
-            <img src={product.image} alt={product.name} className="max-w-full max-h-full object-contain" onError={handleImageError} loading="lazy" />
+            <img src={currentImage} alt={product.name} className="max-w-full max-h-full object-contain" onError={handleImageError} loading="lazy" />
           )}
         </div>
       </div>

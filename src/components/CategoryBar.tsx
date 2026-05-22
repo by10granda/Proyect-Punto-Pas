@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Product } from "@/data/products";
 import { buildCategoryImageCandidates, handleCategoryImageFallback } from "@/utils/categoryImage";
+import allProductsImage from "@/assets/todos-los-productos.png";
 
 interface CategoryBarProps {
   selectedCategory: string;
@@ -12,6 +13,7 @@ interface CategoryBarProps {
 const CATEGORY_IMAGE_VERSION = 'v1775785362';
 const CATEGORY_IMAGES_BASE_URL = 'https://assets.distribuidor-puntopas.com/CATEGORIAS_PRINCIPAL';
 const CATEGORY_IMAGES_ENV_BASE_URL = (import.meta.env.VITE_CATEGORY_IMAGES_BASE_URL as string | undefined) || '';
+const CATEGORY_DEFAULT_FALLBACK = 'https://assets.distribuidor-puntopas.com/CATEGORIAS_PRINCIPAL/MUEBLERIA_COMEDORES_Y_MESAS_123.png';
 const ITEM_WIDTH = 350;
 
 export const CategoryBar = ({ selectedCategory, onSelectCategory, products = [] }: CategoryBarProps) => {
@@ -23,12 +25,15 @@ export const CategoryBar = ({ selectedCategory, onSelectCategory, products = [] 
   const buildCombinedCategoryFallbacks = (categoryName: string): string[] => {
     const primary = buildCategoryImageCandidates(categoryName, CATEGORY_IMAGES_BASE_URL, CATEGORY_IMAGE_VERSION);
 
+    const localFallback = categoryName === "TODOS" ? [allProductsImage] : [];
+    const sharedFallback = [CATEGORY_DEFAULT_FALLBACK];
+
     if (!CATEGORY_IMAGES_ENV_BASE_URL || CATEGORY_IMAGES_ENV_BASE_URL === CATEGORY_IMAGES_BASE_URL) {
-      return primary;
+      return Array.from(new Set([...primary, ...localFallback, ...sharedFallback]));
     }
 
     const secondary = buildCategoryImageCandidates(categoryName, CATEGORY_IMAGES_ENV_BASE_URL, CATEGORY_IMAGE_VERSION);
-    return Array.from(new Set([...primary, ...secondary]));
+    return Array.from(new Set([...primary, ...secondary, ...localFallback, ...sharedFallback]));
   };
 
   const getCategoryImage = (categoryId: string): string => {

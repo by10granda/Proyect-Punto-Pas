@@ -5,7 +5,7 @@ interface ChatButtonProps {
 export const ChatButton = ({ onClick }: ChatButtonProps) => {
   const russoPrimaryImageCandidates = [
     "https://assets.distribuidor-puntopas.com/PERRO/RUSSO1.png",
-    "https://assets.distribuidor-puntopas.com/image/upload/v1777752695/1.png",
+    "https://assets.distribuidor-puntopas.com/PERRO/1.png",
   ];
 
   return (

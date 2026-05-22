@@ -10,8 +10,11 @@ import {
 } from "@/data/products";
 import { toast } from "sonner";
 import { useLocation, useNavigate } from "react-router-dom";
+import { buildAssetCandidates, handleAssetFallback } from "@/utils/assetFallback";
 
 const OTHER_BUSINESSES_BASE_URL = "https://assets.distribuidor-puntopas.com/NEGOCIOS_PUNTOPAS";
+const ASSETS_BASE_URL = "https://assets.distribuidor-puntopas.com";
+const QUIENES_HERO_CANDIDATES = buildAssetCandidates(ASSETS_BASE_URL, "PORTADAS", "PORTADA_QUIENESSOMOS.png");
 
 const milestones = [
   {
@@ -153,7 +156,14 @@ export const QuienesSomos = () => {
 
        {/* Hero Section - portada clásica */}
        <header className="relative h-[68vh] min-h-[480px] overflow-hidden">
-         <div className="absolute inset-0 bg-cover bg-center bg-no-repeat" style={{ backgroundImage: `url(${heroSlides[0].image})` }} />
+         <img
+           src={QUIENES_HERO_CANDIDATES[0]}
+           data-fallbacks={QUIENES_HERO_CANDIDATES.join("|")}
+           data-fallback-index="0"
+           onError={handleAssetFallback}
+           alt="Portada Quienes Somos"
+           className="absolute inset-0 w-full h-full object-cover"
+         />
          <div className="absolute inset-0 bg-black/35" />
          <div className="relative z-10 h-full max-w-7xl mx-auto px-4 flex flex-col items-center justify-center text-center">
            <div className="w-28 h-28 md:w-32 md:h-32 bg-white rounded-full p-1 mb-6 shadow-2xl animate-in fade-in zoom-in-95 duration-700">
@@ -267,7 +277,14 @@ export const QuienesSomos = () => {
                 >
                   <div className="grid md:grid-cols-2 min-h-[64vh] md:min-h-[78vh]">
                     <div className={`${index % 2 === 0 ? "md:order-1" : "md:order-2"} relative bg-slate-900`}>
-                      <img src={milestone.image} alt={milestone.title} className="w-full h-full object-contain transition-transform duration-1000 ease-out hover:scale-[1.02]" />
+                      <img
+                        src={milestone.image}
+                        data-fallbacks={buildAssetCandidates(ASSETS_BASE_URL, "EMPRENDIMIENTOS_PRESENTACIONES", milestone.image.split("/").pop() || "").join("|")}
+                        data-fallback-index="0"
+                        onError={handleAssetFallback}
+                        alt={milestone.title}
+                        className="w-full h-full object-contain transition-transform duration-1000 ease-out hover:scale-[1.02]"
+                      />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent" />
                       <div className="absolute top-4 left-4 md:top-6 md:left-6 bg-white/90 backdrop-blur-sm text-primary px-4 py-2 rounded-full text-base md:text-lg font-black tracking-wide">
                         {milestone.year}

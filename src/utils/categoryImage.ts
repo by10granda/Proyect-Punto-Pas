@@ -70,7 +70,7 @@ export const buildCategoryImageCandidates = (
 
   return fileNameVariants.map(
     (fileName) =>
-      `https://assets.distribuidor-puntopas.com/image/upload/${assetVersion}/${encodeURIComponent(fileName)}`,
+      `https://assets.distribuidor-puntopas.com/CATEGORIAS_PRINCIPAL/${encodeURIComponent(fileName)}`,
   );
 };
 

@@ -1,11 +1,11 @@
 const PAYMENT_CARDS_BASE_URL = (import.meta.env.VITE_PAYMENT_CARDS_BASE_URL as string | undefined) || "";
 
 const fallbackBadges = [
-  "https://assets.distribuidor-puntopas.com/image/upload/v1778348731/TARJETA1.png",
-  "https://assets.distribuidor-puntopas.com/image/upload/v1778348732/TARJETA2.png",
-  "https://assets.distribuidor-puntopas.com/image/upload/v1778348732/TARJETA3.png",
-  "https://assets.distribuidor-puntopas.com/image/upload/v1778348732/TARJETA4.png",
-  "https://assets.distribuidor-puntopas.com/image/upload/v1778348732/TARJETA5.png",
+  "https://assets.distribuidor-puntopas.com/TARGETAS/TARJETA1.png",
+  "https://assets.distribuidor-puntopas.com/TARGETAS/TARJETA2.png",
+  "https://assets.distribuidor-puntopas.com/TARGETAS/TARJETA3.png",
+  "https://assets.distribuidor-puntopas.com/TARGETAS/TARJETA4.png",
+  "https://assets.distribuidor-puntopas.com/TARGETAS/TARJETA5.png",
 ];
 
 const buildPaymentBadges = (): string[] => {

@@ -47,17 +47,22 @@ const getProductImages = (codigo: string, imageVersion: string): string[] => {
   const paddedCode = codigo.padStart(8, '0').substring(0, 8);
   const images: string[] = [];
   const baseUrl = PRODUCTS_BASE_URL.replace(/\/$/, '');
-  const suffixes = ['_E', '_E1', ...Array.from({ length: 9 }, (_, index) => `_E${index + 2}`), 'E', 'E1', ...Array.from({ length: 9 }, (_, index) => `E${index + 2}`)];
+  const suffixes = ['_E', ...Array.from({ length: 12 }, (_, index) => `_E${index + 2}`)];
+  const extensions = ['.png', '.PNG'];
 
   if (baseUrl) {
     suffixes.forEach((suffix) => {
-      images.push(`${baseUrl}/${paddedCode}${suffix}.png`);
+      extensions.forEach((ext) => {
+        images.push(`${baseUrl}/${paddedCode}${suffix}${ext}`);
+      });
     });
     return Array.from(new Set(images));
   }
 
   suffixes.forEach((suffix) => {
-    images.push(`https://assets.distribuidor-puntopas.com/image/upload/${imageVersion}/${paddedCode}${suffix}.png`);
+    extensions.forEach((ext) => {
+      images.push(`https://assets.distribuidor-puntopas.com/PRODUCTOS_ESMERALDAS2/${paddedCode}${suffix}${ext}`);
+    });
   });
 
   return Array.from(new Set(images));

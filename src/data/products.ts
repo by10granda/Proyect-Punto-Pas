@@ -73,10 +73,10 @@ const categoryMap: Record<string, { name: string; icon: string }> = {
 
 const customProductImages: Record<string, string[]> = {
   '00000041': [
-    'https://assets.distribuidor-puntopas.com/image/upload/v1776195792/00000041_E.png',
+    'https://assets.distribuidor-puntopas.com/PRODUCTOS_ESMERALDAS2/00000041_E.png',
   ],
   '00000349': [
-    'https://assets.distribuidor-puntopas.com/image/upload/v1776202043/00000349_E.png',
+    'https://assets.distribuidor-puntopas.com/PRODUCTOS_ESMERALDAS2/00000349_E.png',
   ],
 };
 
