@@ -11,21 +11,33 @@ interface ProductCardProps {
 export const ProductCard = memo(({ product, onAddToCart, onProductClick, compact = false }: ProductCardProps) => {
   const [imageError, setImageError] = useState(false);
   const [imageIndex, setImageIndex] = useState(0);
+  const [retryAttempt, setRetryAttempt] = useState(0);
   const hasStock = product.stock > 0;
   const imageCandidates = (product.images && product.images.length > 0 ? product.images : [product.image]).filter(Boolean);
   const currentImage = imageCandidates[imageIndex] || product.image;
+  const resolvedImageSrc = retryAttempt > 0
+    ? `${currentImage}${currentImage.includes("?") ? "&" : "?"}r=${Date.now()}`
+    : currentImage;
 
   useEffect(() => {
     setImageError(false);
     setImageIndex(0);
+    setRetryAttempt(0);
   }, [product.id, product.image]);
 
 
   const handleImageError = () => {
-    if (imageIndex < imageCandidates.length - 1) {
-      setImageIndex((prev) => prev + 1);
+    if (retryAttempt === 0) {
+      setRetryAttempt(1);
       return;
     }
+
+    if (imageIndex < imageCandidates.length - 1) {
+      setImageIndex((prev) => prev + 1);
+      setRetryAttempt(0);
+      return;
+    }
+
     setImageError(true);
   };
 
@@ -71,7 +83,7 @@ export const ProductCard = memo(({ product, onAddToCart, onProductClick, compact
             </div>
           ) : (
             <img
-              src={currentImage}
+              src={resolvedImageSrc}
               alt={product.name}
               className="max-w-full max-h-full object-contain transition-transform duration-300 sm:group-hover:scale-105"
               onError={handleImageError}
