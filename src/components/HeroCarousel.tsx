@@ -4,6 +4,53 @@ const HERO_BASE_URL = (import.meta.env.VITE_HERO_BASE_URL as string | undefined)
 const heroBase = HERO_BASE_URL.replace(/\/$/, "");
 const heroAssetUrl = (fileName: string, defaultUrl: string) =>
   heroBase ? `${heroBase}/${encodeURIComponent(fileName)}` : defaultUrl;
+const CLOUDINARY_CLOUD = "dx08ybps6";
+
+const buildCloudinaryImageUrl = (fileName: string) =>
+  `https://res.cloudinary.com/${CLOUDINARY_CLOUD}/image/upload/${encodeURIComponent(fileName)}`;
+
+const buildCloudinaryVideoUrl = (fileName: string) =>
+  `https://res.cloudinary.com/${CLOUDINARY_CLOUD}/video/upload/${encodeURIComponent(fileName)}`;
+
+const HERO_CLOUDINARY_FALLBACKS: Record<string, string[]> = {
+  "PORTADA_1-1.png": [
+    "https://res.cloudinary.com/dx08ybps6/image/upload/v1779574038/PORTADA_1-1.png",
+    buildCloudinaryImageUrl("PORTADA_1-1.png"),
+  ],
+  "PORTADA_2.png": [
+    "https://res.cloudinary.com/dx08ybps6/image/upload/v1779574063/PORTADA_2.png",
+    buildCloudinaryImageUrl("PORTADA_2.png"),
+  ],
+  "PORTADA_3.png": [
+    "https://res.cloudinary.com/dx08ybps6/image/upload/v1779574040/PORTADA_3.png",
+    buildCloudinaryImageUrl("PORTADA_3.png"),
+  ],
+  "PORTADA_4.png": [
+    "https://res.cloudinary.com/dx08ybps6/image/upload/v1779574041/PORTADA_4.png",
+    buildCloudinaryImageUrl("PORTADA_4.png"),
+  ],
+  "PORTADA_1.mp4": [
+    buildCloudinaryVideoUrl("PORTADA_1.mp4"),
+  ],
+};
+
+const handleMediaFallback = (event: React.SyntheticEvent<HTMLImageElement | HTMLVideoElement>) => {
+  const media = event.currentTarget;
+  const fallbackValue = media.dataset.fallbacks;
+  if (!fallbackValue) return;
+
+  const fallbacks = fallbackValue.split("|");
+  const currentIndex = Number(media.dataset.fallbackIndex || "0");
+  const nextIndex = currentIndex + 1;
+
+  if (nextIndex >= fallbacks.length) {
+    media.removeAttribute("data-fallbacks");
+    return;
+  }
+
+  media.dataset.fallbackIndex = String(nextIndex);
+  media.src = fallbacks[nextIndex];
+};
 
 const slides = [
   {
@@ -13,6 +60,7 @@ const slides = [
       "PORTADA_1-1.png",
       "https://assets.distribuidor-puntopas.com/PORTADAS/PORTADA_1-1.png",
     ),
+    fallbacks: HERO_CLOUDINARY_FALLBACKS["PORTADA_1-1.png"],
     action: "none" as const,
     value: "",
   },
@@ -23,6 +71,7 @@ const slides = [
       "PORTADA_1.mp4",
       "https://assets.distribuidor-puntopas.com/PORTADAS/PORTADA_1.mp4",
     ),
+    fallbacks: HERO_CLOUDINARY_FALLBACKS["PORTADA_1.mp4"],
     action: "productCode" as const,
     value: "00000467",
   },
@@ -33,6 +82,7 @@ const slides = [
       "PORTADA_2.png",
       "https://assets.distribuidor-puntopas.com/PORTADAS/PORTADA_2.png",
     ),
+    fallbacks: HERO_CLOUDINARY_FALLBACKS["PORTADA_2.png"],
     action: "category" as const,
     value: "TELEVISORES",
   },
@@ -43,6 +93,7 @@ const slides = [
       "PORTADA_3.png",
       "https://assets.distribuidor-puntopas.com/PORTADAS/PORTADA_3.png",
     ),
+    fallbacks: HERO_CLOUDINARY_FALLBACKS["PORTADA_3.png"],
     action: "category" as const,
     value: "COLCHONES",
   },
@@ -53,6 +104,7 @@ const slides = [
       "PORTADA_4.png",
       "https://assets.distribuidor-puntopas.com/PORTADAS/PORTADA_4.png",
     ),
+    fallbacks: HERO_CLOUDINARY_FALLBACKS["PORTADA_4.png"],
     action: "category" as const,
     value: "MUEBLERIA COMEDORES Y MESAS",
   },
@@ -144,13 +196,19 @@ export const HeroCarousel = ({ onProductClick, onCategoryClick }: HeroCarouselPr
             muted
             loop={!isTransitioning}
             playsInline
+            data-fallbacks={currentSlide.fallbacks?.join("|")}
+            data-fallback-index="0"
+            onError={handleMediaFallback}
             className="w-full h-full object-contain"
           />
         ) : (
           <img
             src={currentSlide.src}
+            data-fallbacks={currentSlide.fallbacks?.join("|")}
+            data-fallback-index="0"
             alt=""
             className="w-full h-full object-contain"
+            onError={handleMediaFallback}
           />
         )}
       </div>
