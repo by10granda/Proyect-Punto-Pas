@@ -1,41 +1,19 @@
 import { Product } from "@/data/products";
 import { useState, useEffect } from "react";
+import { useImageCandidateFallback } from "@/hooks/useImageCandidateFallback";
 
 const ProductCardGrid = ({ product, onAddToCart, onProductClick }: {
   product: Product;
   onAddToCart: (product: Product, quantity: number) => void;
   onProductClick: (product: Product) => void;
 }) => {
-  const [imageError, setImageError] = useState(false);
-  const [imageIndex, setImageIndex] = useState(0);
-  const [retryAttempt, setRetryAttempt] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const hasStock = product.stock > 0;
   const imageCandidates = (product.images && product.images.length > 0 ? product.images : [product.image]).filter(Boolean);
-  const currentImage = imageCandidates[imageIndex] || product.image;
-  const resolvedImageSrc = retryAttempt > 0
-    ? `${currentImage}${currentImage.includes("?") ? "&" : "?"}r=${Date.now()}`
-    : currentImage;
-
-  useEffect(() => {
-    setImageError(false);
-    setImageIndex(0);
-    setRetryAttempt(0);
-  }, [product.id, product.image]);
-
-  const handleImageError = () => {
-    if (retryAttempt === 0) {
-      setRetryAttempt(1);
-      return;
-    }
-
-    if (imageIndex < imageCandidates.length - 1) {
-      setImageIndex((prev) => prev + 1);
-      setRetryAttempt(0);
-      return;
-    }
-    setImageError(true);
-  };
+  const { imageError, resolvedImageSrc, handleImageError } = useImageCandidateFallback({
+    resetKey: `${product.id}-${product.image}`,
+    candidates: imageCandidates,
+  });
 
   const hasPvpAndPuntoPas = product.pvpPrice && product.puntoPasPrice && product.pvpPrice > product.puntoPasPrice;
   const hasDiscount = hasPvpAndPuntoPas || (product.originalPrice && product.originalPrice > product.price);

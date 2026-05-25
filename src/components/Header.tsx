@@ -4,7 +4,11 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AdvancedProductFilters, applyAdvancedProductFilters, defaultAdvancedProductFilters, getAdvancedFilterOptions } from "@/application/use-cases/advancedProductFilters";
 import { buildSearchSuggestions, SearchSuggestion } from "@/application/use-cases/searchSuggestions";
 import { useRadio } from "@/contexts/RadioContext";
-import { buildCategoryImageCandidates, handleCategoryImageFallback } from "@/utils/categoryImage";
+import { handleCategoryImageFallback } from "@/utils/categoryImage";
+import {
+  buildCategoryAssetCandidates,
+  CATEGORY_IMAGES_BASE_URL,
+} from "@/data/categoryAssets";
 const headerLogo = "/LOGO_DISTRIBUIDOR-PUNTOPAS.png";
 import { Level2Category, Product } from "@/data/products";
 
@@ -28,9 +32,7 @@ interface HeaderProps {
 
 export const Header = ({ cartCount, searchQuery: propSearchQuery, onSearch, onCartClick, onGoToHome, onClearSearch, products = [], onProductClick, onTypeSelect, filters = defaultAdvancedProductFilters, onFiltersChange, productsCount = 0, popularSearches = [], nivel2Categories = [], nivel3ByParent }: HeaderProps) => {
   const BRAND_LOGO_BASE_URL = (import.meta.env.VITE_BRANDS_BASE_URL as string | undefined) || "https://assets.distribuidor-puntopas.com/MARCAS";
-  const CATEGORY_IMAGES_BASE_URL = (import.meta.env.VITE_CATEGORY_IMAGES_BASE_URL as string | undefined) || "https://assets.distribuidor-puntopas.com/CATEGORIAS_PRINCIPAL";
-  const CATEGORY_CLOUDINARY_BASE_URL = "https://res.cloudinary.com/dx08ybps6/image/upload/v1779574028";
-  const HEADER_CATEGORY_DEFAULT_IMAGE = "https://res.cloudinary.com/dx08ybps6/image/upload/v1779573805/TODOS_123.png";
+  const categoryImagesEnvBaseUrl = (import.meta.env.VITE_CATEGORY_IMAGES_BASE_URL as string | undefined) || CATEGORY_IMAGES_BASE_URL;
   const russoRadioImageCandidates = [
     "https://assets.distribuidor-puntopas.com/PERRO/RUSSO2.png",
     "https://assets.distribuidor-puntopas.com/PERRO/2.png",
@@ -153,9 +155,7 @@ export const Header = ({ cartCount, searchQuery: propSearchQuery, onSearch, onCa
       // Generate image URL from type name
       const imageCandidates = Array.from(
         new Set([
-          ...buildCategoryImageCandidates(typeName, CATEGORY_IMAGES_BASE_URL, "v1775783635"),
-          ...buildCategoryImageCandidates(typeName, CATEGORY_CLOUDINARY_BASE_URL, "v1775783635"),
-          HEADER_CATEGORY_DEFAULT_IMAGE,
+          ...buildCategoryAssetCandidates(typeName, categoryImagesEnvBaseUrl),
         ]),
       );
       
