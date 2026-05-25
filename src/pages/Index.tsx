@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef, useEffect } from "react";
+import { useState, useMemo, useRef, useEffect, useCallback } from "react";
 import { Header } from "@/components/Header";
 import { TopBar } from "@/components/TopBar";
 import { CategoryBar } from "@/components/CategoryBar";
@@ -115,7 +115,7 @@ const Index = () => {
   const PRODUCTS_ALERT_COOLDOWN_MS = 15 * 60 * 1000;
   const PRODUCTS_ALERT_LAST_SENT_KEY = "products_alert_last_sent_at";
 
-  const sendProductsUnavailableAlert = async (detail: string) => {
+  const sendProductsUnavailableAlert = useCallback(async (detail: string) => {
     try {
       const now = Date.now();
       const lastSentRaw = localStorage.getItem(PRODUCTS_ALERT_LAST_SENT_KEY);
@@ -148,7 +148,7 @@ const Index = () => {
     } catch (error) {
       console.error("No se pudo enviar la alerta de productos:", error);
     }
-  };
+  }, [PRODUCTS_ALERT_COOLDOWN_MS]);
 
   type MainFilterMode = "none" | "search" | "type" | "category" | "brand" | "carousel";
   const navigate = useNavigate();
@@ -213,14 +213,14 @@ const Index = () => {
   const productsRef = useRef<HTMLDivElement>(null);
   const envBannerRef = useRef<HTMLDivElement>(null);
 
-  const normalizeForMatch = (value: string) =>
+  const normalizeForMatch = useCallback((value: string) =>
     (value || "")
       .normalize("NFD")
       .replace(/[\u0300-\u036f]/g, "")
       .toUpperCase()
-      .trim();
+      .trim(), []);
 
-  const isTechAccessoriesFamilyProduct = (product: Product) => {
+  const isTechAccessoriesFamilyProduct = useCallback((product: Product) => {
     const normalizedType = normalizeForMatch(product.type || "");
     const normalizedCategory = normalizeForMatch(product.category || "");
     const normalizedName = normalizeForMatch(product.name || "");
@@ -253,7 +253,7 @@ const Index = () => {
     ];
 
     return techKeywords.some((keyword) => normalizedName.includes(keyword));
-  };
+  }, [normalizeForMatch]);
 
   const applyEnvBrandFilter = () => {
     const normalizedBrand = "ENV";
@@ -351,7 +351,7 @@ const Index = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const loadAPIProducts = async ({ silent = false }: { silent?: boolean } = {}) => {
+  const loadAPIProducts = useCallback(async ({ silent = false }: { silent?: boolean } = {}) => {
     try {
       if (!silent) {
         setIsLoadingProducts(true);
@@ -385,11 +385,11 @@ const Index = () => {
         setIsLoadingProducts(false);
       }
     }
-  };
+  }, [sendProductsUnavailableAlert]);
 
   useEffect(() => {
-    loadAPIProducts();
-  }, []);
+    void loadAPIProducts();
+  }, [loadAPIProducts]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -399,7 +399,7 @@ const Index = () => {
     }, 60000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [loadAPIProducts]);
 
   useEffect(() => {
     setInventoryUpdateCallback((updatedProducts) => {
@@ -467,7 +467,7 @@ const Index = () => {
     });
 
     return applyAdvancedProductFilters(baseFiltered, advancedFilters);
-  }, [mainFilter, allProducts, apiStatus, advancedFilters]);
+  }, [mainFilter, allProducts, advancedFilters]);
   
   // Productos filtrados para WeeklyDeals (independiente)
   const weeklyDealsProducts = useMemo(() => {
@@ -494,7 +494,7 @@ const Index = () => {
     }
 
     return displayedProducts.some((product) => isTechAccessoriesFamilyProduct(product));
-  }, [mainFilter.mode, searchQuery, displayedProducts]);
+  }, [mainFilter.mode, searchQuery, displayedProducts, isTechAccessoriesFamilyProduct]);
 
   const cartItemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
