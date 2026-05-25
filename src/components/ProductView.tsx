@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, memo } from "react";
+import { useState, useCallback, useEffect, useMemo, memo } from "react";
 import { 
   ChevronRight, 
   ShoppingCart, 
@@ -306,7 +306,7 @@ const PriceSection = ({ product }: { product: Product }) => {
 };
 
 const StockStatus = ({ stock }: { stock: number }) => {
-  if (stock === 0) {
+  if (stock <= 0) {
     return (
       <div className="flex items-center gap-2 px-4 py-2 bg-red-50 text-red-600 rounded-xl">
         <X className="w-5 h-5" />
@@ -573,9 +573,20 @@ export const ProductView = ({ product, onAddToCart, onClose }: ProductViewProps)
   const hasDiscount = product.pvpPrice && product.puntoPasPrice && 
     product.pvpPrice > product.puntoPasPrice && product.puntoPasPrice > 0;
 
-  const images = product.images && product.images.length > 0 
-    ? product.images 
-    : [product.image];
+  const images = useMemo(() => {
+    const rawImages = product.images && product.images.length > 0 ? product.images : [product.image];
+    const unique = new Map<string, string>();
+
+    rawImages.forEach((imageUrl) => {
+      if (!imageUrl) return;
+      const key = imageUrl.split("?")[0].toLowerCase();
+      if (!unique.has(key)) {
+        unique.set(key, imageUrl);
+      }
+    });
+
+    return Array.from(unique.values());
+  }, [product.images, product.image]);
 
   const handleAddToCart = useCallback(() => {
     if (product.stock <= 0 || addedToCart) return;
