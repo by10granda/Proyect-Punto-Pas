@@ -577,9 +577,16 @@ export const ProductView = ({ product, onAddToCart, onClose }: ProductViewProps)
     const rawImages = product.images && product.images.length > 0 ? product.images : [product.image];
     const unique = new Map<string, string>();
 
+    const toImageIdentityKey = (imageUrl: string): string => {
+      const withoutQuery = imageUrl.split("?")[0].toLowerCase();
+      const withoutExtension = withoutQuery.replace(/\.(png|jpg|jpeg|webp|gif)$/i, "");
+      const normalizedSuffix = withoutExtension.replace(/_e1$/i, "_e");
+      return normalizedSuffix;
+    };
+
     rawImages.forEach((imageUrl) => {
       if (!imageUrl) return;
-      const key = imageUrl.split("?")[0].toLowerCase();
+      const key = toImageIdentityKey(imageUrl);
       if (!unique.has(key)) {
         unique.set(key, imageUrl);
       }
