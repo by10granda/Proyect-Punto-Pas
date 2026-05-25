@@ -595,7 +595,7 @@ export const ProductView = ({ product, onAddToCart, onClose }: ProductViewProps)
       }
     });
 
-    return Array.from(unique.values());
+    return Array.from(unique.values()).slice(0, 8);
   }, [product.images, product.image]);
 
   const handleAddToCart = useCallback(() => {
