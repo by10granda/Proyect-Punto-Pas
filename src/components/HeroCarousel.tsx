@@ -78,10 +78,7 @@ const slides = [
   {
     id: 3,
     type: "image" as const,
-    src: heroAssetUrl(
-      "PORTADA_2.png",
-      "https://assets.distribuidor-puntopas.com/PORTADAS/PORTADA_2.png",
-    ),
+    src: "https://res.cloudinary.com/dx08ybps6/image/upload/v1779574063/PORTADA_2.png",
     fallbacks: HERO_CLOUDINARY_FALLBACKS["PORTADA_2.png"],
     action: "category" as const,
     value: "TELEVISORES",
@@ -89,10 +86,7 @@ const slides = [
   {
     id: 4,
     type: "image" as const,
-    src: heroAssetUrl(
-      "PORTADA_3.png",
-      "https://assets.distribuidor-puntopas.com/PORTADAS/PORTADA_3.png",
-    ),
+    src: "https://res.cloudinary.com/dx08ybps6/image/upload/v1779574040/PORTADA_3.png",
     fallbacks: HERO_CLOUDINARY_FALLBACKS["PORTADA_3.png"],
     action: "category" as const,
     value: "COLCHONES",
@@ -100,10 +94,7 @@ const slides = [
   {
     id: 5,
     type: "image" as const,
-    src: heroAssetUrl(
-      "PORTADA_4.png",
-      "https://assets.distribuidor-puntopas.com/PORTADAS/PORTADA_4.png",
-    ),
+    src: "https://res.cloudinary.com/dx08ybps6/image/upload/v1779574041/PORTADA_4.png",
     fallbacks: HERO_CLOUDINARY_FALLBACKS["PORTADA_4.png"],
     action: "category" as const,
     value: "MUEBLERIA COMEDORES Y MESAS",

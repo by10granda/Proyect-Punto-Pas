@@ -57,6 +57,14 @@ const buildWeeklyDealsImages = (): string[] => {
   }
 
   return [
+    "https://res.cloudinary.com/dx08ybps6/image/upload/v1779573798/Descuento1_s.png",
+    "https://res.cloudinary.com/dx08ybps6/image/upload/v1779573798/Descuento2_s.png",
+    "https://res.cloudinary.com/dx08ybps6/image/upload/v1779573798/Descuento3_s.png",
+    "https://res.cloudinary.com/dx08ybps6/image/upload/v1779573798/Descuento4_s.png",
+    "https://res.cloudinary.com/dx08ybps6/image/upload/v1779573798/Descuento5_s.png",
+    "https://res.cloudinary.com/dx08ybps6/image/upload/v1779573798/Descuento6_s.png",
+    "https://res.cloudinary.com/dx08ybps6/image/upload/v1779573798/Descuento7_s.png",
+    "https://res.cloudinary.com/dx08ybps6/image/upload/v1779573798/Descuento8_s.png",
     "https://assets.distribuidor-puntopas.com/IMPERDIBLES%20DE%20LA%20SEMANA/Descuento1_s.png",
     "https://assets.distribuidor-puntopas.com/IMPERDIBLES%20DE%20LA%20SEMANA/Descuento2_s.png",
     "https://assets.distribuidor-puntopas.com/IMPERDIBLES%20DE%20LA%20SEMANA/Descuento3_s.png",
@@ -87,14 +95,17 @@ const withAssetFallback = (event: { currentTarget: HTMLImageElement }, fallbackS
 };
 
 const topBanner1Candidates = [
+  "https://res.cloudinary.com/dx08ybps6/image/upload/v1779574045/VIDEOS_PRINCIPALES.gif",
   "https://assets.distribuidor-puntopas.com/VIDEOS_PRINCIPALES/VIDEOS%20PRINCIPALES.gif",
   ...buildAssetCandidates(ASSETS_BASE_URL, "VIDEOS_PRINCIPALES", "VIDEOS PRINCIPALES.gif"),
 ];
 const topBanner2Candidates = [
+  "https://res.cloudinary.com/dx08ybps6/image/upload/v1779574043/VIDEOS_PRINCIPALES2.gif",
   "https://assets.distribuidor-puntopas.com/VIDEOS_PRINCIPALES/VIDEOS%20PRINCIPALES2.gif",
   ...buildAssetCandidates(ASSETS_BASE_URL, "VIDEOS_PRINCIPALES", "VIDEOS PRINCIPALES2.gif"),
 ];
 const secondBannerCandidates = [
+  "https://res.cloudinary.com/dx08ybps6/image/upload/v1779574039/FIFIERE_TODAS_TUS_COMPRAS_ONLINE.png",
   ...buildAssetCandidates(ASSETS_BASE_URL, "VIDEOS_PRINCIPALES", "FIFIERE TODAS TUS COMPRAS ONLINE.png"),
   ...buildAssetCandidates(ASSETS_BASE_URL, "VIDEOS_PRINCIPALES", "DIFIERE TODAS TUS COMPRAS ONLINE.png"),
 ];

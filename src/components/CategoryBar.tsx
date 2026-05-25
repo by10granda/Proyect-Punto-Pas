@@ -12,16 +12,25 @@ interface CategoryBarProps {
 
 const CATEGORY_IMAGE_VERSION = 'v1775785362';
 const CATEGORY_IMAGES_BASE_URL = 'https://assets.distribuidor-puntopas.com/CATEGORIAS_PRINCIPAL';
+const CATEGORY_CLOUDINARY_BASE_URL = 'https://res.cloudinary.com/dx08ybps6/image/upload/v1779574030';
 const CATEGORY_IMAGES_ENV_BASE_URL = (import.meta.env.VITE_CATEGORY_IMAGES_BASE_URL as string | undefined) || '';
-const CATEGORY_DEFAULT_FALLBACK = 'https://assets.distribuidor-puntopas.com/CATEGORIAS_PRINCIPAL/MUEBLERIA_COMEDORES_Y_MESAS_123.png';
+const CATEGORY_DEFAULT_FALLBACK = 'https://res.cloudinary.com/dx08ybps6/image/upload/v1779573805/TODOS_123.png';
 const CATEGORY_FIXED_FILES: Record<string, string> = {
   all: 'TODOS_123.png',
+  TODOS: 'TODOS_123.png',
   TELEVISORES: 'TELEVISORES_123.png',
   'MUEBLERIA COMEDORES Y MESAS': 'MUEBLERIA_COMEDORES_Y_MESAS_123.png',
   'LAVADORAS Y SECADORAS': 'LAVADORAS Y SECADORAS_123.png',
   'COCINAS Y CAMPANAS': 'COCINAS_Y_CAMPANAS_123.png',
   CELULARES: 'CELULARES_123.png',
   'CONGELADORES Y NEVERAS': 'CONGELADORES Y NEVERAS_123.png',
+};
+
+const CATEGORY_CLOUDINARY_URLS: Record<string, string> = {
+  all: 'https://res.cloudinary.com/dx08ybps6/image/upload/v1779573805/TODOS_123.png',
+  TODOS: 'https://res.cloudinary.com/dx08ybps6/image/upload/v1779573805/TODOS_123.png',
+  'LAVADORAS Y SECADORAS': 'https://res.cloudinary.com/dx08ybps6/image/upload/v1779575546/LAVADORAS_Y_SECADORAS_123.png',
+  'CONGELADORES Y NEVERAS': 'https://res.cloudinary.com/dx08ybps6/image/upload/v1779575547/CONGELADORES_Y_NEVERAS_123.png',
 };
 const ITEM_WIDTH = 350;
 
@@ -32,25 +41,52 @@ export const CategoryBar = ({ selectedCategory, onSelectCategory, products = [] 
   const [canScrollRight, setCanScrollRight] = useState(true);
 
   const buildCombinedCategoryFallbacks = (categoryName: string): string[] => {
-    const normalizedCategory = categoryName === 'all' ? 'all' : categoryName.toUpperCase().trim();
-    const fixedFile = CATEGORY_FIXED_FILES[normalizedCategory];
+    const normalizedCategory = categoryName.toUpperCase().trim();
+    const fixedLookupKey = categoryName === 'all'
+      ? 'all'
+      : (CATEGORY_FIXED_FILES[normalizedCategory] ? normalizedCategory : categoryName);
+    const fixedFile = CATEGORY_FIXED_FILES[fixedLookupKey];
     const fixedCandidates = fixedFile ? [`${CATEGORY_IMAGES_BASE_URL}/${encodeURIComponent(fixedFile)}`] : [];
+    const cloudinaryFixedCandidates = CATEGORY_CLOUDINARY_URLS[fixedLookupKey]
+      ? [CATEGORY_CLOUDINARY_URLS[fixedLookupKey]]
+      : fixedFile
+        ? [`${CATEGORY_CLOUDINARY_BASE_URL}/${encodeURIComponent(fixedFile)}`]
+        : [];
 
     const primary = buildCategoryImageCandidates(categoryName, CATEGORY_IMAGES_BASE_URL, CATEGORY_IMAGE_VERSION);
+    const cloudinarySecondary = buildCategoryImageCandidates(categoryName, CATEGORY_CLOUDINARY_BASE_URL, CATEGORY_IMAGE_VERSION);
 
     const localFallback = categoryName === "TODOS" ? [allProductsImage] : [];
     const sharedFallback = [CATEGORY_DEFAULT_FALLBACK];
 
     if (fixedCandidates.length > 0) {
-      return Array.from(new Set([...fixedCandidates, ...localFallback, ...sharedFallback]));
+      return Array.from(new Set([
+        ...fixedCandidates,
+        ...cloudinaryFixedCandidates,
+        ...primary,
+        ...cloudinarySecondary,
+        ...localFallback,
+        ...sharedFallback,
+      ]));
     }
 
     if (!CATEGORY_IMAGES_ENV_BASE_URL || CATEGORY_IMAGES_ENV_BASE_URL === CATEGORY_IMAGES_BASE_URL) {
-      return Array.from(new Set([...fixedCandidates, ...primary, ...localFallback, ...sharedFallback]));
+      return Array.from(new Set([
+        ...primary,
+        ...cloudinarySecondary,
+        ...localFallback,
+        ...sharedFallback,
+      ]));
     }
 
     const secondary = buildCategoryImageCandidates(categoryName, CATEGORY_IMAGES_ENV_BASE_URL, CATEGORY_IMAGE_VERSION);
-    return Array.from(new Set([...fixedCandidates, ...primary, ...secondary, ...localFallback, ...sharedFallback]));
+    return Array.from(new Set([
+      ...primary,
+      ...secondary,
+      ...cloudinarySecondary,
+      ...localFallback,
+      ...sharedFallback,
+    ]));
   };
 
   const getCategoryImage = (categoryId: string): string => {

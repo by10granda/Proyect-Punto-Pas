@@ -322,14 +322,17 @@ export const QuienesSomos = () => {
               {[
                 {
                   image: `${OTHER_BUSINESSES_BASE_URL}/MADEDERA.PNG`,
+                  fallback: "https://res.cloudinary.com/dx08ybps6/image/upload/v1779574073/MADEDERA.png",
                   href: "/emprendimientos/madedera"
                 },
                 {
                   image: `${OTHER_BUSINESSES_BASE_URL}/JARDIN_DE_LA_PAZ.PNG`,
+                  fallback: "https://res.cloudinary.com/dx08ybps6/image/upload/v1779574073/JARDIN_DE_LA_PAZ.png",
                   href: "/emprendimientos/jardin-de-la-paz"
                 },
                 {
                   image: `${OTHER_BUSINESSES_BASE_URL}/RINCON.PNG`,
+                  fallback: "https://res.cloudinary.com/dx08ybps6/image/upload/v1779574073/RINCON.png",
                   href: "/emprendimientos/rincon-del-pacifico"
                 },
               ].map((item, index) => {
@@ -337,9 +340,17 @@ export const QuienesSomos = () => {
                   <div className="group relative overflow-hidden rounded-[28px] cursor-pointer" style={{ animationDelay: `${index * 100}ms` }}>
                     <img
                       src={item.image}
+                      data-fallback-src={item.fallback || undefined}
                       alt={`Emprendimiento ${index + 1}`}
                       className="w-full h-[240px] md:h-[360px] object-contain rounded-[28px] transition-transform duration-500 hover:scale-[1.02]"
                       loading="lazy"
+                      onError={(event) => {
+                        const image = event.currentTarget;
+                        const fallback = image.dataset.fallbackSrc;
+                        if (!fallback || image.dataset.fallbackApplied === "1") return;
+                        image.dataset.fallbackApplied = "1";
+                        image.src = fallback;
+                      }}
                     />
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/25 transition-colors duration-300" />
                     <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">

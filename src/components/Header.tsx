@@ -28,7 +28,9 @@ interface HeaderProps {
 
 export const Header = ({ cartCount, searchQuery: propSearchQuery, onSearch, onCartClick, onGoToHome, onClearSearch, products = [], onProductClick, onTypeSelect, filters = defaultAdvancedProductFilters, onFiltersChange, productsCount = 0, popularSearches = [], nivel2Categories = [], nivel3ByParent }: HeaderProps) => {
   const BRAND_LOGO_BASE_URL = (import.meta.env.VITE_BRANDS_BASE_URL as string | undefined) || "https://assets.distribuidor-puntopas.com/MARCAS";
-  const CATEGORY_IMAGES_BASE_URL = (import.meta.env.VITE_CATEGORY_IMAGES_BASE_URL as string | undefined) || "";
+  const CATEGORY_IMAGES_BASE_URL = (import.meta.env.VITE_CATEGORY_IMAGES_BASE_URL as string | undefined) || "https://assets.distribuidor-puntopas.com/CATEGORIAS_PRINCIPAL";
+  const CATEGORY_CLOUDINARY_BASE_URL = "https://res.cloudinary.com/dx08ybps6/image/upload/v1779574028";
+  const HEADER_CATEGORY_DEFAULT_IMAGE = "https://res.cloudinary.com/dx08ybps6/image/upload/v1779573805/TODOS_123.png";
   const russoRadioImageCandidates = [
     "https://assets.distribuidor-puntopas.com/PERRO/RUSSO2.png",
     "https://assets.distribuidor-puntopas.com/PERRO/2.png",
@@ -149,7 +151,13 @@ export const Header = ({ cartCount, searchQuery: propSearchQuery, onSearch, onCa
     
     return nivel3Types.map((typeName: string) => {
       // Generate image URL from type name
-      const imageCandidates = buildCategoryImageCandidates(typeName, CATEGORY_IMAGES_BASE_URL, "v1775783635");
+      const imageCandidates = Array.from(
+        new Set([
+          ...buildCategoryImageCandidates(typeName, CATEGORY_IMAGES_BASE_URL, "v1775783635"),
+          ...buildCategoryImageCandidates(typeName, CATEGORY_CLOUDINARY_BASE_URL, "v1775783635"),
+          HEADER_CATEGORY_DEFAULT_IMAGE,
+        ]),
+      );
       
       return {
         name: typeName,

@@ -10,6 +10,7 @@ interface BrandsBannerProps {
 
 const BRANDS_BASE_URL = (import.meta.env.VITE_BRANDS_BASE_URL as string | undefined) || "";
 const DEFAULT_BRANDS_BASE = "https://assets.distribuidor-puntopas.com/MARCAS";
+const CLOUDINARY_BRANDS_BASE = "https://res.cloudinary.com/dx08ybps6/image/upload/v1779573858";
 
 const featuredBrands = [
   "HONOR",
@@ -93,6 +94,11 @@ export const BrandsBanner = memo(({ products, onBrandClick }: BrandsBannerProps)
     return `${base}/${normalizedBrand}_1.png`;
   };
 
+  const getCloudinaryLogoUrl = (brand: string) => {
+    const normalizedBrand = normalizeBrandFileName(brand);
+    return `${CLOUDINARY_BRANDS_BASE}/${normalizedBrand}_1.png`;
+  };
+
   const handleBrandClick = (brand: string) => {
     onBrandClick(brand);
     navigate(`/?tab=all&brand=${encodeURIComponent(brand)}`);
@@ -135,22 +141,29 @@ return (
                   {brand}
                 </span>
               ) : (
-                <img
-                  src={getLogoUrl(brand)}
-                  alt={brand}
-                  className="h-full w-auto object-contain rounded-xl transition-transform duration-200 hover:scale-125"
-                  onError={() => {
-                    const normalizedBrand = normalizeBrandFileName(brand);
-                    setBrandsWithoutImage((current) => {
-                      if (current.has(normalizedBrand)) return current;
-                      const next = new Set(current);
-                      next.add(normalizedBrand);
-                      return next;
-                    });
-                  }}
-                />
-              )}
-            </button>
+                  <img
+                    src={getLogoUrl(brand)}
+                    alt={brand}
+                    className="h-full w-auto object-contain rounded-xl transition-transform duration-200 hover:scale-125"
+                    onError={(event) => {
+                      const image = event.currentTarget;
+                      if (image.dataset.cloudinaryTried !== "1") {
+                        image.dataset.cloudinaryTried = "1";
+                        image.src = getCloudinaryLogoUrl(brand);
+                        return;
+                      }
+
+                      const normalizedBrand = normalizeBrandFileName(brand);
+                      setBrandsWithoutImage((current) => {
+                        if (current.has(normalizedBrand)) return current;
+                        const next = new Set(current);
+                        next.add(normalizedBrand);
+                        return next;
+                      });
+                    }}
+                  />
+                )}
+              </button>
           ))}
         </div>
 
