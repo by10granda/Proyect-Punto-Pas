@@ -580,7 +580,7 @@ export const ProductView = ({ product, onAddToCart, onClose }: ProductViewProps)
     const toImageIdentityKey = (imageUrl: string): string => {
       const withoutQuery = imageUrl.split("?")[0].toLowerCase();
       const withoutExtension = withoutQuery.replace(/\.(png|jpg|jpeg|webp|gif)$/i, "");
-      const normalizedSuffix = withoutExtension.replace(/_e1$/i, "_e");
+      const normalizedSuffix = withoutExtension.replace(/_e\d*$/i, "_e");
       return normalizedSuffix;
     };
 
