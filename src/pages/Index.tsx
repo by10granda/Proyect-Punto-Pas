@@ -538,13 +538,15 @@ const Index = () => {
       return filteredProducts;
     }
 
-    const categoryPriorityGroups = [
-      ["CONGELADORES Y NEVERAS"],
+    const categoryRowGroups = [
+      ["CONGELADOR", "CONGELADORES"],
+      ["REFRIGERADORA", "REFRIGERADORAS", "NEVERA", "NEVERAS"],
       ["AIRE ACONDICIONADO", "AIRES ACONDICIONADOS"],
-      ["TELEVISORES"],
-      ["COCINAS"],
-      ["MUEBLERIA COMEDORES Y MESAS", "COLCHONES"],
+      ["COCINAS", "COCINA"],
+      ["MUEBLERIA COMEDORES Y MESAS", "COMEDOR", "COMEDORES", "MESAS"],
+      ["COLCHONES", "COLCHON"],
     ];
+    const PRODUCTS_PER_ROW = 6;
 
     const normalize = (value: string) =>
       (value || "")
@@ -553,38 +555,50 @@ const Index = () => {
         .toUpperCase()
         .trim();
 
-    const getPriority = (product: Product) => {
-      const category = normalize(product.category || "");
-      const type = normalize(product.type || "");
-
-      for (let index = 0; index < categoryPriorityGroups.length; index += 1) {
-        const group = categoryPriorityGroups[index];
-        const matches = group.some((target) => {
-          const normalizedTarget = normalize(target);
-          return (
-            category === normalizedTarget ||
-            type === normalizedTarget ||
-            category.includes(normalizedTarget) ||
-            type.includes(normalizedTarget)
-          );
-        });
-
-        if (matches) return index;
-      }
-
-      return categoryPriorityGroups.length;
+    const sortByStockThenName = (left: Product, right: Product) => {
+      const leftInStock = (left.stock || 0) > 0 ? 1 : 0;
+      const rightInStock = (right.stock || 0) > 0 ? 1 : 0;
+      if (leftInStock !== rightInStock) return rightInStock - leftInStock;
+      return (left.name || "").localeCompare(right.name || "");
     };
 
-    return [...filteredProducts].sort((a, b) => {
-      const priorityDiff = getPriority(a) - getPriority(b);
-      if (priorityDiff !== 0) return priorityDiff;
+    const matchesGroup = (product: Product, group: string[]) => {
+      const category = normalize(product.category || "");
+      const type = normalize(product.type || "");
+      const name = normalize(product.name || "");
 
-      const aInStock = (a.stock || 0) > 0 ? 1 : 0;
-      const bInStock = (b.stock || 0) > 0 ? 1 : 0;
-      if (aInStock !== bInStock) return bInStock - aInStock;
+      return group.some((target) => {
+        const normalizedTarget = normalize(target);
+        return (
+          category === normalizedTarget ||
+          type === normalizedTarget ||
+          name.includes(normalizedTarget) ||
+          category.includes(normalizedTarget) ||
+          type.includes(normalizedTarget)
+        );
+      });
+    };
 
-      return (a.name || "").localeCompare(b.name || "");
+    const usedProductIds = new Set<string>();
+    const orderedRows: Product[] = [];
+
+    categoryRowGroups.forEach((group) => {
+      const rowProducts = filteredProducts
+        .filter((product) => !usedProductIds.has(product.id) && matchesGroup(product, group))
+        .sort(sortByStockThenName)
+        .slice(0, PRODUCTS_PER_ROW);
+
+      rowProducts.forEach((product) => {
+        usedProductIds.add(product.id);
+        orderedRows.push(product);
+      });
     });
+
+    const remainingProducts = filteredProducts
+      .filter((product) => !usedProductIds.has(product.id))
+      .sort(sortByStockThenName);
+
+    return [...orderedRows, ...remainingProducts];
   }, [activeTab, searchQuery, mainFilter.mode, selectedCategory, selectedType, selectedBrand, filteredProducts]);
 
   const showEnvLaptopBannerInSearch = useMemo(() => {
