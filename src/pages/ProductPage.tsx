@@ -148,7 +148,13 @@ const ProductPage = () => {
 
   const openProductInNewTab = (productId: string) => {
     const productUrl = `${window.location.origin}/product/${productId}`;
-    window.open(productUrl, "_blank", "noopener,noreferrer");
+    const link = document.createElement("a");
+    link.href = productUrl;
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
   };
 
   const handleWhatsAppBuy = () => {
