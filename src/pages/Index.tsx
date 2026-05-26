@@ -611,6 +611,14 @@ const Index = () => {
 
   const cartItemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
+  const shouldForceSixRowsInMainGrid =
+    activeTab === "home" &&
+    !searchQuery &&
+    mainFilter.mode === "none" &&
+    selectedCategory === "all" &&
+    selectedType === "all" &&
+    selectedBrand === "all";
+
   const handleAddToCart = (product: Product, quantity: number = 1) => {
     try {
       const newCart = [...cart];
@@ -1073,6 +1081,7 @@ const Index = () => {
             title={getTitle()}
             showPagination={!searchQuery}
             isLoading={isLoadingProducts}
+            itemsPerPage={shouldForceSixRowsInMainGrid ? 36 : 18}
             resetPageKey={`${activeTab}|${mainFilter.mode}|${mainFilter.value}|${selectedCategory}|${selectedType}|${selectedBrand}|${offersCategory}|${searchQuery}`}
           />
           

@@ -125,15 +125,16 @@ const ProductCardGrid = ({ product, onAddToCart }: {
   );
 };
 
-const ITEMS_PER_PAGE = 18;
+const DEFAULT_ITEMS_PER_PAGE = 18;
 
-export const ProductGrid = ({ products, onAddToCart, title, showPagination = true, isLoading = false, resetPageKey = "" }: {
+export const ProductGrid = ({ products, onAddToCart, title, showPagination = true, isLoading = false, resetPageKey = "", itemsPerPage = DEFAULT_ITEMS_PER_PAGE }: {
   products: Product[];
   onAddToCart: (product: Product, quantity: number) => void;
   title?: string;
   showPagination?: boolean;
   isLoading?: boolean;
   resetPageKey?: string;
+  itemsPerPage?: number;
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -167,10 +168,10 @@ export const ProductGrid = ({ products, onAddToCart, title, showPagination = tru
     );
   }
 
-  const totalPages = Math.ceil(products.length / ITEMS_PER_PAGE);
-  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const totalPages = Math.ceil(products.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
   const visibleProducts = showPagination
-    ? products.slice(startIndex, startIndex + ITEMS_PER_PAGE)
+    ? products.slice(startIndex, startIndex + itemsPerPage)
     : products;
   const rangeStart = startIndex + 1;
   const rangeEnd = startIndex + visibleProducts.length;
