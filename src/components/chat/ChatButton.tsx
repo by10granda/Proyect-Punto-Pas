@@ -4,6 +4,7 @@ interface ChatButtonProps {
 
 export const ChatButton = ({ onClick }: ChatButtonProps) => {
   const russoPrimaryImageCandidates = [
+    "https://res.cloudinary.com/dx08ybps6/image/upload/v1779573691/RUSSO1.png?v=20260526",
     "https://assets.distribuidor-puntopas.com/PERRO/RUSSO1.png",
     "https://assets.distribuidor-puntopas.com/PERRO/1.png",
   ];

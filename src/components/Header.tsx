@@ -34,6 +34,7 @@ export const Header = ({ cartCount, searchQuery: propSearchQuery, onSearch, onCa
   const BRAND_LOGO_BASE_URL = (import.meta.env.VITE_BRANDS_BASE_URL as string | undefined) || "https://assets.distribuidor-puntopas.com/MARCAS";
   const categoryImagesEnvBaseUrl = (import.meta.env.VITE_CATEGORY_IMAGES_BASE_URL as string | undefined) || CATEGORY_IMAGES_BASE_URL;
   const russoRadioImageCandidates = [
+    "https://res.cloudinary.com/dx08ybps6/image/upload/v1779573693/RUSSO2.png?v=20260526",
     "https://assets.distribuidor-puntopas.com/PERRO/RUSSO2.png",
     "https://assets.distribuidor-puntopas.com/PERRO/2.png",
   ];
