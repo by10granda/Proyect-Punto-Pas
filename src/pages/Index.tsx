@@ -123,7 +123,10 @@ const secondBannerCandidates = [
   ...buildAssetCandidates(ASSETS_BASE_URL, "VIDEOS_PRINCIPALES", "FIFIERE TODAS TUS COMPRAS ONLINE.png"),
   ...buildAssetCandidates(ASSETS_BASE_URL, "VIDEOS_PRINCIPALES", "DIFIERE TODAS TUS COMPRAS ONLINE.png"),
 ];
-const portadaTecCandidates = buildAssetCandidates(ASSETS_BASE_URL, "PORTADAS", "PORTADA_TEC1.png");
+const portadaTecCandidates = [
+  "https://res.cloudinary.com/dx08ybps6/image/upload/v1779574063/PORTADA_TEC1.png?v=20260526",
+  ...buildAssetCandidates(ASSETS_BASE_URL, "PORTADAS", "PORTADA_TEC1.png"),
+];
 
 const Index = () => {
   const PRODUCTS_ALERT_COOLDOWN_MS = 15 * 60 * 1000;
