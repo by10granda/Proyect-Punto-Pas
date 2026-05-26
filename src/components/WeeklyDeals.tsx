@@ -12,7 +12,7 @@ interface WeeklyDealsProps {
   onCategoryChange?: (category: string) => void;
 }
 
-export const WeeklyDeals = ({ images, imageCandidatesBySlot, products, onProductClick, selectedCategory = "all", onCategoryChange }: WeeklyDealsProps) => {
+export const WeeklyDeals = ({ images, imageCandidatesBySlot, products, selectedCategory = "all", onCategoryChange }: WeeklyDealsProps) => {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const scrollLeft = () => {
@@ -100,13 +100,16 @@ export const WeeklyDeals = ({ images, imageCandidatesBySlot, products, onProduct
                 : [img];
               
               return (
-                <div 
+                <a
                   key={idx}
+                  href={matchedProduct ? `/product/${matchedProduct.id}` : undefined}
+                  target={matchedProduct ? "_blank" : undefined}
+                  rel={matchedProduct ? "noopener noreferrer" : undefined}
                   className="group flex-shrink-0 w-[280px] md:w-[315px] snap-start"
                   style={{ aspectRatio: '4/5' }}
-                  onClick={() => {
-                    if (matchedProduct && onProductClick) {
-                      onProductClick(matchedProduct);
+                  onClick={(event) => {
+                    if (!matchedProduct) {
+                      event.preventDefault();
                     }
                   }}
                 >
@@ -120,7 +123,7 @@ export const WeeklyDeals = ({ images, imageCandidatesBySlot, products, onProduct
                       onError={handleAssetFallback}
                     />
                   </div>
-                </div>
+                </a>
               );
             })}
           </div>

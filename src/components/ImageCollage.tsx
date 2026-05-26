@@ -3,6 +3,7 @@ import { memo } from "react";
 interface ImageCollageProps {
   images: string[];
   imageCandidatesBySlot?: string[][];
+  linkTargetsBySlot?: string[];
   onImageClick?: (index: number) => void;
 }
 
@@ -56,8 +57,9 @@ const handleCollageFallback = (event: React.SyntheticEvent<HTMLImageElement>) =>
   image.src = fallbacks[nextIndex];
 };
 
-export const ImageCollage = memo(({ images = DEFAULT_IMAGES, imageCandidatesBySlot, onImageClick }: ImageCollageProps) => {
+export const ImageCollage = memo(({ images = DEFAULT_IMAGES, imageCandidatesBySlot, linkTargetsBySlot, onImageClick }: ImageCollageProps) => {
   const displayImages = images.slice(0, 6);
+  const getLinkTarget = (index: number) => linkTargetsBySlot?.[index] || "";
   const displayFallbacks = displayImages.map((image, index) => {
     const providedCandidates = imageCandidatesBySlot?.[index];
     if (providedCandidates && providedCandidates.length > 0) {
@@ -84,27 +86,29 @@ export const ImageCollage = memo(({ images = DEFAULT_IMAGES, imageCandidatesBySl
       >
         {/* img1 - Left column, spans both rows */}
         <div style={{ gridRow: "1 / span 2", position: "relative", backgroundColor: "white", overflow: "hidden" }}>
-            <img
-              src={displayImages[0]}
-              data-fallbacks={displayFallbacks[0].join("|")}
-              data-fallback-index="0"
-              alt="Marca 1"
-              onClick={() => onImageClick?.(0)}
-              onError={handleCollageFallback}
-              className="transition-transform duration-300 hover:scale-105"
-              style={{
-                width: "100%",
-                height: "100%",
-                objectFit: "cover",
-                display: "block",
-                cursor: onImageClick ? "pointer" : "default"
-              }}
-            />
+            <a href={getLinkTarget(0) || undefined} target={getLinkTarget(0) ? "_blank" : undefined} rel={getLinkTarget(0) ? "noopener noreferrer" : undefined}>
+              <img
+                src={displayImages[0]}
+                data-fallbacks={displayFallbacks[0].join("|")}
+                data-fallback-index="0"
+                alt="Marca 1"
+                onClick={() => onImageClick?.(0)}
+                onError={handleCollageFallback}
+                className="transition-transform duration-300 hover:scale-105"
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                  display: "block",
+                  cursor: onImageClick ? "pointer" : "default"
+                }}
+              />
+            </a>
         </div>
 
         {/* img2 - Top center */}
         <div style={{ position: "relative", backgroundColor: "white", overflow: "hidden" }}>
-          <img
+          <a href={getLinkTarget(1) || undefined} target={getLinkTarget(1) ? "_blank" : undefined} rel={getLinkTarget(1) ? "noopener noreferrer" : undefined}><img
             src={displayImages[1]}
             data-fallbacks={displayFallbacks[1].join("|")}
             data-fallback-index="0"
@@ -119,12 +123,12 @@ export const ImageCollage = memo(({ images = DEFAULT_IMAGES, imageCandidatesBySl
               display: "block",
               cursor: onImageClick ? "pointer" : "default"
             }}
-          />
+          /></a>
         </div>
         
         {/* img3 - Top right */}
         <div style={{ position: "relative", backgroundColor: "white", overflow: "hidden" }}>
-          <img
+          <a href={getLinkTarget(2) || undefined} target={getLinkTarget(2) ? "_blank" : undefined} rel={getLinkTarget(2) ? "noopener noreferrer" : undefined}><img
             src={displayImages[2]}
             data-fallbacks={displayFallbacks[2].join("|")}
             data-fallback-index="0"
@@ -139,13 +143,13 @@ export const ImageCollage = memo(({ images = DEFAULT_IMAGES, imageCandidatesBySl
               display: "block",
               cursor: onImageClick ? "pointer" : "default"
             }}
-          />
+          /></a>
         </div>
 
         {/* Bottom row - Nested grid with 3 equal columns spanning columns 2 and 3 */}
         <div style={{ gridColumn: "2 / span 2", display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "6px", backgroundColor: "#e5e5e5" }}>
           <div style={{ position: "relative", backgroundColor: "white", overflow: "hidden" }}>
-            <img
+            <a href={getLinkTarget(3) || undefined} target={getLinkTarget(3) ? "_blank" : undefined} rel={getLinkTarget(3) ? "noopener noreferrer" : undefined}><img
               src={displayImages[3]}
               data-fallbacks={displayFallbacks[3].join("|")}
               data-fallback-index="0"
@@ -160,10 +164,10 @@ export const ImageCollage = memo(({ images = DEFAULT_IMAGES, imageCandidatesBySl
                 display: "block",
                 cursor: onImageClick ? "pointer" : "default"
               }}
-            />
+            /></a>
           </div>
           <div style={{ position: "relative", backgroundColor: "white", overflow: "hidden" }}>
-            <img
+            <a href={getLinkTarget(4) || undefined} target={getLinkTarget(4) ? "_blank" : undefined} rel={getLinkTarget(4) ? "noopener noreferrer" : undefined}><img
               src={displayImages[4]}
               data-fallbacks={displayFallbacks[4].join("|")}
               data-fallback-index="0"
@@ -178,10 +182,10 @@ export const ImageCollage = memo(({ images = DEFAULT_IMAGES, imageCandidatesBySl
                 display: "block",
                 cursor: onImageClick ? "pointer" : "default"
               }}
-            />
+            /></a>
           </div>
           <div style={{ position: "relative", backgroundColor: "white", overflow: "hidden" }}>
-            <img
+            <a href={getLinkTarget(5) || undefined} target={getLinkTarget(5) ? "_blank" : undefined} rel={getLinkTarget(5) ? "noopener noreferrer" : undefined}><img
               src={displayImages[5]}
               data-fallbacks={displayFallbacks[5].join("|")}
               data-fallback-index="0"
@@ -196,7 +200,7 @@ export const ImageCollage = memo(({ images = DEFAULT_IMAGES, imageCandidatesBySl
                 display: "block",
                 cursor: onImageClick ? "pointer" : "default"
               }}
-            />
+            /></a>
           </div>
         </div>
       </div>

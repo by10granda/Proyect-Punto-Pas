@@ -1155,11 +1155,13 @@ const Index = () => {
                   buildBrandSectionPoster(fileName),
                 ]);
                 const collageImages = collageCandidatesBySlot.map((candidates) => candidates[0]);
+                const collageLinkTargets = brandSectionPosters.map(({ brand }) => `/?tab=all&brand=${encodeURIComponent(brand)}#productos`);
 
                 return (
-               <ImageCollage
+                <ImageCollage
                images={collageImages}
                imageCandidatesBySlot={collageCandidatesBySlot}
+               linkTargetsBySlot={collageLinkTargets}
                onImageClick={(index) => {
                   const brand = brandSectionPosters[index]?.brand;
                   if (brand) {

@@ -1,7 +1,6 @@
 import { memo, useRef, useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight, Star } from "lucide-react";
 import { Product } from "@/data/products";
-import { useNavigate } from "react-router-dom";
 
 interface BrandsBannerProps {
   products: Product[];
@@ -31,9 +30,8 @@ const normalizeBrandFileName = (brand: string) =>
 
 const isGenericBrand = (brand: string) => normalizeBrandFileName(brand) === "GENERICA";
 
-export const BrandsBanner = memo(({ products, onBrandClick }: BrandsBannerProps) => {
+export const BrandsBanner = memo(({ products }: BrandsBannerProps) => {
   const scrollRef = useRef<HTMLDivElement>(null);
-  const navigate = useNavigate();
   const [isScrolling, setIsScrolling] = useState(false);
   const [brandsWithoutImage, setBrandsWithoutImage] = useState<Set<string>>(() => new Set());
   const scrollIntervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -99,11 +97,7 @@ export const BrandsBanner = memo(({ products, onBrandClick }: BrandsBannerProps)
     return `${CLOUDINARY_BRANDS_BASE}/${normalizedBrand}_1.png`;
   };
 
-  const handleBrandClick = (brand: string) => {
-    onBrandClick(brand);
-    navigate(`/?tab=all&brand=${encodeURIComponent(brand)}`);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+  const getBrandUrl = (brand: string) => `/?tab=all&brand=${encodeURIComponent(brand)}#productos`;
 
   if (brandsToRender.length === 0) return null;
 
@@ -131,9 +125,11 @@ return (
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
           {duplicatedBrands.map((brand, index) => (
-            <button
+            <a
               key={`${brand}-${index}`}
-              onClick={() => handleBrandClick(brand)}
+              href={getBrandUrl(brand)}
+              target="_blank"
+              rel="noopener noreferrer"
               className="flex-shrink-0 h-16 w-36 flex items-center justify-center overflow-hidden rounded-xl"
             >
               {isGenericBrand(brand) ? (
@@ -163,7 +159,7 @@ return (
                     }}
                   />
                 )}
-              </button>
+              </a>
           ))}
         </div>
 
