@@ -78,10 +78,10 @@ const buildWeeklyDealsImages = (): string[] => {
 
 const weeklyDealsImages = buildWeeklyDealsImages();
 
-const buildSectionPoster = (fileName: string, fallbackUrl: string): string => {
+const buildSectionPosterCandidates = (fileName: string, fallbackUrl: string): string[] => {
   const base = SECTION_BRANDS_BASE_URL.replace(/\/$/, "");
-  if (!base) return fallbackUrl;
-  return `${base}/${encodeURIComponent(fileName)}`;
+  if (!base) return [fallbackUrl];
+  return [`${base}/${encodeURIComponent(fileName)}`, fallbackUrl];
 };
 
 const buildBrandSectionPoster = (fileName: string): string =>
@@ -975,7 +975,8 @@ const Index = () => {
                          type.includes("LAVADORAS") || type.includes("SECADERAS");
                 })}
                 category="LAVADORAS Y SECADERAS"
-                bannerImage={buildSectionPoster("PORTADA_LAVADORAS.png", "https://res.cloudinary.com/dx08ybps6/image/upload/v1779573689/PORTADA_LAVADORAS.png")}
+                bannerImage={buildSectionPosterCandidates("PORTADA_LAVADORAS.png", "https://res.cloudinary.com/dx08ybps6/image/upload/v1779573689/PORTADA_LAVADORAS.png")[0]}
+                bannerImageFallbacks={buildSectionPosterCandidates("PORTADA_LAVADORAS.png", "https://res.cloudinary.com/dx08ybps6/image/upload/v1779573689/PORTADA_LAVADORAS.png")}
                 onBannerClick={() => {
                   setMainFilter({ mode: "carousel", value: "LAVADORAS Y SECADERAS" });
                   setSelectedType("all");
@@ -1018,7 +1019,8 @@ const Index = () => {
                 category="CONGELADORES Y NEVERAS"
                 topTitle="CONGELADORES Y NEVERAS"
                 sectionTitle="REFRIGERADORAS Y CONGELADORES PARA TU HOGAR"
-                bannerImage={buildSectionPoster("PORTADA_NEVERAS.png", "https://res.cloudinary.com/dx08ybps6/image/upload/v1779574050/PORTADA_NEVERAS.png")}
+                bannerImage={buildSectionPosterCandidates("PORTADA_NEVERAS.png", "https://res.cloudinary.com/dx08ybps6/image/upload/v1779574050/PORTADA_NEVERAS.png")[0]}
+                bannerImageFallbacks={buildSectionPosterCandidates("PORTADA_NEVERAS.png", "https://res.cloudinary.com/dx08ybps6/image/upload/v1779574050/PORTADA_NEVERAS.png")}
                 layout="fridge"
                 onBannerClick={() => {
                   const sourceProducts = allProducts;
@@ -1052,7 +1054,8 @@ const Index = () => {
                 category="TELEVISORES"
                 topTitle="TELEVISORES"
                 sectionTitle="TELEVISORES PARA TU HOGAR"
-                bannerImage={buildSectionPoster("PORTADA_TELEVISOR.png", "https://res.cloudinary.com/dx08ybps6/image/upload/v1779573810/PORTADA_TELEVISOR.png")}
+                bannerImage={buildSectionPosterCandidates("PORTADA_TELEVISOR.png", "https://res.cloudinary.com/dx08ybps6/image/upload/v1779573810/PORTADA_TELEVISOR.png")[0]}
+                bannerImageFallbacks={buildSectionPosterCandidates("PORTADA_TELEVISOR.png", "https://res.cloudinary.com/dx08ybps6/image/upload/v1779573810/PORTADA_TELEVISOR.png")}
                 layout="fridge"
                 onBannerClick={() => {
                   setMainFilter({ mode: "carousel", value: "TELEVISORES" });

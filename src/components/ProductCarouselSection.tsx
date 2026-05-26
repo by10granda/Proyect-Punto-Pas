@@ -2,11 +2,13 @@ import { useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Product } from "@/data/products";
 import { ProductCard } from "./ProductCard";
+import { handleAssetFallback } from "@/utils/assetFallback";
 
 interface ProductCarouselSectionProps {
   products: Product[];
   category: string;
   bannerImage: string;
+  bannerImageFallbacks?: string[];
   layout?: 'default' | 'fridge';
   sectionTitle?: string;
   topTitle?: string;
@@ -19,6 +21,7 @@ export const ProductCarouselSection = ({
   products, 
   category, 
   bannerImage,
+  bannerImageFallbacks,
   layout = 'default',
   sectionTitle,
   topTitle,
@@ -74,6 +77,9 @@ export const ProductCarouselSection = ({
                 src={bannerImage}
                 alt={category}
                 className="w-full h-[150px] sm:h-[190px] lg:h-[680px] object-contain rounded-lg cursor-pointer bg-white"
+                data-fallbacks={bannerImageFallbacks?.join("|")}
+                data-fallback-index="0"
+                onError={handleAssetFallback}
               />
             </div>
 
@@ -184,6 +190,9 @@ export const ProductCarouselSection = ({
                 src={bannerImage}
                 alt={category}
                 className="w-full h-auto lg:h-full object-contain rounded-xl cursor-pointer"
+                data-fallbacks={bannerImageFallbacks?.join("|")}
+                data-fallback-index="0"
+                onError={handleAssetFallback}
               />
             </div>
           </div>
