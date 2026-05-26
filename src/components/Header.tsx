@@ -590,7 +590,7 @@ export const Header = ({ cartCount, searchQuery: propSearchQuery, onSearch, onCa
               <span className="block text-white font-black tracking-tight text-lg md:text-2xl">PUNTO PAS</span>
               <span className="block text-white/95 font-semibold tracking-wide text-[9px] md:text-sm mt-1">ENCUENTRA TODO EN UN SOLO LUGAR</span>
               <span className="block text-white font-black italic tracking-[0.02em] text-sm md:text-[24px] mt-1">PETMEMEBASPS</span>
-              <span className="block h-[3px] md:h-[5px] w-[108px] md:w-[188px] rounded-full bg-lime-400 mt-1" />
+              <span className="block h-[3px] md:h-[5px] w-[118px] md:w-[206px] rounded-full bg-lime-400 mt-1" />
             </div>
           </div>
 
