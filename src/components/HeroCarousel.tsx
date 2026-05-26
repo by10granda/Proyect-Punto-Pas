@@ -30,7 +30,9 @@ const HERO_CLOUDINARY_FALLBACKS: Record<string, string[]> = {
     buildCloudinaryImageUrl("PORTADA_4.png"),
   ],
   "PORTADA_1.mp4": [
+    "https://res.cloudinary.com/dx08ybps6/video/upload/v1779574034/PORTADA_1.mp4",
     buildCloudinaryVideoUrl("PORTADA_1.mp4"),
+    "https://assets.distribuidor-puntopas.com/PORTADAS/PORTADA_1.mp4",
   ],
 };
 
@@ -67,10 +69,7 @@ const slides = [
   {
     id: 2,
     type: "video" as const,
-    src: heroAssetUrl(
-      "PORTADA_1.mp4",
-      "https://assets.distribuidor-puntopas.com/PORTADAS/PORTADA_1.mp4",
-    ),
+    src: "https://res.cloudinary.com/dx08ybps6/video/upload/v1779574034/PORTADA_1.mp4",
     fallbacks: HERO_CLOUDINARY_FALLBACKS["PORTADA_1.mp4"],
     action: "productCode" as const,
     value: "00000467",
