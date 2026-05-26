@@ -188,7 +188,28 @@ const ProductPage = () => {
     );
   }
 
-  const productImages = (product.images && product.images.length > 0 ? product.images : [product.image]).filter((img) => !!img && img.trim().length > 0);
+  const productImages = useMemo(() => {
+    const rawImages = (product.images && product.images.length > 0 ? product.images : [product.image]).filter(
+      (img) => !!img && img.trim().length > 0,
+    );
+
+    const toImageIdentityKey = (imageUrl: string): string => {
+      const withoutQuery = imageUrl.split("?")[0].toLowerCase();
+      const fileName = withoutQuery.split("/").pop() || withoutQuery;
+      const withoutExtension = fileName.replace(/\.(png|jpg|jpeg|webp|gif)$/i, "");
+      return withoutExtension.replace(/_?e\d*$/i, "_e").replace(/_+/g, "_");
+    };
+
+    const unique = new Map<string, string>();
+    rawImages.forEach((imageUrl) => {
+      const key = toImageIdentityKey(imageUrl);
+      if (!unique.has(key)) {
+        unique.set(key, imageUrl);
+      }
+    });
+
+    return Array.from(unique.values()).slice(0, 8);
+  }, [product.images, product.image]);
   const visibleImages = productImages.filter((_, index) => !brokenImageIndexes.includes(index));
   const price = product.puntoPasPrice || product.pvpPrice || product.price;
   const visibleRelated = relatedProducts.slice(carouselStart, carouselStart + 6);
