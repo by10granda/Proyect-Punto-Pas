@@ -44,32 +44,32 @@ const brandSectionPosters = [
   {
     brand: "INDURAMA",
     fileName: "MARCA INDURAMA.png",
-    cloudinaryUrl: "https://res.cloudinary.com/dx08ybps6/image/upload/v1779573685/MARCA_INDURAMA.png",
+    cloudinaryUrl: "https://res.cloudinary.com/dx08ybps6/image/upload/v1779573685/MARCA_INDURAMA.png?v=20260526",
   },
   {
     brand: "PHILIPS",
     fileName: "MARCA PHILIPS.png",
-    cloudinaryUrl: "https://res.cloudinary.com/dx08ybps6/image/upload/v1779573688/MARCA_PHILIPS.png",
+    cloudinaryUrl: "https://res.cloudinary.com/dx08ybps6/image/upload/v1779573688/MARCA_PHILIPS.png?v=20260526",
   },
   {
     brand: "MABE",
     fileName: "MARCA MABE.png",
-    cloudinaryUrl: "https://res.cloudinary.com/dx08ybps6/image/upload/v1779573686/MARCA_MABE.png",
+    cloudinaryUrl: "https://res.cloudinary.com/dx08ybps6/image/upload/v1779573686/MARCA_MABE.png?v=20260526",
   },
   {
     brand: "HONOR",
     fileName: "MARCA HONOR.png",
-    cloudinaryUrl: "https://res.cloudinary.com/dx08ybps6/image/upload/v1779573684/MARCA_HONOR.png",
+    cloudinaryUrl: "https://res.cloudinary.com/dx08ybps6/image/upload/v1779573684/MARCA_HONOR.png?v=20260526",
   },
   {
     brand: "RCA",
     fileName: "MARCA RCA.png",
-    cloudinaryUrl: "https://res.cloudinary.com/dx08ybps6/image/upload/v1779573688/MARCA_RCA.png",
+    cloudinaryUrl: "https://res.cloudinary.com/dx08ybps6/image/upload/v1779573688/MARCA_RCA.png?v=20260526",
   },
   {
     brand: "TCL",
     fileName: "MARCA TCL.png",
-    cloudinaryUrl: "https://res.cloudinary.com/dx08ybps6/image/upload/v1779573690/MARCA_TCL.png",
+    cloudinaryUrl: "https://res.cloudinary.com/dx08ybps6/image/upload/v1779573690/MARCA_TCL.png?v=20260526",
   },
 ];
 
