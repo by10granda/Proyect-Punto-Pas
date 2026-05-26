@@ -2,6 +2,7 @@ import { memo } from "react";
 
 interface ImageCollageProps {
   images: string[];
+  imageCandidatesBySlot?: string[][];
   onImageClick?: (index: number) => void;
 }
 
@@ -55,9 +56,15 @@ const handleCollageFallback = (event: React.SyntheticEvent<HTMLImageElement>) =>
   image.src = fallbacks[nextIndex];
 };
 
-export const ImageCollage = memo(({ images = DEFAULT_IMAGES, onImageClick }: ImageCollageProps) => {
+export const ImageCollage = memo(({ images = DEFAULT_IMAGES, imageCandidatesBySlot, onImageClick }: ImageCollageProps) => {
   const displayImages = images.slice(0, 6);
-  const displayFallbacks = displayImages.map((image, index) => buildImageFallbacks(image, index));
+  const displayFallbacks = displayImages.map((image, index) => {
+    const providedCandidates = imageCandidatesBySlot?.[index];
+    if (providedCandidates && providedCandidates.length > 0) {
+      return unique([...providedCandidates, ...buildImageFallbacks(image, index)]);
+    }
+    return buildImageFallbacks(image, index);
+  });
   
   return (
     <section className="w-full" style={{ marginTop: 0, paddingTop: 0 }}>

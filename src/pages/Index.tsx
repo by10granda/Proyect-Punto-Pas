@@ -41,12 +41,36 @@ const SECTION_BRANDS_BASE_URL = (import.meta.env.VITE_SECTION_BRANDS_BASE_URL as
 const BRAND_SECTION_POSTERS_BASE_URL = "https://assets.distribuidor-puntopas.com/MARCAS_SECCION_MARCAS";
 const ASSETS_BASE_URL = "https://assets.distribuidor-puntopas.com";
 const brandSectionPosters = [
-  { brand: "INDURAMA", fileName: "MARCA INDURAMA.png" },
-  { brand: "PHILIPS", fileName: "MARCA PHILIPS.png" },
-  { brand: "MABE", fileName: "MARCA MABE.png" },
-  { brand: "HONOR", fileName: "MARCA HONOR.png" },
-  { brand: "RCA", fileName: "MARCA RCA.png" },
-  { brand: "TCL", fileName: "MARCA TCL.png" },
+  {
+    brand: "INDURAMA",
+    fileName: "MARCA INDURAMA.png",
+    cloudinaryUrl: "https://res.cloudinary.com/dx08ybps6/image/upload/v1779573685/MARCA_INDURAMA.png",
+  },
+  {
+    brand: "PHILIPS",
+    fileName: "MARCA PHILIPS.png",
+    cloudinaryUrl: "https://res.cloudinary.com/dx08ybps6/image/upload/v1779573688/MARCA_PHILIPS.png",
+  },
+  {
+    brand: "MABE",
+    fileName: "MARCA MABE.png",
+    cloudinaryUrl: "https://res.cloudinary.com/dx08ybps6/image/upload/v1779573686/MARCA_MABE.png",
+  },
+  {
+    brand: "HONOR",
+    fileName: "MARCA HONOR.png",
+    cloudinaryUrl: "https://res.cloudinary.com/dx08ybps6/image/upload/v1779573684/MARCA_HONOR.png",
+  },
+  {
+    brand: "RCA",
+    fileName: "MARCA RCA.png",
+    cloudinaryUrl: "https://res.cloudinary.com/dx08ybps6/image/upload/v1779573688/MARCA_RCA.png",
+  },
+  {
+    brand: "TCL",
+    fileName: "MARCA TCL.png",
+    cloudinaryUrl: "https://res.cloudinary.com/dx08ybps6/image/upload/v1779573690/MARCA_TCL.png",
+  },
 ];
 
 const buildWeeklyDealsImageCandidates = (): string[][] => {
@@ -1112,8 +1136,17 @@ const Index = () => {
              </div>
 
              <div id="imagecollage-section" className="mb-10 md:mb-14">
-              <ImageCollage
-               images={brandSectionPosters.map(({ fileName }) => buildBrandSectionPoster(fileName))}
+              {(() => {
+                const collageCandidatesBySlot = brandSectionPosters.map(({ fileName, cloudinaryUrl }) => [
+                  cloudinaryUrl,
+                  buildBrandSectionPoster(fileName),
+                ]);
+                const collageImages = collageCandidatesBySlot.map((candidates) => candidates[0]);
+
+                return (
+               <ImageCollage
+               images={collageImages}
+               imageCandidatesBySlot={collageCandidatesBySlot}
                onImageClick={(index) => {
                   const brand = brandSectionPosters[index]?.brand;
                   if (brand) {
@@ -1133,6 +1166,8 @@ const Index = () => {
                 }
                }}
              />
+                );
+              })()}
              </div>
             </>
           )}
