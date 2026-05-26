@@ -146,6 +146,11 @@ const ProductPage = () => {
     toast.success("Producto agregado al carrito");
   };
 
+  const openProductInNewTab = (productId: string) => {
+    const productUrl = `${window.location.origin}/product/${productId}`;
+    window.open(productUrl, "_blank", "noopener,noreferrer");
+  };
+
   const handleWhatsAppBuy = () => {
     if (!product) return;
     const productUrl = `${window.location.origin}/product/${product.id}`;
@@ -238,7 +243,7 @@ const ProductPage = () => {
           navigate("/");
         }}
         products={products}
-        onProductClick={(selected) => navigate(`/product/${selected.id}`)}
+        onProductClick={(selected) => openProductInNewTab(selected.id)}
       />
 
       <div className="mx-auto max-w-[1600px] px-0 py-0">
@@ -406,7 +411,7 @@ const ProductPage = () => {
                 return (
                   <button
                     key={item.id}
-                    onClick={() => navigate(`/product/${item.id}`)}
+                    onClick={() => openProductInNewTab(item.id)}
                     className="rounded-xl border border-slate-200 p-2 text-left transition hover:-translate-y-0.5 hover:border-[#FA003F]/60 hover:shadow-md"
                   >
                     <div className="mb-2 rounded-lg bg-slate-50 p-2">

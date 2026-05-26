@@ -584,8 +584,13 @@ const Index = () => {
     navigate("/compra");
   };
 
+  const openProductInNewTab = (productId: string) => {
+    const productUrl = `${window.location.origin}/product/${productId}`;
+    window.open(productUrl, "_blank", "noopener,noreferrer");
+  };
+
   const handleProductClick = (product: Product) => {
-    navigate(`/product/${product.id}`);
+    openProductInNewTab(product.id);
   };
 
   const handleSearch = (query: string) => {
@@ -772,7 +777,7 @@ const Index = () => {
                   const product = allProducts.find(p => p.code === code);
                   console.log('Product found:', product?.name, 'code:', product?.code);
                   if (product) {
-                    navigate(`/product/${product.id}`);
+                    openProductInNewTab(product.id);
                   }
                 }}
                 onCategoryClick={(category) => {
@@ -979,9 +984,9 @@ const Index = () => {
                   setWeeklyDealsCategory(category);
                 }}
                  onProductClick={(product) => {
-                   navigate(`/product/${product.id}`);
-                 }}
-              />
+                   openProductInNewTab(product.id);
+                  }}
+               />
               </div>
 
               <ProductCarouselSection
@@ -1044,7 +1049,7 @@ const Index = () => {
                   const sourceProducts = allProducts;
                   const featuredProduct = sourceProducts.find((p) => p.code === "00001528");
                   if (featuredProduct) {
-                    navigate(`/product/${featuredProduct.id}`);
+                    openProductInNewTab(featuredProduct.id);
                   }
                 }}
                 onProductClick={handleProductClick}
