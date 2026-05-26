@@ -1,16 +1,18 @@
 import { useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Product } from "@/data/products";
+import { handleAssetFallback } from "@/utils/assetFallback";
 
 interface WeeklyDealsProps {
   images: string[];
+  imageCandidatesBySlot?: string[][];
   products?: Product[];
   onProductClick?: (product: Product) => void;
   selectedCategory?: string;
   onCategoryChange?: (category: string) => void;
 }
 
-export const WeeklyDeals = ({ images, products, onProductClick, selectedCategory = "all", onCategoryChange }: WeeklyDealsProps) => {
+export const WeeklyDeals = ({ images, imageCandidatesBySlot, products, onProductClick, selectedCategory = "all", onCategoryChange }: WeeklyDealsProps) => {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const scrollLeft = () => {
@@ -93,6 +95,9 @@ export const WeeklyDeals = ({ images, products, onProductClick, selectedCategory
               const productCodes = ["00000723", "00000546", "00001213", "00000491", "00000401", "00000396", "00000549", "00000770"];
               const code = productCodes[idx];
               const matchedProduct = code && products ? products.find(p => p.code === code) : null;
+              const imageCandidates = imageCandidatesBySlot?.[idx] && imageCandidatesBySlot[idx].length > 0
+                ? imageCandidatesBySlot[idx]
+                : [img];
               
               return (
                 <div 
@@ -107,9 +112,12 @@ export const WeeklyDeals = ({ images, products, onProductClick, selectedCategory
                 >
                   <div className="w-full h-full rounded-[26px] overflow-hidden bg-white border border-gray-200 shadow-sm group-hover:shadow-md transition-shadow">
                     <img
-                      src={img}
+                      src={imageCandidates[0]}
                       alt={`Descuento ${idx + 1}`}
                       className="w-full h-full object-cover"
+                      data-fallbacks={imageCandidates.join("|")}
+                      data-fallback-index="0"
+                      onError={handleAssetFallback}
                     />
                   </div>
                 </div>

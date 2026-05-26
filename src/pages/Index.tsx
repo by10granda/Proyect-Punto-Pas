@@ -49,34 +49,24 @@ const brandSectionPosters = [
   { brand: "TCL", fileName: "MARCA TCL.png" },
 ];
 
-const buildWeeklyDealsImages = (): string[] => {
+const buildWeeklyDealsImageCandidates = (): string[][] => {
   const base = WEEKLY_DEALS_BASE_URL.replace(/\/$/, "");
-
-  if (base) {
-    return Array.from({ length: 8 }, (_, index) => `${base}/${encodeURIComponent(`Descuento${index + 1}_s.png`)}`);
-  }
-
-  return [
-    "https://res.cloudinary.com/dx08ybps6/image/upload/v1779573798/Descuento1_s.png",
-    "https://res.cloudinary.com/dx08ybps6/image/upload/v1779573798/Descuento2_s.png",
-    "https://res.cloudinary.com/dx08ybps6/image/upload/v1779573798/Descuento3_s.png",
-    "https://res.cloudinary.com/dx08ybps6/image/upload/v1779573798/Descuento4_s.png",
-    "https://res.cloudinary.com/dx08ybps6/image/upload/v1779573798/Descuento5_s.png",
-    "https://res.cloudinary.com/dx08ybps6/image/upload/v1779573798/Descuento6_s.png",
-    "https://res.cloudinary.com/dx08ybps6/image/upload/v1779573798/Descuento7_s.png",
-    "https://res.cloudinary.com/dx08ybps6/image/upload/v1779573798/Descuento8_s.png",
-    "https://assets.distribuidor-puntopas.com/IMPERDIBLES%20DE%20LA%20SEMANA/Descuento1_s.png",
-    "https://assets.distribuidor-puntopas.com/IMPERDIBLES%20DE%20LA%20SEMANA/Descuento2_s.png",
-    "https://assets.distribuidor-puntopas.com/IMPERDIBLES%20DE%20LA%20SEMANA/Descuento3_s.png",
-    "https://assets.distribuidor-puntopas.com/IMPERDIBLES%20DE%20LA%20SEMANA/Descuento4_s.png",
-    "https://assets.distribuidor-puntopas.com/IMPERDIBLES%20DE%20LA%20SEMANA/Descuento5_s.png",
-    "https://assets.distribuidor-puntopas.com/IMPERDIBLES%20DE%20LA%20SEMANA/Descuento6_s.png",
-    "https://assets.distribuidor-puntopas.com/IMPERDIBLES%20DE%20LA%20SEMANA/Descuento7_s.png",
-    "https://assets.distribuidor-puntopas.com/IMPERDIBLES%20DE%20LA%20SEMANA/Descuento8_s.png",
-  ];
+  const assetsBase = "https://assets.distribuidor-puntopas.com/IMPERDIBLES%20DE%20LA%20SEMANA";
+  const cloudinaryBase = "https://res.cloudinary.com/dx08ybps6/image/upload/v1779573798";
+  return Array.from({ length: 8 }, (_, index) => {
+    const fileName = `Descuento${index + 1}_s.png`;
+    const candidates: string[] = [];
+    if (base) {
+      candidates.push(`${base}/${encodeURIComponent(fileName)}`);
+    }
+    candidates.push(`${cloudinaryBase}/${fileName}`);
+    candidates.push(`${assetsBase}/${fileName}`);
+    return Array.from(new Set(candidates));
+  });
 };
 
-const weeklyDealsImages = buildWeeklyDealsImages();
+const weeklyDealsImageCandidates = buildWeeklyDealsImageCandidates();
+const weeklyDealsImages = weeklyDealsImageCandidates.map((candidates) => candidates[0]);
 
 const buildSectionPosterCandidates = (fileName: string, fallbackUrl: string): string[] => {
   const base = SECTION_BRANDS_BASE_URL.replace(/\/$/, "");
@@ -954,8 +944,9 @@ const Index = () => {
             <>
               <div id="weeklydeals-section">
                <WeeklyDeals
-               images={weeklyDealsImages}
-               products={allProducts}
+                images={weeklyDealsImages}
+                imageCandidatesBySlot={weeklyDealsImageCandidates}
+                products={allProducts}
                 selectedCategory={weeklyDealsCategory}
                 onCategoryChange={(category) => {
                   setWeeklyDealsCategory(category);
