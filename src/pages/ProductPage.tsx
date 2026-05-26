@@ -174,22 +174,8 @@ const ProductPage = () => {
       });
   }, [products, product]);
 
-  if (loading) {
-    return <div className="min-h-screen flex items-center justify-center text-slate-600">Cargando producto...</div>;
-  }
-
-  if (!product) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-lg font-semibold">Producto no encontrado</p>
-          <button className="mt-3 rounded-lg border px-4 py-2" onClick={() => navigate("/")}>Volver</button>
-        </div>
-      </div>
-    );
-  }
-
   const productImages = useMemo(() => {
+    if (!product) return [];
     const rawImages = (product.images && product.images.length > 0 ? product.images : [product.image]).filter(
       (img) => !!img && img.trim().length > 0,
     );
@@ -210,7 +196,22 @@ const ProductPage = () => {
     });
 
     return Array.from(unique.values()).slice(0, 8);
-  }, [product.images, product.image]);
+  }, [product]);
+
+  if (loading) {
+    return <div className="min-h-screen flex items-center justify-center text-slate-600">Cargando producto...</div>;
+  }
+
+  if (!product) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-lg font-semibold">Producto no encontrado</p>
+          <button className="mt-3 rounded-lg border px-4 py-2" onClick={() => navigate("/")}>Volver</button>
+        </div>
+      </div>
+    );
+  }
   const visibleImages = productImages.filter((_, index) => !brokenImageIndexes.includes(index));
   const price = product.puntoPasPrice || product.pvpPrice || product.price;
   const visibleRelated = relatedProducts.slice(carouselStart, carouselStart + 6);
