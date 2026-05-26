@@ -7,7 +7,8 @@ import { TopBar } from "@/components/TopBar";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { WhatsAppButton } from "@/components/WhatsAppButton";
-import { paymentBadges } from "@/utils/paymentBadges";
+import { paymentBadgeCandidates, paymentBadges } from "@/utils/paymentBadges";
+import { handleAssetFallback } from "@/utils/assetFallback";
 
 const normalizeCategory = (value: string) =>
   (value || "")
@@ -295,8 +296,16 @@ const ProductPage = () => {
               <div>
                 <p className="mb-2 text-sm font-semibold text-slate-700">Modos de pago</p>
                 <div className="flex flex-wrap items-center gap-3">
-                  {paymentBadges.map((badge) => (
-                    <img key={badge} src={badge} alt="Metodo de pago" className="h-14 w-auto rounded-md border border-slate-200 bg-white p-1.5" />
+                  {paymentBadges.map((badge, index) => (
+                    <img
+                      key={`payment-badge-page-${index}`}
+                      src={badge}
+                      alt="Metodo de pago"
+                      className="h-14 w-auto rounded-md border border-slate-200 bg-white p-1.5"
+                      data-fallbacks={paymentBadgeCandidates[index]?.join("|")}
+                      data-fallback-index="0"
+                      onError={handleAssetFallback}
+                    />
                   ))}
                 </div>
               </div>

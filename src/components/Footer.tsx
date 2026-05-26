@@ -1,7 +1,8 @@
 import { MapPin, Phone, Mail, Clock, Shield, Home, Info, ShoppingCart, FileText, PackageSearch } from "lucide-react";
 import { Link } from "react-router-dom";
 import logoPuntoPas from "@/assets/logo-punto-pas.png";
-import { paymentBadges } from "@/utils/paymentBadges";
+import { paymentBadgeCandidates, paymentBadges } from "@/utils/paymentBadges";
+import { handleAssetFallback } from "@/utils/assetFallback";
 
 interface FooterProps {
   onCartClick?: () => void;
@@ -213,8 +214,16 @@ export const Footer = ({ onCartClick }: FooterProps) => {
         <div className="max-w-7xl mx-auto px-4 py-5">
           <p className="mb-3 text-center text-sm font-semibold text-white">Tipos de pago</p>
           <div className="flex flex-wrap items-center justify-center gap-3">
-            {paymentBadges.map((badge) => (
-              <img key={badge} src={badge} alt="Tipo de pago" className="h-14 w-auto rounded-md border border-white/20 bg-white p-1.5" />
+            {paymentBadges.map((badge, index) => (
+              <img
+                key={`payment-badge-footer-${index}`}
+                src={badge}
+                alt="Tipo de pago"
+                className="h-14 w-auto rounded-md border border-white/20 bg-white p-1.5"
+                data-fallbacks={paymentBadgeCandidates[index]?.join("|")}
+                data-fallback-index="0"
+                onError={handleAssetFallback}
+              />
             ))}
           </div>
         </div>

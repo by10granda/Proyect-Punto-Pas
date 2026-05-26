@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { X, Minus, Plus, ShoppingCart, Check, ChevronLeft, ChevronRight } from "lucide-react";
 import { Product } from "@/data/products";
-import { paymentBadges } from "@/utils/paymentBadges";
+import { paymentBadgeCandidates, paymentBadges } from "@/utils/paymentBadges";
+import { handleAssetFallback } from "@/utils/assetFallback";
 
 interface ProductModalProps {
   product: Product | null;
@@ -108,8 +109,16 @@ export const ProductModal = ({ product, isOpen, onClose, onAddToCart, relatedPro
               <div>
                 <p className="mb-2 text-sm font-semibold text-slate-700">Modos de pago</p>
                 <div className="flex flex-wrap items-center gap-2">
-                  {paymentBadges.map((badge) => (
-                    <img key={badge} src={badge} alt="Metodo de pago" className="h-10 w-auto rounded-md border border-slate-200 bg-white p-1" />
+                  {paymentBadges.map((badge, index) => (
+                    <img
+                      key={`payment-badge-modal-${index}`}
+                      src={badge}
+                      alt="Metodo de pago"
+                      className="h-10 w-auto rounded-md border border-slate-200 bg-white p-1"
+                      data-fallbacks={paymentBadgeCandidates[index]?.join("|")}
+                      data-fallback-index="0"
+                      onError={handleAssetFallback}
+                    />
                   ))}
                 </div>
               </div>
