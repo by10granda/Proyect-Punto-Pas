@@ -2,10 +2,9 @@ import { Product } from "@/data/products";
 import { useState, useEffect } from "react";
 import { useImageCandidateFallback } from "@/hooks/useImageCandidateFallback";
 
-const ProductCardGrid = ({ product, onAddToCart, onProductClick }: {
+const ProductCardGrid = ({ product, onAddToCart }: {
   product: Product;
   onAddToCart: (product: Product, quantity: number) => void;
-  onProductClick: (product: Product) => void;
 }) => {
   const [quantity, setQuantity] = useState(1);
   const hasStock = product.stock > 0;
@@ -30,10 +29,12 @@ const ProductCardGrid = ({ product, onAddToCart, onProductClick }: {
   };
 
   return (
-    <div 
+    <a
+      href={`/product/${product.id}`}
+      target="_blank"
+      rel="noopener noreferrer"
       className="group bg-white rounded-xl overflow-hidden cursor-pointer h-full flex flex-col transition-all duration-200 sm:hover:shadow-sm"
       style={{ border: '1px solid #ececec', boxShadow: '0 1px 4px rgba(0,0,0,0.025)' }}
-      onClick={() => onProductClick(product)}
     >
         <div className="relative aspect-[4/5] bg-gray-50/60 overflow-hidden">
         {!hasStock && (
@@ -120,16 +121,15 @@ const ProductCardGrid = ({ product, onAddToCart, onProductClick }: {
           </button>
         </div>
       </div>
-    </div>
+    </a>
   );
 };
 
 const ITEMS_PER_PAGE = 18;
 
-export const ProductGrid = ({ products, onAddToCart, onProductClick, title, showPagination = true, isLoading = false, resetPageKey = "" }: {
+export const ProductGrid = ({ products, onAddToCart, title, showPagination = true, isLoading = false, resetPageKey = "" }: {
   products: Product[];
   onAddToCart: (product: Product, quantity: number) => void;
-  onProductClick: (product: Product) => void;
   title?: string;
   showPagination?: boolean;
   isLoading?: boolean;
@@ -219,7 +219,6 @@ export const ProductGrid = ({ products, onAddToCart, onProductClick, title, show
             key={product.id}
             product={product}
             onAddToCart={onAddToCart}
-            onProductClick={onProductClick}
           />
         ))}
       </div>

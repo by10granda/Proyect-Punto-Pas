@@ -965,7 +965,6 @@ const Index = () => {
           <ProductGrid 
             products={displayedProducts}
             onAddToCart={handleAddToCart}
-            onProductClick={handleProductClick}
             title={getTitle()}
             showPagination={!searchQuery}
             isLoading={isLoadingProducts}

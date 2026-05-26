@@ -5,11 +5,10 @@ import { useImageCandidateFallback } from "@/hooks/useImageCandidateFallback";
 interface ProductCardProps {
   product: Product;
   onAddToCart: (product: Product) => void;
-  onProductClick: (product: Product) => void;
   compact?: boolean;
 }
 
-export const ProductCard = memo(({ product, onAddToCart, onProductClick, compact = false }: ProductCardProps) => {
+export const ProductCard = memo(({ product, onAddToCart, compact = false }: ProductCardProps) => {
   const hasStock = product.stock > 0;
   const imageCandidates = (product.images && product.images.length > 0 ? product.images : [product.image]).filter(Boolean);
   const { imageError, resolvedImageSrc, handleImageError } = useImageCandidateFallback({
@@ -23,13 +22,15 @@ export const ProductCard = memo(({ product, onAddToCart, onProductClick, compact
     : 0;
 
   return (
-    <div 
+    <a
+      href={`/product/${product.id}`}
+      target="_blank"
+      rel="noopener noreferrer"
       className="group bg-white rounded-xl overflow-hidden cursor-pointer h-full flex flex-col transition-all duration-200 sm:hover:shadow-md sm:hover:-translate-y-0.5"
       style={{ 
         border: '1px solid #efefef',
         boxShadow: '0 1px 6px rgba(0,0,0,0.03)'
       }}
-      onClick={() => onProductClick(product)}
     >
       <div className={`relative ${compact ? "aspect-[4/3]" : "aspect-[4/5]"} bg-gray-50 overflow-hidden`}>
         {!hasStock && (
@@ -105,6 +106,6 @@ export const ProductCard = memo(({ product, onAddToCart, onProductClick, compact
           </button>
         </div>
       </div>
-    </div>
+    </a>
   );
 });

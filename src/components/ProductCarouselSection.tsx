@@ -116,7 +116,6 @@ export const ProductCarouselSection = ({
                       <ProductCard
                         product={product}
                         onAddToCart={onAddToCart}
-                        onProductClick={onProductClick}
                         compact
                       />
                     </div>
@@ -169,7 +168,6 @@ export const ProductCarouselSection = ({
                       <ProductCard
                         product={product}
                         onAddToCart={onAddToCart}
-                        onProductClick={onProductClick}
                       />
                     </div>
                   ))}
