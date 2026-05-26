@@ -526,8 +526,66 @@ const Index = () => {
   }, [weeklyDealsCategory, allProducts]);
 
   const displayedProducts = useMemo(() => {
-    return filteredProducts;
-  }, [filteredProducts]);
+    const isMainAllProductsView =
+      activeTab === "home" &&
+      !searchQuery &&
+      mainFilter.mode === "none" &&
+      selectedCategory === "all" &&
+      selectedType === "all" &&
+      selectedBrand === "all";
+
+    if (!isMainAllProductsView) {
+      return filteredProducts;
+    }
+
+    const categoryPriorityGroups = [
+      ["CONGELADORES Y NEVERAS"],
+      ["AIRE ACONDICIONADO", "AIRES ACONDICIONADOS"],
+      ["TELEVISORES"],
+      ["COCINAS"],
+      ["MUEBLERIA COMEDORES Y MESAS", "COLCHONES"],
+    ];
+
+    const normalize = (value: string) =>
+      (value || "")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toUpperCase()
+        .trim();
+
+    const getPriority = (product: Product) => {
+      const category = normalize(product.category || "");
+      const type = normalize(product.type || "");
+
+      for (let index = 0; index < categoryPriorityGroups.length; index += 1) {
+        const group = categoryPriorityGroups[index];
+        const matches = group.some((target) => {
+          const normalizedTarget = normalize(target);
+          return (
+            category === normalizedTarget ||
+            type === normalizedTarget ||
+            category.includes(normalizedTarget) ||
+            type.includes(normalizedTarget)
+          );
+        });
+
+        if (matches) return index;
+      }
+
+      return categoryPriorityGroups.length;
+    };
+
+    return [...filteredProducts].sort((a, b) => {
+      const priorityDiff = getPriority(a) - getPriority(b);
+      if (priorityDiff !== 0) return priorityDiff;
+
+      const aInStock = (a.stock || 0) > 0 ? 1 : 0;
+      const bInStock = (b.stock || 0) > 0 ? 1 : 0;
+      if (aInStock !== bInStock) return bInStock - aInStock;
+
+      return (a.name || "").localeCompare(b.name || "");
+    });
+  }, [activeTab, searchQuery, mainFilter.mode, selectedCategory, selectedType, selectedBrand, filteredProducts]);
 
   const showEnvLaptopBannerInSearch = useMemo(() => {
     if (mainFilter.mode !== "search" || !searchQuery.trim()) {
