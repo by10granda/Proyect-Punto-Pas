@@ -538,6 +538,40 @@ const Index = () => {
       return filteredProducts;
     }
 
+    const fixedRowsByCode = [
+      ["00000394", "00000397", "00001057", "00000469", "00000470", "00000396"],
+      ["00000463", "00000464", "00000465", "00000466", "00000467", "00000468"],
+      ["00000399", "00000400", "00000401", "00000402", "00001585", "00000271"],
+      ["00000719", "00000723", "00000671", "00000718", "00000663", "00000666"],
+      ["00000862", "00000937", "00001660", "00000036", "00001291", "00000830"],
+      ["00001530", "00001535", "00001541", "00001546", "00000496", "00000502"],
+    ];
+
+    const normalizeCode = (value: string | number | undefined | null) =>
+      String(value || "").trim().padStart(8, "0").substring(0, 8);
+
+    const productByCode = new Map<string, Product>();
+    filteredProducts.forEach((product) => {
+      const key = normalizeCode(product.code || product.id);
+      if (!productByCode.has(key)) {
+        productByCode.set(key, product);
+      }
+    });
+
+    const fixedProducts: Product[] = [];
+    const usedIds = new Set<string>();
+    fixedRowsByCode.flat().forEach((code) => {
+      const product = productByCode.get(code);
+      if (!product || usedIds.has(product.id)) return;
+      usedIds.add(product.id);
+      fixedProducts.push(product);
+    });
+
+    if (fixedProducts.length > 0) {
+      const remainingProducts = filteredProducts.filter((product) => !usedIds.has(product.id));
+      return [...fixedProducts, ...remainingProducts];
+    }
+
     const categoryRowGroups = [
       ["CONGELADOR", "CONGELADORES"],
       ["REFRIGERADORA", "REFRIGERADORAS", "NEVERA", "NEVERAS"],
