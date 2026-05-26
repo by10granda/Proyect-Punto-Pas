@@ -302,6 +302,30 @@ const Index = () => {
   }, [searchParams, searchQuery]);
 
   useEffect(() => {
+    const brand = searchParams.get("brand");
+    if (!brand) return;
+
+    const normalizedBrand = decodeURIComponent(brand).trim().toUpperCase();
+    if (!normalizedBrand) return;
+
+    setMainFilter({ mode: "brand", value: normalizedBrand });
+    setSelectedBrand(normalizedBrand);
+    setSelectedCategory("all");
+    setSelectedType("all");
+    setCarouselCategory("all");
+    setOffersCategory("all");
+    setSearchQuery("");
+    setActiveTab("home");
+
+    setTimeout(() => {
+      const productsSection = document.getElementById("productos");
+      if (productsSection) {
+        productsSection.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }, 120);
+  }, [searchParams]);
+
+  useEffect(() => {
     const query = searchParams.get("q");
     if (!query) {
       window.scrollTo({ top: 0, behavior: "auto" });
@@ -680,6 +704,9 @@ const Index = () => {
   const getTitle = () => {
     if (searchQuery) {
       return `Resultados para "${searchQuery}"`;
+    }
+    if (mainFilter.mode === "brand" && selectedBrand !== "all") {
+      return `Marca: ${selectedBrand}`;
     }
     if (mainFilter.mode === "type" && selectedType !== "all") {
       return `Tipo: ${selectedType}`;
