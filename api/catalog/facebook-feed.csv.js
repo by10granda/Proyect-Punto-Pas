@@ -41,7 +41,7 @@ const fetchJson = async (url) => {
 };
 
 export default async function handler(req, res) {
-  if (req.method !== "GET") {
+  if (!(req.method === "GET" || req.method === "HEAD")) {
     res.status(405).json({ error: "Method not allowed" });
     return;
   }
@@ -113,6 +113,10 @@ export default async function handler(req, res) {
     res.status(200);
     res.setHeader("Content-Type", "text/csv; charset=utf-8");
     res.setHeader("Cache-Control", "public, max-age=900, s-maxage=900");
+    if (req.method === "HEAD") {
+      res.end();
+      return;
+    }
     res.send(rows.join("\n"));
   } catch (error) {
     res.status(500).json({
