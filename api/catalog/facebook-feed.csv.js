@@ -32,7 +32,7 @@ const buildProductImageUrl = (code) =>
 
 const fetchJson = async (url, token) => {
   const headers = {};
-  if (token) headers.Authorization = token;
+  if (token) headers.Authorization = `Bearer ${token}`;
   const response = await fetch(url, { method: "GET", headers });
   if (!response.ok) {
     throw new Error(`Upstream error ${response.status} at ${url}`);
@@ -54,7 +54,7 @@ const loginSiape = async (apiBaseUrl) => {
     throw new Error(`No se pudo autenticar en API (${response.status})`);
   }
 
-  return response.text();
+  return response.text().then((value) => String(value || "").trim());
 };
 
 export default async function handler(req, res) {
