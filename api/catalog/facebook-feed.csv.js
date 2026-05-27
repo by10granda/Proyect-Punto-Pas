@@ -1,7 +1,5 @@
-const SIAPE_BASE_URL = process.env.SIAPE_BASE_URL || "http://26.65.247.204:91/api";
-
-const normalizeBaseUrl = () =>
-  SIAPE_BASE_URL.endsWith("/") ? SIAPE_BASE_URL.slice(0, -1) : SIAPE_BASE_URL;
+const SIAPE_USERNAME = process.env.SIAPE_FEED_USERNAME || process.env.VITE_SIAPE_USERNAME || "Yuberin";
+const SIAPE_PASSWORD = process.env.SIAPE_FEED_PASSWORD || process.env.VITE_SIAPE_PASSWORD || "2015";
 
 const normalizeCode = (value) => String(value || "").trim().padStart(8, "0").substring(0, 8);
 
@@ -32,12 +30,31 @@ const getPublicBaseUrl = (req) => {
 const buildProductImageUrl = (code) =>
   `https://assets.distribuidor-puntopas.com/PRODUCTOS_ESMERALDAS2/${code}_E.png`;
 
-const fetchJson = async (url) => {
-  const response = await fetch(url, { method: "GET" });
+const fetchJson = async (url, token) => {
+  const headers = {};
+  if (token) headers.Authorization = token;
+  const response = await fetch(url, { method: "GET", headers });
   if (!response.ok) {
     throw new Error(`Upstream error ${response.status} at ${url}`);
   }
   return response.json();
+};
+
+const loginSiape = async (apiBaseUrl) => {
+  const response = await fetch(`${apiBaseUrl}/usuario/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      login: SIAPE_USERNAME,
+      password: SIAPE_PASSWORD,
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`No se pudo autenticar en API (${response.status})`);
+  }
+
+  return response.text();
 };
 
 export default async function handler(req, res) {
@@ -47,10 +64,12 @@ export default async function handler(req, res) {
   }
 
   try {
-    const base = normalizeBaseUrl();
+    const siteBaseUrl = getPublicBaseUrl(req);
+    const apiBaseUrl = `${siteBaseUrl}/api`;
+    const token = await loginSiape(apiBaseUrl);
     const [items, inventory] = await Promise.all([
-      fetchJson(`${base}/item/search3`),
-      fetchJson(`${base}/item/inventario`).catch(() => []),
+      fetchJson(`${apiBaseUrl}/item/search3`, token),
+      fetchJson(`${apiBaseUrl}/item/inventario`, token).catch(() => []),
     ]);
 
     const inventoryMap = new Map();
@@ -60,7 +79,6 @@ export default async function handler(req, res) {
       });
     }
 
-    const siteBaseUrl = getPublicBaseUrl(req);
     const currency = detectCurrency();
 
     const headers = [
