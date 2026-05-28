@@ -9,6 +9,7 @@ interface ProductMapperOptions {
 }
 
 const PRODUCTS_BASE_URL = (import.meta.env.VITE_PRODUCTS_BASE_URL as string | undefined) || '';
+const PRODUCTS_BACKUP_BASE_URL = (import.meta.env.VITE_PRODUCTS_BACKUP_BASE_URL as string | undefined) || '';
 
 const isPlaceholderBrand = (value: string) => {
   const cleaned = value.replace(/\s+/g, '');
@@ -43,29 +44,41 @@ const resolveBrand = (item: ApiProductItem) => {
   return inferBrandFromName(item.descripcionItem || '');
 };
 
-const getProductImages = (codigo: string, imageVersion: string): string[] => {
-  const paddedCode = codigo.padStart(8, '0').substring(0, 8);
+const withVersionQuery = (url: string, imageVersion: string) => {
+  if (!imageVersion) return url;
+  const versionValue = imageVersion.replace(/^v/i, '');
+  return `${url}${url.includes('?') ? '&' : '?'}v=${versionValue}`;
+};
+
+const buildImageCandidates = (baseUrl: string, paddedCode: string, suffixes: string[], extensions: string[]) => {
+  const normalizedBaseUrl = baseUrl.replace(/\/$/, '');
+  if (!normalizedBaseUrl) return [];
+
   const images: string[] = [];
-  const baseUrl = PRODUCTS_BASE_URL.replace(/\/$/, '');
-  const suffixes = ['_E', ...Array.from({ length: 12 }, (_, index) => `_E${index + 2}`)];
-  const extensions = ['.png', '.PNG'];
-
-  if (baseUrl) {
-    suffixes.forEach((suffix) => {
-      extensions.forEach((ext) => {
-        images.push(`${baseUrl}/${paddedCode}${suffix}${ext}`);
-      });
-    });
-    return Array.from(new Set(images));
-  }
-
   suffixes.forEach((suffix) => {
     extensions.forEach((ext) => {
-      images.push(`https://assets.distribuidor-puntopas.com/PRODUCTOS_ESMERALDAS2/${paddedCode}${suffix}${ext}`);
+      images.push(`${normalizedBaseUrl}/${paddedCode}${suffix}${ext}`);
     });
   });
 
-  return Array.from(new Set(images));
+  return images;
+};
+
+const getProductImages = (codigo: string, imageVersion: string): string[] => {
+  const paddedCode = codigo.padStart(8, '0').substring(0, 8);
+  const suffixes = ['_E', ...Array.from({ length: 12 }, (_, index) => `_E${index + 2}`)];
+  const extensions = ['.png', '.PNG'];
+  const primaryImages = buildImageCandidates(PRODUCTS_BASE_URL, paddedCode, suffixes, extensions);
+  const defaultTunnelImages = buildImageCandidates('https://assets.distribuidor-puntopas.com/PRODUCTOS_ESMERALDAS2', paddedCode, suffixes, extensions);
+  const backupImages = buildImageCandidates(PRODUCTS_BACKUP_BASE_URL, paddedCode, suffixes, ['.png']);
+
+  const imageCandidates = [
+    ...backupImages,
+    ...primaryImages,
+    ...defaultTunnelImages,
+  ];
+
+  return Array.from(new Set(imageCandidates)).map((image) => withVersionQuery(image, imageVersion));
 };
 
 const normalizeProductCode = (value: string | undefined | null) =>
