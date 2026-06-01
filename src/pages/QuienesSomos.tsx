@@ -18,18 +18,6 @@ const QUIENES_HERO_CANDIDATES = buildAssetCandidates(ASSETS_BASE_URL, "PORTADAS"
 
 const milestones = [
   {
-    year: "2000",
-    title: "Nuestros Inicios",
-    description: "Punto Pas inicia sus actividades en el año 2000 bajo la dirección del Empresario Franco Becerra, dedicándose a la comercialización de madera. Gracias al esfuerzo, trabajo constante y compromiso con sus clientes, la empresa logra posicionarse como un proveedor confiable en su sector.",
-     image: "https://assets.distribuidor-puntopas.com/EMPRENDIMIENTOS_PRESENTACIONES/MADEDERA_Q1.png"
-  },
-  {
-    year: "2007",
-    title: "Primer Local Stihl",
-    description: "Con el valioso apoyo y respaldo incondicional de su esposa Marlene Ambuldi, El empresario Franco Becerra materializa una visión empresarial estratégica al fundar el primer local Stihl, marcando así el inicio de una alianza comercial con una de las marcas más prestigiosas del sector de maquinaria y equipos de exterior.",
-     image: "https://assets.distribuidor-puntopas.com/EMPRENDIMIENTOS_PRESENTACIONES/QUIENES_SOMOS_2.png"
-  },
-  {
     year: "2008",
     title: "Expansión y Diversificación",
     description: "Con una visión de crecimiento y diversificación, Punto Pas abre su primera sucursal en San Lorenzo, incorporando la franquicia Disensa, ampliando así su oferta hacia productos de ferretería, construcción y maquinaria.",
@@ -186,19 +174,16 @@ export const QuienesSomos = () => {
                      ¿Quiénés somos?
                     </h2>
                   </div>
-                 <p className="text-muted-foreground leading-relaxed text-justify">
-                   En <strong className="text-foreground">Punto-Pas</strong> somos una empresa
-                   dedicada a la comercialización de una amplia variedad de productos para el hogar,
-                   la construcción y el uso diario. Ofrecemos desde artículos de ferretería y materiales
-                   de construcción hasta electrodomésticos, brindando a nuestros clientes soluciones
-                   completas en un solo lugar.
-                 </p>
-                 <p className="text-muted-foreground leading-relaxed mt-4 text-justify">
-                   Nos caracterizamos por la <strong className="text-primary">calidad de nuestros productos</strong>,
-                   la atención personalizada y el compromiso con la satisfacción de quienes
-                   confían en nosotros.
-                 </p>
-               </div>
+                  <p className="text-muted-foreground leading-relaxed text-justify">
+                    Distribuidor Punto PAS es una empresa moderna, dedicada a la comercialización y distribución de una amplia variedad de productos para el hogar y la construcción. Entre sus principales marcas se encuentran DISENSA, STIHIL, YAMAHA, INDURAMA, RCA, TCL, MABE, ELECTROLUX y un mundo de artículos para el hogar.
+                  </p>
+                  <p className="text-muted-foreground leading-relaxed mt-4 text-justify">
+                    Con una sólida trayectoria en el mercado ecuatoriano, Distribuidor Punto PAS trabaja constantemente para brindar a sus clientes productos confiables, precios competitivos y una atención personalizada. Su objetivo es abastecer tanto a clientes, clientes mayoristas como minoristas, ofreciendo soluciones integrales para hogares, negocios y proyectos de diversa magnitud.
+                  </p>
+                  <p className="text-muted-foreground leading-relaxed mt-4 text-justify">
+                    Gracias a su compromiso con la calidad de productos, el servicio y la innovación, Distribuidor Punto PAS se ha consolidado como una empresa confiable para nuestros clientes.
+                  </p>
+                </div>
 
               {/* Misión y Visión en grid */}
               <div className="grid md:grid-cols-2 gap-6">
