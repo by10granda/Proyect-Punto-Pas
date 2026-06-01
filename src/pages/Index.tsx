@@ -119,7 +119,7 @@ const topBanner2Candidates = [
   ...buildAssetCandidates(ASSETS_BASE_URL, "VIDEOS_PRINCIPALES", "VIDEOS PRINCIPALES2.gif"),
 ];
 const secondBannerCandidates = [
-  "https://res.cloudinary.com/dx08ybps6/image/upload/v1779574039/FIFIERE_TODAS_TUS_COMPRAS_ONLINE.png",
+  "https://res.cloudinary.com/dx08ybps6/image/upload/v1780325479/FIFIERE_TODAS_TUS_COMPRAS_ONLINE.png",
   ...buildAssetCandidates(ASSETS_BASE_URL, "VIDEOS_PRINCIPALES", "FIFIERE TODAS TUS COMPRAS ONLINE.png"),
   ...buildAssetCandidates(ASSETS_BASE_URL, "VIDEOS_PRINCIPALES", "DIFIERE TODAS TUS COMPRAS ONLINE.png"),
 ];
