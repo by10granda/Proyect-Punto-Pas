@@ -21,7 +21,7 @@ const milestones = [
     year: "2008",
     title: "Expansión y Diversificación",
     description: "Con una visión de crecimiento y diversificación, Punto Pas abre su primera sucursal en San Lorenzo, incorporando la franquicia Disensa, ampliando así su oferta hacia productos de ferretería, construcción y maquinaria.",
-     image: "https://assets.distribuidor-puntopas.com/EMPRENDIMIENTOS_PRESENTACIONES/DISENSA_1.png"
+     image: "https://res.cloudinary.com/dx08ybps6/image/upload/v1780353801/disensa.png"
   },
   {
     year: "2025",
