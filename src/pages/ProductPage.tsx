@@ -387,6 +387,13 @@ const ProductPage = () => {
             </aside>
           </div>
 
+          <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-5 md:p-6">
+            <h2 className="text-xl font-bold text-slate-900">Descripción del producto</h2>
+            <p className="mt-3 whitespace-pre-line text-sm leading-7 text-slate-600 md:text-base">
+              {product.description || "Este producto cuenta con una excelente calidad y desempeño. Diseñado para satisfacer tus necesidades con la mejor relación calidad-precio del mercado."}
+            </p>
+          </div>
+
           <div className="mt-6 border-t pt-5">
             <div className="mb-3 flex items-center justify-between">
               <h2 className="text-xl font-bold text-slate-900">Productos relacionados</h2>

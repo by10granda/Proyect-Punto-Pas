@@ -12,6 +12,9 @@ const manualStockOverrides: Record<string, number> = {
   '00001776': 0,
 };
 
+const PRODUCT_DESCRIPTIONS_SHEET_CSV_URL =
+  'https://docs.google.com/spreadsheets/d/1Vw3Rb0Q0U5WSn5UciiJ8FuGsYtdWrOO9GLlQzphdiEA/export?format=csv&gid=0';
+
 
 let classificationsList: string[] = [];
 const classificationsHierarchy: Map<number, { name: string; level: number; parentId: number | null }> = new Map();
@@ -186,8 +189,49 @@ export const searchProducts = (query: string): Product[] => {
 
 let apiProducts: Product[] | null = null;
 let apiProductsLastSyncAt = 0;
+let productDescriptionsByCode: Record<string, string> = {};
 const inventarioMap: Record<string, number> = {};
 let updateInventoryCallback: ((products: Product[]) => void) | null = null;
+
+const unescapeCsvValue = (value: string) => value.replace(/^"|"$/g, '').replace(/""/g, '"').trim();
+
+const parseSheetCsv = (csv: string): Record<string, string> => {
+  const map: Record<string, string> = {};
+  const lines = csv.split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
+
+  for (const line of lines) {
+    const firstCommaIndex = line.indexOf(',');
+    if (firstCommaIndex <= 0) continue;
+
+    const code = unescapeCsvValue(line.slice(0, firstCommaIndex));
+    const description = unescapeCsvValue(line.slice(firstCommaIndex + 1));
+
+    if (!code || !description) continue;
+    if (/^codigo$/i.test(code) || /^descripci[oó]n$/i.test(description)) continue;
+
+    map[normalizeProductCode(code)] = description;
+  }
+
+  return map;
+};
+
+const loadProductDescriptionsFromSheet = async (): Promise<Record<string, string>> => {
+  try {
+    const response = await fetch(PRODUCT_DESCRIPTIONS_SHEET_CSV_URL);
+    if (!response.ok) return productDescriptionsByCode;
+
+    const csv = await response.text();
+    const parsed = parseSheetCsv(csv);
+    if (Object.keys(parsed).length > 0) {
+      productDescriptionsByCode = parsed;
+    }
+
+    return productDescriptionsByCode;
+  } catch (error) {
+    console.error('Error loading product descriptions from sheet:', error);
+    return productDescriptionsByCode;
+  }
+};
 
 export const setInventoryUpdateCallback = (callback: (products: Product[]) => void) => {
   updateInventoryCallback = callback;
@@ -251,9 +295,10 @@ export const loadProductsFromAPI = async ({
       return [];
     }
 
-    const [inventario, clasificaciones] = await Promise.all([
+    const [inventario, clasificaciones, descriptionsByCode] = await Promise.all([
       productService.getInventario().catch(() => []),
-      productService.getClasificacionItem().catch(() => [])
+      productService.getClasificacionItem().catch(() => []),
+      loadProductDescriptionsFromSheet().catch(() => ({}))
     ]);
 
     if (inventario && Array.isArray(inventario) && inventario.length > 0) {
@@ -337,6 +382,12 @@ export const loadProductsFromAPI = async ({
       customProductImages,
       inventarioMap,
       getFriendlyCategory,
+    });
+    apiProducts = apiProducts.map((product) => {
+      const normalizedCode = normalizeProductCode(product.code || product.id);
+      const sheetDescription = descriptionsByCode[normalizedCode];
+      if (!sheetDescription) return product;
+      return { ...product, description: sheetDescription };
     });
     apiProducts = apiProducts.map((product) => {
       const code = normalizeProductCode(product.code || product.id);
