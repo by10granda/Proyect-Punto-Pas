@@ -23,6 +23,7 @@ const ProductCardGrid = ({ product, onAddToCart }: {
       : 0;
 
   const handleAdd = (e: React.MouseEvent) => {
+    e.preventDefault();
     e.stopPropagation();
     onAddToCart(product, quantity);
     setQuantity(1);
@@ -79,7 +80,7 @@ const ProductCardGrid = ({ product, onAddToCart }: {
             </div>
             <div className="flex items-center gap-1 justify-between sm:justify-start">
               <button
-                onClick={(e) => { e.stopPropagation(); setQuantity(q => Math.max(1, q - 1)); }}
+                onClick={(e) => { e.preventDefault(); e.stopPropagation(); setQuantity(q => Math.max(1, q - 1)); }}
                 disabled={!hasStock || quantity <= 1}
                 className="w-5.5 h-5.5 rounded-md flex items-center justify-center text-[10px] font-bold disabled:opacity-30"
                 style={{ backgroundColor: '#f3f4f6', color: '#374151' }}
@@ -96,12 +97,12 @@ const ProductCardGrid = ({ product, onAddToCart }: {
                   const val = parseInt(e.target.value) || 1;
                   setQuantity(Math.max(1, Math.min(val, Math.max(1, product.stock))));
                 }}
-                onClick={(e) => e.stopPropagation()}
+                onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
                 className="w-8 h-5.5 rounded-md text-center text-[11px] font-semibold border"
                 style={{ borderColor: '#e5e7eb' }}
               />
               <button
-                onClick={(e) => { e.stopPropagation(); setQuantity(q => Math.min(Math.max(1, product.stock), q + 1)); }}
+                onClick={(e) => { e.preventDefault(); e.stopPropagation(); setQuantity(q => Math.min(Math.max(1, product.stock), q + 1)); }}
                 disabled={!hasStock || quantity >= Math.max(1, product.stock)}
                 className="w-5.5 h-5.5 rounded-md flex items-center justify-center text-[10px] font-bold disabled:opacity-30"
                 style={{ backgroundColor: '#f3f4f6', color: '#374151' }}

@@ -95,6 +95,7 @@ export const ProductCard = memo(({ product, onAddToCart, compact = false }: Prod
 
           <button
             onClick={(e) => {
+              e.preventDefault();
               e.stopPropagation();
               onAddToCart(product);
             }}
