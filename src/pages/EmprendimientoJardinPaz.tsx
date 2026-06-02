@@ -1,10 +1,14 @@
 import { Link } from "react-router-dom";
 import { ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const JARDIN_IMAGES_BASE_URL = "https://assets.distribuidor-puntopas.com/EMPRENDIMIENTOS_PRESENTACIONES";
+const JARDIN_CLOUDINARY_BASE_URL = "https://res.cloudinary.com/dx08ybps6/video/upload/v1780353801";
 
-const portadaVideo = `${JARDIN_IMAGES_BASE_URL}/JARDIN_DE_LA_PAZ_PORTADA2.mp4`;
+const portadaVideoCandidates = [
+  `${JARDIN_CLOUDINARY_BASE_URL}/JARDIN_DE_LA_PAZ_PORTADA2.mp4`,
+  `${JARDIN_IMAGES_BASE_URL}/JARDIN_DE_LA_PAZ_PORTADA2.mp4`,
+];
 const portadaImagen = `${JARDIN_IMAGES_BASE_URL}/Jardin_de_la_Paz_Portada1.png`;
 
 const cuerpoImages = [
@@ -15,6 +19,13 @@ const cuerpoImages = [
 
 const EmprendimientoJardinPaz = () => {
   const [activePortada, setActivePortada] = useState(0);
+  const [activeVideoIndex, setActiveVideoIndex] = useState(0);
+
+  useEffect(() => {
+    if (activePortada === 0) {
+      setActiveVideoIndex(0);
+    }
+  }, [activePortada]);
 
   const nextPortada = () => setActivePortada((prev) => (prev + 1) % 2);
   const prevPortada = () => setActivePortada((prev) => (prev - 1 + 2) % 2);
@@ -39,13 +50,22 @@ const EmprendimientoJardinPaz = () => {
           <div className="relative overflow-hidden">
             {activePortada === 0 ? (
               <video
-                src={portadaVideo}
+                src={portadaVideoCandidates[activeVideoIndex]}
                 autoPlay
                 muted
                 loop
                 playsInline
                 preload="auto"
                 className="block w-full h-auto bg-black"
+                onError={(event) => {
+                  const video = event.currentTarget;
+                  const nextIndex = activeVideoIndex + 1;
+                  if (nextIndex >= portadaVideoCandidates.length) return;
+                  setActiveVideoIndex(nextIndex);
+                  video.src = portadaVideoCandidates[nextIndex];
+                  video.load();
+                  video.play().catch(() => {});
+                }}
               />
             ) : (
               <img
