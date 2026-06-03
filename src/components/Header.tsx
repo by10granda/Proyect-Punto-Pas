@@ -1067,16 +1067,16 @@ export const Header = ({ cartCount, searchQuery: propSearchQuery, onSearch, onCa
 
                 <button
                   onClick={openGarantias}
-                  className="w-full flex items-center gap-3 p-3 rounded-lg bg-gradient-to-r from-emerald-50 to-lime-50 hover:from-emerald-100 hover:to-lime-100 border border-emerald-100 hover:border-emerald-300 transition-all duration-300 group"
+                  className="w-full flex items-center gap-3 p-3 rounded-lg bg-gradient-to-r from-emerald-600 to-lime-600 hover:from-emerald-700 hover:to-lime-700 border border-emerald-400 transition-all duration-300 group shadow-lg shadow-emerald-900/10"
                 >
-                  <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-lime-500 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                  <div className="w-10 h-10 bg-white/18 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
                     <ShieldCheck className="w-5 h-5 text-white" />
                   </div>
                   <div className="text-left flex-1">
-                    <h3 className="font-bold text-gray-900 text-sm group-hover:text-emerald-700 transition-colors">Garantías</h3>
-                    <p className="text-xs text-gray-500">Consulta por factura</p>
+                    <h3 className="font-bold text-white text-sm transition-colors">Garantías</h3>
+                    <p className="text-xs text-white/80">Consulta por factura</p>
                   </div>
-                  <ShieldCheck className="w-4 h-4 text-emerald-400 group-hover:text-emerald-600 transition-colors" />
+                  <ShieldCheck className="w-4 h-4 text-white/85 transition-colors" />
                 </button>
               </div>
             </div>

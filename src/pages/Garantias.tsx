@@ -195,6 +195,7 @@ const Garantias = () => {
 
   const displayHeaders = Object.keys(matchedRows[0] || {});
   const message = matchedRows.length > 0 ? buildWarrantyMessage(matchedRows, searchedInvoice) : "";
+  const warrantyStatus = matchedRows.length > 0 ? getValueByAliases(matchedRows[0], ["estado", "situacion"]) : "";
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
@@ -268,8 +269,18 @@ const Garantias = () => {
 
             {matchedRows.length > 0 && (
               <div className="mt-6 space-y-5">
-                <div className="rounded-2xl border border-emerald-100 bg-emerald-50 p-5 text-sm leading-7 text-emerald-900">
-                  {message}
+                <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-[0_20px_70px_-45px_rgba(15,23,42,0.65)]">
+                  <div className="bg-gradient-to-r from-slate-950 via-slate-900 to-[#FA003F] px-5 py-6 text-center text-white md:px-8">
+                    <p className="text-xs font-bold uppercase tracking-[0.28em] text-white/65">Estado del producto</p>
+                    <h2 className="mt-3 text-3xl font-black uppercase tracking-wide md:text-5xl">
+                      {warrantyStatus || "Garantía registrada"}
+                    </h2>
+                  </div>
+                  <div className="px-5 py-6 md:px-8">
+                    <p className="mx-auto max-w-4xl text-center text-base leading-8 text-slate-700 md:text-lg">
+                      {message}
+                    </p>
+                  </div>
                 </div>
 
                 <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
