@@ -1,4 +1,4 @@
-import { Search, ShoppingCart, Mic, MicOff, Plus, Minus, MapPin, X, Headphones, Radio, Play, Pause, Shield, ChevronRight, SlidersHorizontal } from "lucide-react";
+import { Search, ShoppingCart, Mic, MicOff, Plus, Minus, MapPin, X, Headphones, Radio, Play, Pause, Shield, ShieldCheck, ChevronRight, SlidersHorizontal } from "lucide-react";
 import { useState, useRef, useEffect, useMemo } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AdvancedProductFilters, applyAdvancedProductFilters, defaultAdvancedProductFilters, getAdvancedFilterOptions } from "@/application/use-cases/advancedProductFilters";
@@ -59,7 +59,7 @@ export const Header = ({ cartCount, searchQuery: propSearchQuery, onSearch, onCa
   const { isPlaying, toggleRadio, currentSong, isLoading, error, volume, setVolume } = useRadio();
   const location = useLocation();
   const navigate = useNavigate();
-  const hideCommerceControls = ["/quienes-somos", "/sucursales", "/privacidad", "/politicas", "/seguimiento"].includes(location.pathname);
+  const hideCommerceControls = ["/quienes-somos", "/sucursales", "/privacidad", "/politicas", "/seguimiento", "/garantias"].includes(location.pathname);
   const menuRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLFormElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -529,6 +529,12 @@ export const Header = ({ cartCount, searchQuery: propSearchQuery, onSearch, onCa
   // Open Privacy Policy Page - Navega a la página de privacidad
   const openPrivacyPolicy = () => {
     navigate('/privacidad');
+    setIsMenuOpen(false);
+    scrollToTop();
+  };
+
+  const openGarantias = () => {
+    navigate('/garantias');
     setIsMenuOpen(false);
     scrollToTop();
   };
@@ -1057,6 +1063,20 @@ export const Header = ({ cartCount, searchQuery: propSearchQuery, onSearch, onCa
                     <p className="text-xs text-gray-500">Protección de datos</p>
                   </div>
                   <Shield className="w-4 h-4 text-slate-400 group-hover:text-slate-600 transition-colors" />
+                </button>
+
+                <button
+                  onClick={openGarantias}
+                  className="w-full flex items-center gap-3 p-3 rounded-lg bg-gradient-to-r from-emerald-50 to-lime-50 hover:from-emerald-100 hover:to-lime-100 border border-emerald-100 hover:border-emerald-300 transition-all duration-300 group"
+                >
+                  <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-lime-500 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                    <ShieldCheck className="w-5 h-5 text-white" />
+                  </div>
+                  <div className="text-left flex-1">
+                    <h3 className="font-bold text-gray-900 text-sm group-hover:text-emerald-700 transition-colors">Garantías</h3>
+                    <p className="text-xs text-gray-500">Consulta por factura</p>
+                  </div>
+                  <ShieldCheck className="w-4 h-4 text-emerald-400 group-hover:text-emerald-600 transition-colors" />
                 </button>
               </div>
             </div>
