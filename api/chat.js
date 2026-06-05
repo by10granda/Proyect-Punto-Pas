@@ -51,6 +51,23 @@ const compactProduct = (product) => ({
   precio: Number(getPrice(product) || 0).toFixed(2),
 });
 
+const extractOpenAIText = (data) => {
+  if (typeof data?.output_text === 'string' && data.output_text.trim()) return data.output_text.trim();
+
+  const output = Array.isArray(data?.output) ? data.output : [];
+  const textParts = [];
+
+  for (const item of output) {
+    const content = Array.isArray(item?.content) ? item.content : [];
+    for (const block of content) {
+      if (typeof block?.text === 'string') textParts.push(block.text);
+      if (typeof block?.content === 'string') textParts.push(block.content);
+    }
+  }
+
+  return textParts.join('\n').trim();
+};
+
 const KNOWLEDGE_BASE = [
   {
     title: 'Identidad de Distribuidor Punto PAS',
@@ -201,7 +218,7 @@ export default async function handler(req, res) {
     }
 
     const data = await response.json();
-    const text = data.output_text || 'Con gusto te ayudo. Puedes indicarme que producto, marca o presupuesto tienes en mente?';
+    const text = extractOpenAIText(data) || 'Con gusto te ayudo. Puedes indicarme que producto, marca o presupuesto tienes en mente?';
 
     return res.status(200).json({
       text,

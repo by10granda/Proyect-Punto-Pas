@@ -170,10 +170,15 @@ export const fallbackChatReply = (message: string, products: Product[]): ChatRep
 
 export const askAssistant = async (message: string, products: Product[], history: ChatTurn[] = []): Promise<ChatReply> => {
   try {
+    const relevantProducts = searchProducts(message, products).slice(0, 24);
+    const productsPayload = relevantProducts.length > 0
+      ? relevantProducts
+      : products.filter((product) => product.isActive).slice(0, 60);
+
     const response = await fetch("/api/chat", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message, products, history }),
+      body: JSON.stringify({ message, products: productsPayload, history }),
     });
 
     if (!response.ok) {
