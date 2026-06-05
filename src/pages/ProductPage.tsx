@@ -326,9 +326,9 @@ const ProductPage = () => {
               <img
                 src={selectedImage}
                 alt={product.name}
-                className="mx-auto h-[320px] w-full object-contain transition-transform duration-500 ease-out will-change-transform md:h-[560px]"
+                className="mx-auto h-[320px] w-full object-contain transition-transform duration-300 ease-out will-change-transform md:h-[560px]"
                 style={{
-                  transform: isImageZoomed ? "scale(1.06)" : "scale(1)",
+                  transform: isImageZoomed ? "scale(1.08)" : "scale(1)",
                   transformOrigin: `${zoomPosition.x}% ${zoomPosition.y}%`,
                 }}
                 onError={() => {
@@ -346,12 +346,12 @@ const ProductPage = () => {
                   top: `${zoomPosition.y}%`,
                   backgroundImage: `url(${selectedImage})`,
                   backgroundRepeat: "no-repeat",
-                  backgroundSize: "220%",
+                  backgroundSize: "270%",
                   backgroundPosition: zoomBackgroundPosition,
                 }}
               />
               <div
-                className={`pointer-events-none absolute right-4 top-4 hidden h-56 w-56 overflow-hidden rounded-2xl border border-white/80 bg-white shadow-[0_24px_70px_-28px_rgba(15,23,42,0.85)] ring-1 ring-slate-900/10 transition-all duration-300 xl:block ${isImageZoomed ? "translate-y-0 opacity-100" : "translate-y-2 opacity-0"}`}
+                className={`pointer-events-none absolute right-4 top-4 hidden h-56 w-56 overflow-hidden rounded-2xl border border-white/80 bg-white shadow-[0_24px_70px_-28px_rgba(15,23,42,0.85)] ring-1 ring-slate-900/10 transition-all duration-200 xl:block ${isImageZoomed ? "translate-y-0 opacity-100" : "translate-y-2 opacity-0"}`}
               >
                 <div className="border-b border-slate-100 bg-white/95 px-3 py-2 text-xs font-bold uppercase tracking-[0.16em] text-slate-500">
                   Vista ampliada
@@ -361,7 +361,7 @@ const ProductPage = () => {
                   style={{
                     backgroundImage: `url(${selectedImage})`,
                     backgroundRepeat: "no-repeat",
-                    backgroundSize: "230%",
+                    backgroundSize: "285%",
                     backgroundPosition: zoomBackgroundPosition,
                   }}
                 />
