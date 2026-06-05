@@ -51,6 +51,75 @@ const compactProduct = (product) => ({
   precio: Number(getPrice(product) || 0).toFixed(2),
 });
 
+const KNOWLEDGE_BASE = [
+  {
+    title: 'Identidad de Distribuidor Punto PAS',
+    tags: ['quienes somos', 'empresa', 'historia', 'marcas', 'punto pas', 'distribuidor'],
+    text: 'Distribuidor Punto PAS es una empresa moderna dedicada a la comercializacion y distribucion de productos para el hogar y la construccion. Trabaja con marcas como DISENSA, STIHL, YAMAHA, INDURAMA, RCA, TCL, MABE, ELECTROLUX y muchos articulos para el hogar. Tiene trayectoria en el mercado ecuatoriano y busca ofrecer productos confiables, precios competitivos y atencion personalizada para clientes minoristas y mayoristas.',
+  },
+  {
+    title: 'Mision y vision',
+    tags: ['mision', 'vision', 'valores', 'calidad', 'servicio'],
+    text: 'Mision: satisfacer las necesidades de los clientes ofreciendo productos variados, confiables y a precios competitivos, con servicio responsable y cercano. Vision: ser una empresa referente en productos para el hogar, construccion y comercio general, reconocida por variedad, calidad y excelencia en servicio.',
+  },
+  {
+    title: 'Sucursales y horarios',
+    tags: ['sucursal', 'sucursales', 'ubicacion', 'direccion', 'horario', 'telefono', 'contacto', 'tienda'],
+    text: 'Sucursales disponibles: Sucursal Esmeraldas, Sucursal San Lorenzo y Sucursal Stihl en San Lorenzo. Telefono/WhatsApp principal: 095 9990 999. En la pagina se muestra horario 8:00 AM - 6:00 PM para las sucursales y se indica atencion general de lunes a sabado. Para confirmar direccion exacta o ruta, el cliente puede revisar la seccion Nuestras Sucursales.',
+  },
+  {
+    title: 'Politicas de compra y retiro',
+    tags: ['compra', 'pedido', 'cancelacion', 'retiro', 'entrega', 'envio', 'tienda'],
+    text: 'Las compras se pagan por adelantado antes del retiro en tienda. El cliente puede solicitar cancelacion antes de que el pedido sea marcado como listo para retiro. Si ya esta listo para retiro, no aplica cancelacion. El plazo maximo para retirar es 48 horas. Actualmente no se realizan envios a domicilio; las compras se entregan por retiro en tienda. Para retirar se requiere cedula y numero de pedido. No se permite retiro por terceros autorizados.',
+  },
+  {
+    title: 'Devoluciones',
+    tags: ['devolucion', 'devoluciones', 'cambio', 'cambios', 'politicas'],
+    text: 'La politica publicada indica que no se aceptan cambios ni devoluciones en ninguna compra realizada. Si el cliente tiene una situacion especial, se debe recomendar comunicarse con atencion al cliente para revisar el caso con respeto y claridad.',
+  },
+  {
+    title: 'Atencion al cliente',
+    tags: ['whatsapp', 'correo', 'asesor', 'ayuda', 'soporte', 'contacto'],
+    text: 'Canales activos: WhatsApp 095 999 0999 y correo variedadespas2025@gmail.com. Las solicitudes se atienden en horario laboral y se registran para seguimiento. El asistente debe invitar a contactar a un asesor cuando se requiera confirmar stock, precio final, retiro, factura o casos especiales.',
+  },
+  {
+    title: 'Privacidad y seguridad',
+    tags: ['privacidad', 'datos', 'seguridad', 'informacion personal'],
+    text: 'Punto PAS protege la informacion personal del cliente. Puede recopilar datos de contacto, envio, facturacion, historial de compras y soporte. Usa la informacion para procesar pedidos, contacto, soporte, mejoras y promociones con consentimiento. No vende ni alquila datos personales a terceros. Implementa medidas como SSL, firewalls y acceso restringido.',
+  },
+  {
+    title: 'Categorias y productos',
+    tags: ['categoria', 'categorias', 'producto', 'productos', 'catalogo', 'marca', 'precio', 'stock'],
+    text: 'El catalogo incluye productos para hogar, construccion, ferreteria, electrodomesticos, linea blanca, televisores, congeladores, neveras, lavadoras, secadoras, celulares, muebles, cocina, calzado, deportes y movilidad, accesorios y mas. El asistente debe priorizar productos reales enviados en el contexto y no inventar precios o disponibilidad.',
+  },
+  {
+    title: 'Forma de atencion del asesor',
+    tags: ['asesor', 'como responder', 'humano', 'tono', 'ayuda'],
+    text: 'El Asesor Punto PAS debe responder con calidez humana, educacion, humildad y brevedad. Debe sonar como un vendedor experto: saludar cuando corresponde, hacer una pregunta de seguimiento si falta informacion, recomendar opciones reales, explicar beneficios y orientar a WhatsApp si el cliente esta listo para comprar o necesita confirmacion.',
+  },
+];
+
+const selectKnowledge = (message) => {
+  const normalizedMessage = normalize(message);
+  const terms = normalizedMessage.split(' ').filter((term) => term.length >= 3);
+
+  const scored = KNOWLEDGE_BASE.map((item) => {
+    const tagScore = item.tags.reduce((score, tag) => score + (normalizedMessage.includes(normalize(tag)) ? 3 : 0), 0);
+    const text = normalize(`${item.title} ${item.text}`);
+    const termScore = terms.reduce((score, term) => score + (text.includes(term) ? 1 : 0), 0);
+    return { item, score: tagScore + termScore };
+  })
+    .filter(({ score }) => score > 0)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 4)
+    .map(({ item }) => `- ${item.title}: ${item.text}`);
+
+  if (scored.length > 0) return scored.join('\n');
+  return KNOWLEDGE_BASE.filter((item) => ['Identidad de Distribuidor Punto PAS', 'Forma de atencion del asesor'].includes(item.title))
+    .map((item) => `- ${item.title}: ${item.text}`)
+    .join('\n');
+};
+
 const buildStoreContext = (products = []) => {
   const activeProducts = products.filter((product) => product?.isActive !== false);
   const categories = [...new Set(activeProducts.map((product) => product?.category).filter(Boolean))].slice(0, 18);
@@ -59,12 +128,12 @@ const buildStoreContext = (products = []) => {
   return [
     'Tienda: Distribuidor Punto PAS.',
     'Asistente: Asesor Punto PAS, asesor virtual amable, profesional y directo.',
-    'Objetivo: ayudar al cliente a encontrar productos, comparar opciones, explicar disponibilidad, precios y orientar la compra.',
+    'Objetivo: ayudar al cliente a encontrar productos, comparar opciones, explicar disponibilidad, precios, politicas, sucursales y orientar la compra.',
     'Telefono/WhatsApp principal: 095 9990 999.',
     'Sucursales conocidas: Esmeraldas, San Lorenzo y Sucursal Stihl.',
     'Categorias disponibles: ' + (categories.join(', ') || 'catalogo general de hogar, construccion, electrodomesticos y ferreteria') + '.',
     'Marcas disponibles: ' + (brands.join(', ') || 'varias marcas comerciales') + '.',
-    'Reglas: responde en espanol, con educacion y humildad. No inventes stock ni precios fuera del contexto entregado. Si falta informacion, invita a consultar con un asesor.',
+    'Reglas: responde en espanol, con educacion, humildad y naturalidad. Usa primero la base de conocimiento y los productos enviados. No inventes stock, precios, politicas ni direcciones fuera del contexto. Si falta informacion, haz una pregunta concreta o invita a consultar con un asesor.',
   ].join('\n');
 };
 
@@ -88,6 +157,7 @@ export default async function handler(req, res) {
 
     const relevantProducts = selectRelevantProducts(cleanMessage, Array.isArray(products) ? products : []);
     const productContext = relevantProducts.map(compactProduct);
+    const knowledgeContext = selectKnowledge(cleanMessage);
     const safeHistory = Array.isArray(history)
       ? history.slice(-6).map((turn) => ({ role: turn.role === 'user' ? 'user' : 'assistant', content: String(turn.text || '').slice(0, 500) }))
       : [];
@@ -108,7 +178,7 @@ export default async function handler(req, res) {
             content: [
               {
                 type: 'input_text',
-                text: `${buildStoreContext(products)}\n\nProductos relevantes para esta consulta:\n${JSON.stringify(productContext)}`,
+                text: `${buildStoreContext(products)}\n\nBase de conocimiento relevante de la pagina:\n${knowledgeContext}\n\nProductos relevantes para esta consulta:\n${JSON.stringify(productContext)}\n\nEstilo de respuesta: humano, cercano, profesional, maximo 2 parrafos cortos salvo que el usuario pida detalle. Si recomiendas productos, explica por que pueden servir.`,
               },
             ],
           },
