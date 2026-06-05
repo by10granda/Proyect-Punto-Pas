@@ -328,7 +328,7 @@ const ProductPage = () => {
                 alt={product.name}
                 className="mx-auto h-[320px] w-full object-contain transition-transform duration-500 ease-out will-change-transform md:h-[560px]"
                 style={{
-                  transform: isImageZoomed ? "scale(1.04)" : "scale(1)",
+                  transform: isImageZoomed ? "scale(1.06)" : "scale(1)",
                   transformOrigin: `${zoomPosition.x}% ${zoomPosition.y}%`,
                 }}
                 onError={() => {
@@ -346,7 +346,7 @@ const ProductPage = () => {
                   top: `${zoomPosition.y}%`,
                   backgroundImage: `url(${selectedImage})`,
                   backgroundRepeat: "no-repeat",
-                  backgroundSize: "190%",
+                  backgroundSize: "220%",
                   backgroundPosition: zoomBackgroundPosition,
                 }}
               />
@@ -361,7 +361,7 @@ const ProductPage = () => {
                   style={{
                     backgroundImage: `url(${selectedImage})`,
                     backgroundRepeat: "no-repeat",
-                    backgroundSize: "200%",
+                    backgroundSize: "230%",
                     backgroundPosition: zoomBackgroundPosition,
                   }}
                 />
