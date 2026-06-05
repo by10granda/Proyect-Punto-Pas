@@ -1,5 +1,5 @@
 import { FormEvent, useState } from "react";
-import { Send, X } from "lucide-react";
+import { RefreshCcw, Send, X } from "lucide-react";
 import { Product } from "@/data/products";
 import { askAssistant, ChatTurn } from "@/services/chatAssistant";
 import { ChatMessage } from "./ChatMessage";
@@ -10,26 +10,18 @@ interface ChatWindowProps {
   onClose: () => void;
 }
 
-const QUICK_ACTIONS = [
-  "Que categorias manejan?",
-  "Que marcas tienen disponibles?",
-  "Tienen lavadoras disponibles?",
-  "Donde estan sus sucursales?",
-  "Como puedo comprar?",
-];
 const WHATSAPP_PHONE = "+593959990999";
+const WELCOME_MESSAGE: ChatMessageModel = {
+  id: "welcome",
+  role: "assistant",
+  text: "¡Hola! Soy el Asesor Punto PAS. Te ayudo con productos, precios, marcas, categorías, sucursales, formas de compra y políticas de la tienda. ¿Qué estás buscando?",
+};
 
 export const ChatWindow = ({ products, onClose }: ChatWindowProps) => {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [engine, setEngine] = useState<"openai" | "openai-unavailable" | "ollama" | "fallback" | "ollama-unavailable">("fallback");
-  const [messages, setMessages] = useState<ChatMessageModel[]>([
-    {
-      id: "welcome",
-      role: "assistant",
-      text: "Hola, soy Asesor Punto PAS. Estoy para ayudarte a comprar facil y rapido. Dime que producto buscas y te muestro opciones reales.",
-    },
-  ]);
+  const [messages, setMessages] = useState<ChatMessageModel[]>([WELCOME_MESSAGE]);
 
   const submitMessage = async (rawMessage?: string) => {
     const message = (rawMessage ?? input).trim();
@@ -68,56 +60,58 @@ export const ChatWindow = ({ products, onClose }: ChatWindowProps) => {
     window.open(url, "_blank");
   };
 
+  const resetChat = () => {
+    setMessages([WELCOME_MESSAGE]);
+    setInput("");
+    setEngine("fallback");
+  };
+
   return (
-    <div className="fixed bottom-5 right-3 left-3 sm:left-auto sm:right-4 z-50 w-auto sm:w-[390px] max-h-[76vh] bg-white rounded-2xl border border-slate-200 shadow-[0_20px_45px_-22px_rgba(0,0,0,0.55)] flex flex-col overflow-hidden animate-in slide-in-from-bottom-3 fade-in duration-300">
-      <div className="px-4 py-3 bg-[#FA003F] text-white flex items-center justify-between">
+    <div className="fixed bottom-5 right-3 left-3 sm:left-auto sm:right-4 z-50 w-auto sm:w-[420px] h-[78vh] max-h-[760px] bg-white rounded-[28px] border border-slate-200 shadow-[0_26px_70px_-28px_rgba(15,23,42,0.55)] flex flex-col overflow-hidden animate-in slide-in-from-bottom-3 fade-in duration-300">
+      <div className="px-6 py-5 bg-[#ff0000] text-white flex items-center justify-between">
         <div>
-          <p className="text-sm font-bold">Asesor Punto PAS</p>
-          <p className="text-xs text-white/90">
-            {engine === "openai" ? "Modo IA: Asesor Pro" : engine === "openai-unavailable" ? "Modo IA: reconectando" : engine === "ollama" ? "Modo IA: Ollama" : engine === "ollama-unavailable" ? "Modo IA: reconectando" : "Modo IA: respaldo"}
+          <p className="text-lg font-bold">Distribuidor Punto Pas</p>
+          <p className="mt-1 text-xs text-white/80">
+            {engine === "openai" ? "Asesor virtual activo" : engine === "openai-unavailable" ? "Reconectando asesor" : "Asesor virtual"}
           </p>
         </div>
-        <button onClick={onClose} className="p-1.5 rounded-full hover:bg-white/15" aria-label="Cerrar asistente">
-          <X className="w-4 h-4" />
-        </button>
-      </div>
-
-      <div className="px-3 py-2 border-b border-slate-100 flex flex-wrap gap-1.5">
-        {QUICK_ACTIONS.map((action) => (
+        <div className="flex items-center gap-2">
           <button
-            key={action}
-            onClick={() => void submitMessage(action)}
-            className="text-xs px-2.5 py-1 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700"
+            onClick={resetChat}
+            className="p-2 rounded-full text-white/85 hover:bg-white/15 hover:text-white transition-colors"
+            aria-label="Reiniciar chat"
           >
-            {action}
+            <RefreshCcw className="w-5 h-5" />
           </button>
-        ))}
+          <button onClick={onClose} className="p-2 rounded-full text-white/85 hover:bg-white/15 hover:text-white transition-colors" aria-label="Cerrar asistente">
+            <X className="w-5 h-5" />
+          </button>
+        </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-3 space-y-2 bg-slate-50">
+      <div className="flex-1 overflow-y-auto px-6 py-5 space-y-5 bg-white [scrollbar-color:#9ca3af_transparent] [scrollbar-width:thin]">
         {messages.map((message) => (
           <ChatMessage key={message.id} message={message} />
         ))}
         {isLoading && (
-          <div className="max-w-[85%] px-3 py-2 rounded-2xl text-sm bg-white text-slate-600 border border-slate-200">
-            Un momento... estoy revisando productos reales.
+          <div className="max-w-[88%] px-5 py-4 rounded-[22px] text-[15px] bg-[#f4f4f5] text-slate-700">
+            Un momento... estoy revisando la información de la tienda.
           </div>
         )}
       </div>
 
-      <form onSubmit={onSubmit} className="p-3 border-t border-slate-200 bg-white">
-        <p className="text-[11px] text-slate-500 mb-2 px-1">Tip: escribe producto, marca, categoria o presupuesto.</p>
-        <div className="flex items-center gap-2">
+      <form onSubmit={onSubmit} className="p-4 bg-white">
+        <div className="flex items-center gap-2 rounded-full border border-slate-900 bg-white px-4 py-2 shadow-sm">
           <input
             value={input}
             onChange={(event) => setInput(event.target.value)}
             maxLength={280}
-            placeholder="Ej: lavadora Mabe hasta 500"
-            className="flex-1 h-10 rounded-full border border-slate-300 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-200"
+            placeholder="Mensaje..."
+            className="flex-1 h-10 bg-transparent text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none"
           />
           <button
             type="submit"
-            className="w-10 h-10 rounded-full bg-[#FA003F] text-white flex items-center justify-center disabled:opacity-60"
+            className="w-10 h-10 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center transition hover:bg-[#ff0000] hover:text-white disabled:opacity-40 disabled:hover:bg-slate-100 disabled:hover:text-slate-400"
             disabled={!input.trim() || isLoading}
             aria-label="Enviar mensaje"
           >
@@ -127,7 +121,7 @@ export const ChatWindow = ({ products, onClose }: ChatWindowProps) => {
         <button
           type="button"
           onClick={openWhatsApp}
-          className="mt-2 w-full h-9 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold"
+          className="mt-3 w-full h-9 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold"
         >
           Ir a WhatsApp
         </button>

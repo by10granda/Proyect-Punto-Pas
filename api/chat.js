@@ -150,7 +150,7 @@ const buildStoreContext = (products = []) => {
     'Sucursales conocidas: Esmeraldas, San Lorenzo y Sucursal Stihl.',
     'Categorias disponibles: ' + (categories.join(', ') || 'catalogo general de hogar, construccion, electrodomesticos y ferreteria') + '.',
     'Marcas disponibles: ' + (brands.join(', ') || 'varias marcas comerciales') + '.',
-    'Reglas: responde en espanol, con educacion, humildad y naturalidad. Usa primero la base de conocimiento y los productos enviados. No inventes stock, precios, politicas ni direcciones fuera del contexto. Si falta informacion, haz una pregunta concreta o invita a consultar con un asesor.',
+    'Reglas: responde en espanol, con educacion, humildad y naturalidad. Entiende preguntas con faltas ortograficas, abreviaturas y lenguaje informal. Usa primero la base de conocimiento y los productos enviados. No inventes stock, precios, politicas ni direcciones fuera del contexto. Si falta informacion, haz una pregunta concreta o invita a consultar con un asesor.',
   ].join('\n');
 };
 
@@ -195,7 +195,7 @@ export default async function handler(req, res) {
             content: [
               {
                 type: 'input_text',
-                text: `${buildStoreContext(products)}\n\nBase de conocimiento relevante de la pagina:\n${knowledgeContext}\n\nProductos relevantes para esta consulta:\n${JSON.stringify(productContext)}\n\nEstilo de respuesta: humano, cercano, profesional, maximo 2 parrafos cortos salvo que el usuario pida detalle. Si recomiendas productos, explica por que pueden servir.`,
+                text: `${buildStoreContext(products)}\n\nBase de conocimiento relevante de la pagina:\n${knowledgeContext}\n\nProductos relevantes para esta consulta:\n${JSON.stringify(productContext)}\n\nEstilo de respuesta: vendedor experto, humano y concreto. Responde corto, claro y util. Maximo 2 parrafos cortos o una lista breve. Corrige mentalmente faltas ortograficas del cliente. Responde solo temas relacionados a la pagina, productos, compra, politicas, sucursales, pagos, retiro o atencion. Si recomiendas productos, explica en una frase por que pueden servir.`,
               },
             ],
           },
