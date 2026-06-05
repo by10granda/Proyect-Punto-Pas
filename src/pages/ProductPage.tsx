@@ -53,6 +53,8 @@ const ProductPage = () => {
   const [brokenImageIndexes, setBrokenImageIndexes] = useState<number[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [cartCount, setCartCount] = useState(0);
+  const [isImageZoomed, setIsImageZoomed] = useState(false);
+  const [zoomPosition, setZoomPosition] = useState({ x: 50, y: 50 });
 
   useEffect(() => {
     const run = async () => {
@@ -113,7 +115,14 @@ const ProductPage = () => {
     setQuantity(1);
     setCarouselStart(0);
     setBrokenImageIndexes([]);
+    setIsImageZoomed(false);
+    setZoomPosition({ x: 50, y: 50 });
   }, [id]);
+
+  useEffect(() => {
+    setIsImageZoomed(false);
+    setZoomPosition({ x: 50, y: 50 });
+  }, [selectedImageIndex]);
 
   const addToCart = () => {
     if (!product) return;
@@ -155,6 +164,23 @@ const ProductPage = () => {
     document.body.appendChild(link);
     link.click();
     link.remove();
+  };
+
+  const updateZoomPosition = (clientX: number, clientY: number, element: HTMLElement) => {
+    const rect = element.getBoundingClientRect();
+    const x = Math.min(100, Math.max(0, ((clientX - rect.left) / rect.width) * 100));
+    const y = Math.min(100, Math.max(0, ((clientY - rect.top) / rect.height) * 100));
+    setZoomPosition({ x, y });
+  };
+
+  const handleZoomPointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
+    updateZoomPosition(event.clientX, event.clientY, event.currentTarget);
+  };
+
+  const handleZoomTouchMove = (event: React.TouchEvent<HTMLDivElement>) => {
+    const touch = event.touches[0];
+    if (!touch) return;
+    updateZoomPosition(touch.clientX, touch.clientY, event.currentTarget);
   };
 
   const handleWhatsAppBuy = () => {
@@ -228,6 +254,7 @@ const ProductPage = () => {
   const visibleRelated = relatedProducts.slice(carouselStart, carouselStart + 6);
   const selectedImage = visibleImages[selectedImageIndex] || visibleImages[0] || product.image;
   const displayBrand = inferDisplayBrand(product.brand, product.name);
+  const zoomBackgroundPosition = `${zoomPosition.x}% ${zoomPosition.y}%`;
 
   return (
     <div className="min-h-screen bg-white">
@@ -278,11 +305,32 @@ const ProductPage = () => {
               ))}
             </div>
 
-            <div className="order-1 xl:order-2 bg-slate-50 p-4">
+            <div
+              className="order-1 xl:order-2 relative overflow-hidden bg-slate-50 p-4 cursor-zoom-in select-none"
+              onPointerEnter={(event) => {
+                setIsImageZoomed(true);
+                updateZoomPosition(event.clientX, event.clientY, event.currentTarget);
+              }}
+              onPointerMove={handleZoomPointerMove}
+              onPointerLeave={() => setIsImageZoomed(false)}
+              onTouchStart={(event) => {
+                const touch = event.touches[0];
+                if (!touch) return;
+                setIsImageZoomed(true);
+                updateZoomPosition(touch.clientX, touch.clientY, event.currentTarget);
+              }}
+              onTouchMove={handleZoomTouchMove}
+              onTouchEnd={() => setIsImageZoomed(false)}
+              style={{ touchAction: "pan-y pinch-zoom" }}
+            >
               <img
                 src={selectedImage}
                 alt={product.name}
-                className="mx-auto h-[320px] w-full object-contain md:h-[560px]"
+                className="mx-auto h-[320px] w-full object-contain transition-transform duration-500 ease-out will-change-transform md:h-[560px]"
+                style={{
+                  transform: isImageZoomed ? "scale(1.04)" : "scale(1)",
+                  transformOrigin: `${zoomPosition.x}% ${zoomPosition.y}%`,
+                }}
                 onError={() => {
                   const currentRawIndex = productImages.findIndex((img) => img === selectedImage);
                   if (currentRawIndex >= 0 && !brokenImageIndexes.includes(currentRawIndex)) {
@@ -291,6 +339,36 @@ const ProductPage = () => {
                   }
                 }}
               />
+              <div
+                className={`pointer-events-none absolute hidden h-32 w-32 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white bg-white shadow-[0_18px_45px_-20px_rgba(15,23,42,0.75)] ring-1 ring-slate-900/10 transition-opacity duration-300 md:block ${isImageZoomed ? "opacity-100" : "opacity-0"}`}
+                style={{
+                  left: `${zoomPosition.x}%`,
+                  top: `${zoomPosition.y}%`,
+                  backgroundImage: `url(${selectedImage})`,
+                  backgroundRepeat: "no-repeat",
+                  backgroundSize: "190%",
+                  backgroundPosition: zoomBackgroundPosition,
+                }}
+              />
+              <div
+                className={`pointer-events-none absolute right-4 top-4 hidden h-56 w-56 overflow-hidden rounded-2xl border border-white/80 bg-white shadow-[0_24px_70px_-28px_rgba(15,23,42,0.85)] ring-1 ring-slate-900/10 transition-all duration-300 xl:block ${isImageZoomed ? "translate-y-0 opacity-100" : "translate-y-2 opacity-0"}`}
+              >
+                <div className="border-b border-slate-100 bg-white/95 px-3 py-2 text-xs font-bold uppercase tracking-[0.16em] text-slate-500">
+                  Vista ampliada
+                </div>
+                <div
+                  className="h-[calc(100%-33px)] w-full bg-white"
+                  style={{
+                    backgroundImage: `url(${selectedImage})`,
+                    backgroundRepeat: "no-repeat",
+                    backgroundSize: "200%",
+                    backgroundPosition: zoomBackgroundPosition,
+                  }}
+                />
+              </div>
+              <div className={`pointer-events-none absolute bottom-3 left-1/2 -translate-x-1/2 rounded-full bg-slate-950/75 px-4 py-1.5 text-xs font-semibold text-white backdrop-blur transition-opacity duration-300 ${isImageZoomed ? "opacity-0" : "opacity-100"}`}>
+                Pase el cursor para ampliar
+              </div>
             </div>
 
             <div className="order-3 space-y-4">
