@@ -22,12 +22,12 @@ const WHATSAPP_PHONE = "+593959990999";
 export const ChatWindow = ({ products, onClose }: ChatWindowProps) => {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [engine, setEngine] = useState<"ollama" | "fallback" | "ollama-unavailable">("fallback");
+  const [engine, setEngine] = useState<"openai" | "openai-unavailable" | "ollama" | "fallback" | "ollama-unavailable">("fallback");
   const [messages, setMessages] = useState<ChatMessageModel[]>([
     {
       id: "welcome",
       role: "assistant",
-      text: "Hola, soy Russo. Estoy para ayudarte a comprar facil y rapido. Dime que producto buscas y te muestro opciones reales.",
+      text: "Hola, soy Asesor Punto PAS. Estoy para ayudarte a comprar facil y rapido. Dime que producto buscas y te muestro opciones reales.",
     },
   ]);
 
@@ -72,9 +72,9 @@ export const ChatWindow = ({ products, onClose }: ChatWindowProps) => {
     <div className="fixed bottom-5 right-3 left-3 sm:left-auto sm:right-4 z-50 w-auto sm:w-[390px] max-h-[76vh] bg-white rounded-2xl border border-slate-200 shadow-[0_20px_45px_-22px_rgba(0,0,0,0.55)] flex flex-col overflow-hidden animate-in slide-in-from-bottom-3 fade-in duration-300">
       <div className="px-4 py-3 bg-[#FA003F] text-white flex items-center justify-between">
         <div>
-          <p className="text-sm font-bold">Russo - Asistente Punto PAS</p>
+          <p className="text-sm font-bold">Asesor Punto PAS</p>
           <p className="text-xs text-white/90">
-            {engine === "ollama" ? "Modo IA: Ollama" : engine === "ollama-unavailable" ? "Modo IA: reconectando" : "Modo IA: respaldo"}
+            {engine === "openai" ? "Modo IA: Asesor Pro" : engine === "openai-unavailable" ? "Modo IA: reconectando" : engine === "ollama" ? "Modo IA: Ollama" : engine === "ollama-unavailable" ? "Modo IA: reconectando" : "Modo IA: respaldo"}
           </p>
         </div>
         <button onClick={onClose} className="p-1.5 rounded-full hover:bg-white/15" aria-label="Cerrar asistente">

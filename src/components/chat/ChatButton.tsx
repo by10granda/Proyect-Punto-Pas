@@ -13,11 +13,11 @@ export const ChatButton = ({ onClick }: ChatButtonProps) => {
     <button
       onClick={onClick}
       className="fixed bottom-24 right-4 z-50 w-16 h-16 rounded-full overflow-hidden shadow-[0_14px_30px_-12px_rgba(0,0,0,0.5)]"
-      aria-label="Abrir asistente Russo"
+      aria-label="Abrir Asesor Punto PAS"
     >
       <img
         src={russoPrimaryImageCandidates[0]}
-        alt="Russo asistente"
+        alt="Asesor Punto PAS"
         className="w-full h-full object-contain"
         onError={(event) => {
           const image = event.currentTarget;

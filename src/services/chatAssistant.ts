@@ -4,7 +4,7 @@ import { buildSearchSuggestions } from "@/application/use-cases/searchSuggestion
 export interface ChatReply {
   text: string;
   products?: Product[];
-  source?: "ollama" | "fallback" | "ollama-unavailable";
+  source?: "openai" | "openai-unavailable" | "ollama" | "fallback" | "ollama-unavailable";
 }
 
 export interface ChatTurn {
@@ -72,7 +72,7 @@ export const fallbackChatReply = (message: string, products: Product[]): ChatRep
 
   if (isGreeting(clean)) {
     return {
-      text: "Hola, soy Russo. Estoy aqui para ayudarte a comprar facil y rapido. Puedes decirme que producto buscas y te muestro opciones reales.",
+      text: "Hola, soy Asesor Punto PAS. Estoy aqui para ayudarte a comprar facil y rapido. Puedes decirme que producto buscas y te muestro opciones reales.",
     };
   }
 
