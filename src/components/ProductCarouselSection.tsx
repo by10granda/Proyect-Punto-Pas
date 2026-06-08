@@ -3,6 +3,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Product } from "@/data/products";
 import { ProductCard } from "./ProductCard";
 import { handleAssetFallback } from "@/utils/assetFallback";
+import { AutoFitImage } from "./AutoFitImage";
 
 interface ProductCarouselSectionProps {
   products: Product[];
@@ -73,10 +74,10 @@ export const ProductCarouselSection = ({
 
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-3 md:gap-4 items-start" style={{ minHeight: 'auto' }}>
             <div className="lg:col-span-2 h-full" onClick={handleBannerClick}>
-              <img
+              <AutoFitImage
                 src={bannerImage}
                 alt={category}
-                className="w-full h-[150px] sm:h-[190px] lg:h-[680px] object-contain rounded-lg cursor-pointer bg-white"
+                className="w-full h-[150px] sm:h-[190px] lg:h-[680px] rounded-lg cursor-pointer bg-white"
                 data-fallbacks={bannerImageFallbacks?.join("|")}
                 data-fallback-index="0"
                 onError={handleAssetFallback}
@@ -184,10 +185,10 @@ export const ProductCarouselSection = ({
             </div>
 
             <div className={`lg:col-span-3 h-full ${isWasherAndDryerSection ? "lg:h-[560px]" : ""}`} onClick={handleBannerClick}>
-              <img
+              <AutoFitImage
                 src={bannerImage}
                 alt={category}
-                className="w-full h-auto lg:h-full object-contain rounded-xl cursor-pointer"
+                className="w-full h-auto lg:h-full rounded-xl cursor-pointer"
                 data-fallbacks={bannerImageFallbacks?.join("|")}
                 data-fallback-index="0"
                 onError={handleAssetFallback}

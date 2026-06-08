@@ -1,6 +1,7 @@
 import { Product } from "@/data/products";
 import { useState, useEffect } from "react";
 import { useImageCandidateFallback } from "@/hooks/useImageCandidateFallback";
+import { AutoFitImage } from "./AutoFitImage";
 
 const ProductCardGrid = ({ product, onAddToCart }: {
   product: Product;
@@ -54,7 +55,7 @@ const ProductCardGrid = ({ product, onAddToCart }: {
           {imageError ? (
             <span className="text-4xl">📦</span>
           ) : (
-            <img src={resolvedImageSrc} alt={product.name} className="max-w-full max-h-full object-contain" onError={handleImageError} loading="lazy" />
+            <AutoFitImage src={resolvedImageSrc} alt={product.name} className="h-full w-full" onError={handleImageError} loading="lazy" />
           )}
         </div>
       </div>

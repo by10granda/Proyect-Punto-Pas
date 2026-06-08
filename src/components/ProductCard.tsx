@@ -1,6 +1,7 @@
 import { Product } from "@/data/products";
 import { memo } from "react";
 import { useImageCandidateFallback } from "@/hooks/useImageCandidateFallback";
+import { AutoFitImage } from "./AutoFitImage";
 
 interface ProductCardProps {
   product: Product;
@@ -59,10 +60,10 @@ export const ProductCard = memo(({ product, onAddToCart, compact = false }: Prod
               <span className="text-sm">Sin imagen</span>
             </div>
           ) : (
-            <img
+            <AutoFitImage
               src={resolvedImageSrc}
               alt={product.name}
-              className="max-w-full max-h-full object-contain transition-transform duration-300 sm:group-hover:scale-105"
+              className="h-full w-full transition-transform duration-300 sm:group-hover:scale-105"
               onError={handleImageError}
               loading="lazy"
             />

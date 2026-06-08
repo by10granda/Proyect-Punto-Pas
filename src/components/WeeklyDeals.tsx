@@ -2,6 +2,7 @@ import { useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Product } from "@/data/products";
 import { handleAssetFallback } from "@/utils/assetFallback";
+import { AutoFitImage } from "./AutoFitImage";
 
 interface WeeklyDealsProps {
   images: string[];
@@ -114,10 +115,10 @@ export const WeeklyDeals = ({ images, imageCandidatesBySlot, products, selectedC
                   }}
                 >
                   <div className="w-full h-full rounded-[26px] overflow-hidden bg-white border border-gray-200 shadow-sm group-hover:shadow-md transition-shadow">
-                    <img
+                    <AutoFitImage
                       src={imageCandidates[0]}
                       alt={`Descuento ${idx + 1}`}
-                      className="w-full h-full object-cover"
+                      className="w-full h-full"
                       data-fallbacks={imageCandidates.join("|")}
                       data-fallback-index="0"
                       onError={handleAssetFallback}
