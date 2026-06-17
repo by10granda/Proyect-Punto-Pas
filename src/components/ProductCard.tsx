@@ -2,7 +2,7 @@ import { Product } from "@/data/products";
 import { memo } from "react";
 import { useImageCandidateFallback } from "@/hooks/useImageCandidateFallback";
 import { AutoFitImage } from "./AutoFitImage";
-import { getPresentationImageCandidates } from "@/utils/productPresentationImage";
+import { getHoverImageCandidates, getPresentationImageCandidates } from "@/utils/productPresentationImage";
 
 interface ProductCardProps {
   product: Product;
@@ -12,10 +12,20 @@ interface ProductCardProps {
 
 export const ProductCard = memo(({ product, onAddToCart, compact = false }: ProductCardProps) => {
   const hasStock = product.stock > 0;
-  const imageCandidates = getPresentationImageCandidates(product.images && product.images.length > 0 ? product.images : [product.image]);
+  const allImageCandidates = product.images && product.images.length > 0 ? product.images : [product.image];
+  const imageCandidates = getPresentationImageCandidates(allImageCandidates);
+  const hoverImageCandidates = getHoverImageCandidates(allImageCandidates, imageCandidates);
   const { imageError, resolvedImageSrc, handleImageError } = useImageCandidateFallback({
     resetKey: `${product.id}-${product.image}`,
     candidates: imageCandidates,
+  });
+  const {
+    imageError: hoverImageError,
+    resolvedImageSrc: resolvedHoverImageSrc,
+    handleImageError: handleHoverImageError,
+  } = useImageCandidateFallback({
+    resetKey: `${product.id}-${product.image}-hover`,
+    candidates: hoverImageCandidates,
   });
 
   const hasDiscount = product.originalPrice && product.originalPrice > product.price;
@@ -54,7 +64,7 @@ export const ProductCard = memo(({ product, onAddToCart, compact = false }: Prod
           </div>
         )}
 
-        <div className={`w-full h-full flex items-center justify-center ${compact ? "p-2" : "p-3 sm:p-4"}`}>
+        <div className={`relative w-full h-full flex items-center justify-center ${compact ? "p-2" : "p-3 sm:p-4"}`}>
           {imageError ? (
             <div className="flex flex-col items-center justify-center text-gray-400">
               <span className="text-4xl mb-2">📦</span>
@@ -68,6 +78,17 @@ export const ProductCard = memo(({ product, onAddToCart, compact = false }: Prod
               onError={handleImageError}
               loading="lazy"
             />
+          )}
+          {!imageError && !hoverImageError && resolvedHoverImageSrc && (
+            <div className={`absolute inset-0 opacity-0 transition-opacity duration-300 sm:group-hover:opacity-100 ${compact ? "p-2" : "p-3 sm:p-4"}`}>
+              <AutoFitImage
+                src={resolvedHoverImageSrc}
+                alt={`${product.name} vista alternativa`}
+                className="h-full w-full"
+                onError={handleHoverImageError}
+                loading="lazy"
+              />
+            </div>
           )}
         </div>
       </div>

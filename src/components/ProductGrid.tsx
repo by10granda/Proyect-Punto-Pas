@@ -2,7 +2,7 @@ import { Product } from "@/data/products";
 import { useState, useEffect } from "react";
 import { useImageCandidateFallback } from "@/hooks/useImageCandidateFallback";
 import { AutoFitImage } from "./AutoFitImage";
-import { getPresentationImageCandidates } from "@/utils/productPresentationImage";
+import { getHoverImageCandidates, getPresentationImageCandidates } from "@/utils/productPresentationImage";
 
 const ProductCardGrid = ({ product, onAddToCart }: {
   product: Product;
@@ -10,10 +10,20 @@ const ProductCardGrid = ({ product, onAddToCart }: {
 }) => {
   const [quantity, setQuantity] = useState(1);
   const hasStock = product.stock > 0;
-  const imageCandidates = getPresentationImageCandidates(product.images && product.images.length > 0 ? product.images : [product.image]);
+  const allImageCandidates = product.images && product.images.length > 0 ? product.images : [product.image];
+  const imageCandidates = getPresentationImageCandidates(allImageCandidates);
+  const hoverImageCandidates = getHoverImageCandidates(allImageCandidates, imageCandidates);
   const { imageError, resolvedImageSrc, handleImageError } = useImageCandidateFallback({
     resetKey: `${product.id}-${product.image}`,
     candidates: imageCandidates,
+  });
+  const {
+    imageError: hoverImageError,
+    resolvedImageSrc: resolvedHoverImageSrc,
+    handleImageError: handleHoverImageError,
+  } = useImageCandidateFallback({
+    resetKey: `${product.id}-${product.image}-hover`,
+    candidates: hoverImageCandidates,
   });
 
   const hasPvpAndPuntoPas = product.pvpPrice && product.puntoPasPrice && product.pvpPrice > product.puntoPasPrice;
@@ -52,11 +62,22 @@ const ProductCardGrid = ({ product, onAddToCart }: {
             </span>
           </div>
         )}
-          <div className="w-full h-full flex items-center justify-center p-2.5 sm:p-3">
+          <div className="relative w-full h-full flex items-center justify-center p-2.5 sm:p-3">
           {imageError ? (
             <span className="text-4xl">📦</span>
           ) : (
             <AutoFitImage src={resolvedImageSrc} alt={product.name} className="h-full w-full" onError={handleImageError} loading="lazy" />
+          )}
+          {!imageError && !hoverImageError && resolvedHoverImageSrc && (
+            <div className="absolute inset-0 p-2.5 opacity-0 transition-opacity duration-300 sm:p-3 sm:group-hover:opacity-100">
+              <AutoFitImage
+                src={resolvedHoverImageSrc}
+                alt={`${product.name} vista alternativa`}
+                className="h-full w-full"
+                onError={handleHoverImageError}
+                loading="lazy"
+              />
+            </div>
           )}
         </div>
       </div>

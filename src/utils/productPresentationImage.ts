@@ -8,3 +8,12 @@ export const getPresentationImageCandidates = (images: string[]) => {
 
   return presentationImages.length > 0 ? presentationImages : validImages;
 };
+
+export const getHoverImageCandidates = (images: string[], primaryImages: string[]) => {
+  const validImages = images.filter(Boolean);
+  const primarySet = new Set(primaryImages);
+  const alternateImages = validImages.filter((image) => isExcludedPresentationImage(image));
+  const otherImages = validImages.filter((image) => !primarySet.has(image) && !isExcludedPresentationImage(image));
+
+  return [...alternateImages, ...otherImages];
+};
