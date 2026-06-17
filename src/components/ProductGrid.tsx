@@ -2,6 +2,7 @@ import { Product } from "@/data/products";
 import { useState, useEffect } from "react";
 import { useImageCandidateFallback } from "@/hooks/useImageCandidateFallback";
 import { AutoFitImage } from "./AutoFitImage";
+import { getPresentationImageCandidates } from "@/utils/productPresentationImage";
 
 const ProductCardGrid = ({ product, onAddToCart }: {
   product: Product;
@@ -9,7 +10,7 @@ const ProductCardGrid = ({ product, onAddToCart }: {
 }) => {
   const [quantity, setQuantity] = useState(1);
   const hasStock = product.stock > 0;
-  const imageCandidates = (product.images && product.images.length > 0 ? product.images : [product.image]).filter(Boolean);
+  const imageCandidates = getPresentationImageCandidates(product.images && product.images.length > 0 ? product.images : [product.image]);
   const { imageError, resolvedImageSrc, handleImageError } = useImageCandidateFallback({
     resetKey: `${product.id}-${product.image}`,
     candidates: imageCandidates,

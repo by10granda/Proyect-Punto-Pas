@@ -2,6 +2,7 @@ import { Product } from "@/data/products";
 import { memo } from "react";
 import { useImageCandidateFallback } from "@/hooks/useImageCandidateFallback";
 import { AutoFitImage } from "./AutoFitImage";
+import { getPresentationImageCandidates } from "@/utils/productPresentationImage";
 
 interface ProductCardProps {
   product: Product;
@@ -11,7 +12,7 @@ interface ProductCardProps {
 
 export const ProductCard = memo(({ product, onAddToCart, compact = false }: ProductCardProps) => {
   const hasStock = product.stock > 0;
-  const imageCandidates = (product.images && product.images.length > 0 ? product.images : [product.image]).filter(Boolean);
+  const imageCandidates = getPresentationImageCandidates(product.images && product.images.length > 0 ? product.images : [product.image]);
   const { imageError, resolvedImageSrc, handleImageError } = useImageCandidateFallback({
     resetKey: `${product.id}-${product.image}`,
     candidates: imageCandidates,
