@@ -9,6 +9,7 @@ import { Footer } from "@/components/Footer";
 import { WhatsAppButton } from "@/components/WhatsAppButton";
 import { paymentBadgeCandidates, paymentBadges } from "@/utils/paymentBadges";
 import { handleAssetFallback } from "@/utils/assetFallback";
+import { sortPresentationImageCandidates } from "@/utils/productPresentationImage";
 
 const normalizeCategory = (value: string) =>
   (value || "")
@@ -213,7 +214,7 @@ const ProductPage = () => {
 
   const productImages = useMemo(() => {
     if (!product) return [];
-    const rawImages = (product.images && product.images.length > 0 ? product.images : [product.image]).filter(
+    const rawImages = sortPresentationImageCandidates(product.images && product.images.length > 0 ? product.images : [product.image]).filter(
       (img) => !!img && img.trim().length > 0,
     );
 
@@ -221,7 +222,7 @@ const ProductPage = () => {
       const withoutQuery = imageUrl.split("?")[0].toLowerCase();
       const fileName = withoutQuery.split("/").pop() || withoutQuery;
       const withoutExtension = fileName.replace(/\.(png|jpg|jpeg|webp|gif)$/i, "");
-      return withoutExtension.replace(/_?e\d*$/i, "_e").replace(/_+/g, "_");
+      return withoutExtension.replace(/_+/g, "_");
     };
 
     const unique = new Map<string, string>();
