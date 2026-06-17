@@ -8,11 +8,3 @@ export const getPresentationImageCandidates = (images: string[]) => {
 
   return presentationImages.length > 0 ? presentationImages : validImages;
 };
-
-export const sortPresentationImageCandidates = (images: string[]) => {
-  const validImages = images.filter(Boolean);
-  const preferredImages = validImages.filter((image) => !isExcludedPresentationImage(image));
-  const alternateImages = validImages.filter(isExcludedPresentationImage);
-
-  return [...preferredImages, ...alternateImages];
-};

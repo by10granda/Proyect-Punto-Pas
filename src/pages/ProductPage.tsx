@@ -9,7 +9,6 @@ import { Footer } from "@/components/Footer";
 import { WhatsAppButton } from "@/components/WhatsAppButton";
 import { paymentBadgeCandidates, paymentBadges } from "@/utils/paymentBadges";
 import { handleAssetFallback } from "@/utils/assetFallback";
-import { sortPresentationImageCandidates } from "@/utils/productPresentationImage";
 
 const normalizeCategory = (value: string) =>
   (value || "")
@@ -214,7 +213,7 @@ const ProductPage = () => {
 
   const productImages = useMemo(() => {
     if (!product) return [];
-    const rawImages = sortPresentationImageCandidates(product.images && product.images.length > 0 ? product.images : [product.image]).filter(
+    const rawImages = (product.images && product.images.length > 0 ? product.images : [product.image]).filter(
       (img) => !!img && img.trim().length > 0,
     );
 
