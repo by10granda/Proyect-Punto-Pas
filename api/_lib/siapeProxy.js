@@ -1,6 +1,8 @@
 const DEFAULT_SIAPE_BASE_URL = "https://api.distribuidor-puntopas.com/api";
 const LEGACY_SIAPE_BASE_URL = "http://26.65.247.204:91/api";
 const REQUEST_TIMEOUT_MS = 4000;
+const RETRYABLE_STATUS_CODES = [502, 503, 504];
+const MAX_ATTEMPTS_PER_BASE_URL = 3;
 
 const getBaseUrls = () => {
   const configuredBaseUrls = (process.env.SIAPE_BASE_URL || "")
@@ -70,17 +72,21 @@ export const proxyToSiape = async (req, res, path, options = {}) => {
   let lastError;
 
   for (const baseUrl of baseUrls) {
-    try {
-      upstream = await fetchWithTimeout(buildUrl(baseUrl, path, query), {
-        method,
-        headers,
-        body,
-      });
+    for (let attempt = 0; attempt < MAX_ATTEMPTS_PER_BASE_URL; attempt += 1) {
+      try {
+        upstream = await fetchWithTimeout(buildUrl(baseUrl, path, query), {
+          method,
+          headers,
+          body,
+        });
 
-      if (![502, 503, 504].includes(upstream.status)) break;
-    } catch (error) {
-      lastError = error;
+        if (!RETRYABLE_STATUS_CODES.includes(upstream.status)) break;
+      } catch (error) {
+        lastError = error;
+      }
     }
+
+    if (upstream && !RETRYABLE_STATUS_CODES.includes(upstream.status)) break;
   }
 
   if (!upstream) {
