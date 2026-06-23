@@ -1,6 +1,6 @@
 const DEFAULT_SIAPE_BASE_URL = "https://api.distribuidor-puntopas.com/api";
 const LEGACY_SIAPE_BASE_URL = "http://26.65.247.204:91/api";
-const REQUEST_TIMEOUT_MS = 12000;
+const REQUEST_TIMEOUT_MS = 4000;
 
 const getBaseUrls = () => {
   const configuredBaseUrls = (process.env.SIAPE_BASE_URL || "")
@@ -8,7 +8,7 @@ const getBaseUrls = () => {
     .map((url) => url.trim())
     .filter(Boolean);
 
-  return Array.from(new Set([...configuredBaseUrls, DEFAULT_SIAPE_BASE_URL, LEGACY_SIAPE_BASE_URL]))
+  return Array.from(new Set([DEFAULT_SIAPE_BASE_URL, ...configuredBaseUrls, LEGACY_SIAPE_BASE_URL]))
     .map((url) => (url.endsWith("/") ? url.slice(0, -1) : url));
 };
 
