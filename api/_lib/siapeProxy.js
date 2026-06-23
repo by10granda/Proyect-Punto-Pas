@@ -1,11 +1,18 @@
-const SIAPE_BASE_URL = process.env.SIAPE_BASE_URL || "http://26.65.247.204:91/api";
+const DEFAULT_SIAPE_BASE_URL = "https://api.distribuidor-puntopas.com/api";
+const LEGACY_SIAPE_BASE_URL = "http://26.65.247.204:91/api";
+const REQUEST_TIMEOUT_MS = 12000;
 
-const normalizeBaseUrl = () => {
-  const base = SIAPE_BASE_URL.endsWith("/") ? SIAPE_BASE_URL.slice(0, -1) : SIAPE_BASE_URL;
-  return base;
+const getBaseUrls = () => {
+  const configuredBaseUrls = (process.env.SIAPE_BASE_URL || "")
+    .split(",")
+    .map((url) => url.trim())
+    .filter(Boolean);
+
+  return Array.from(new Set([...configuredBaseUrls, DEFAULT_SIAPE_BASE_URL, LEGACY_SIAPE_BASE_URL]))
+    .map((url) => (url.endsWith("/") ? url.slice(0, -1) : url));
 };
 
-const buildUrl = (path, query = {}) => {
+const buildUrl = (base, path, query = {}) => {
   const params = new URLSearchParams();
   Object.entries(query).forEach(([key, value]) => {
     if (value === undefined) return;
@@ -16,10 +23,20 @@ const buildUrl = (path, query = {}) => {
     }
   });
 
-  const base = normalizeBaseUrl();
   const withPath = `${base}${path.startsWith("/") ? path : `/${path}`}`;
   const queryString = params.toString();
   return queryString ? `${withPath}?${queryString}` : withPath;
+};
+
+const fetchWithTimeout = async (url, options) => {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+
+  try {
+    return await fetch(url, { ...options, signal: controller.signal });
+  } finally {
+    clearTimeout(timeout);
+  }
 };
 
 const readRawBody = (req) =>
@@ -32,7 +49,6 @@ const readRawBody = (req) =>
 
 export const proxyToSiape = async (req, res, path, options = {}) => {
   const { method = req.method || "GET", query = req.query || {} } = options;
-  const targetUrl = buildUrl(path, query);
 
   const headers = {};
   if (req.headers.authorization) headers.Authorization = req.headers.authorization;
@@ -49,11 +65,27 @@ export const proxyToSiape = async (req, res, path, options = {}) => {
     }
   }
 
-  const upstream = await fetch(targetUrl, {
-    method,
-    headers,
-    body,
-  });
+  const baseUrls = getBaseUrls();
+  let upstream;
+  let lastError;
+
+  for (const baseUrl of baseUrls) {
+    try {
+      upstream = await fetchWithTimeout(buildUrl(baseUrl, path, query), {
+        method,
+        headers,
+        body,
+      });
+
+      if (![502, 503, 504].includes(upstream.status)) break;
+    } catch (error) {
+      lastError = error;
+    }
+  }
+
+  if (!upstream) {
+    throw lastError || new Error("No se pudo conectar con SIAPE");
+  }
 
   const contentType = upstream.headers.get("content-type") || "application/json";
   const responseBuffer = Buffer.from(await upstream.arrayBuffer());
