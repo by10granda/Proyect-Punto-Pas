@@ -45,14 +45,6 @@ export const ProductCard = memo(({ product, onAddToCart, compact = false }: Prod
       }}
     >
       <div className={`relative ${compact ? "aspect-[4/3]" : "aspect-[4/5]"} bg-gray-50 overflow-hidden`}>
-        {!hasStock && (
-          <div className="absolute inset-0 z-20 flex items-center justify-center bg-white/90">
-            <span className="text-red-600 text-sm font-semibold px-4 py-2 bg-red-50 rounded-full">
-              Sin stock
-            </span>
-          </div>
-        )}
-
         {hasDiscount && hasStock && (
           <div className="absolute top-3 left-3 z-10">
             <span 
@@ -126,7 +118,7 @@ export const ProductCard = memo(({ product, onAddToCart, compact = false }: Prod
             className={`w-full ${compact ? "py-1.5 text-[10px]" : "py-2 text-xs"} rounded-lg font-semibold transition hover:brightness-110 disabled:opacity-40`}
             style={{ backgroundColor: '#FF0000', color: 'white' }}
           >
-            {!hasStock ? 'Sin stock' : 'Agregar al carrito'}
+            Agregar al carrito
           </button>
         </div>
       </div>

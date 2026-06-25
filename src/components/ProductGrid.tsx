@@ -50,11 +50,6 @@ const ProductCardGrid = ({ product, onAddToCart }: {
       style={{ border: '1px solid #ececec', boxShadow: '0 1px 4px rgba(0,0,0,0.025)' }}
     >
         <div className="relative aspect-[4/5] bg-gray-50/60 overflow-hidden">
-        {!hasStock && (
-          <div className="absolute inset-0 z-20 flex items-center justify-center bg-white/90">
-            <span className="text-red-600 text-sm font-semibold px-4 py-2 bg-red-50 rounded-full">Sin stock</span>
-          </div>
-        )}
         {hasPvpAndPuntoPas && hasStock && (
           <div className="absolute top-2 left-2 z-10">
             <span className="text-[10px] font-semibold px-2 py-1 rounded-lg" style={{ backgroundColor: '#FA003F', color: 'white' }}>
@@ -141,7 +136,7 @@ const ProductCardGrid = ({ product, onAddToCart }: {
             className="w-full py-2 rounded-md text-[10px] font-semibold disabled:opacity-40 transition hover:brightness-110"
             style={{ backgroundColor: '#FF0000', color: 'white' }}
           >
-            {!hasStock ? 'Sin stock' : 'Agregar'}
+            Agregar
           </button>
         </div>
       </div>
