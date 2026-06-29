@@ -12,6 +12,8 @@ const manualStockOverrides: Record<string, number> = {
   '00001776': 0,
 };
 
+const excludedProductCodes = new Set(['00000626']);
+
 const PRODUCT_DESCRIPTIONS_SHEET_CSV_URL =
   'https://docs.google.com/spreadsheets/d/1Vw3Rb0Q0U5WSn5UciiJ8FuGsYtdWrOO9GLlQzphdiEA/export?format=csv&gid=0';
 
@@ -382,7 +384,7 @@ export const loadProductsFromAPI = async ({
       customProductImages,
       inventarioMap,
       getFriendlyCategory,
-    });
+    }).filter((product) => !excludedProductCodes.has(normalizeProductCode(product.code || product.id)));
     apiProducts = apiProducts.map((product) => {
       const normalizedCode = normalizeProductCode(product.code || product.id);
       const sheetDescription = descriptionsByCode[normalizedCode];
