@@ -12,13 +12,14 @@ interface ApiInventoryReportItem {
 
 const mapInventoryReport = (items: ApiInventoryReportItem[]): ApiInventoryItem[] => {
   return items.map((item) => {
-    const stockFromWarehouses = Array.isArray(item.bodegas)
+    const availability = Number(item.disponibilidad);
+    const fallbackStockFromWarehouses = Array.isArray(item.bodegas)
       ? item.bodegas.reduce((sum, warehouse) => sum + Number(warehouse.stock || 0), 0)
       : Number.NaN;
 
     return {
       codigo: item.codigo,
-      disponible: Number.isFinite(stockFromWarehouses) ? stockFromWarehouses : Number(item.disponibilidad || 0),
+      disponible: Number.isFinite(availability) ? availability : fallbackStockFromWarehouses,
     };
   });
 };
