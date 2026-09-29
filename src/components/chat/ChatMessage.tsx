@@ -1,5 +1,6 @@
 import { ThumbsDown, ThumbsUp } from "lucide-react";
 import { ChatMessageModel } from "./types";
+import { shouldHideProductImages } from "@/infrastructure/api/branchConfig";
 
 interface ChatMessageProps {
   message: ChatMessageModel;
@@ -7,6 +8,7 @@ interface ChatMessageProps {
 
 export const ChatMessage = ({ message }: ChatMessageProps) => {
   const isAssistant = message.role === "assistant";
+  const hideImages = shouldHideProductImages();
 
   return (
     <div className={`flex flex-col ${isAssistant ? "items-start" : "items-end"}`}>
@@ -22,7 +24,11 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
           <div className="mt-3 space-y-2">
             {message.products.slice(0, 3).map((product) => (
               <div key={product.id} className="rounded-2xl border border-slate-200 bg-white p-2 flex items-center gap-2">
-                <img src={product.image} alt={product.name} className="w-10 h-10 object-contain rounded-md bg-white" />
+                {hideImages ? (
+                  <div className="w-10 h-10 rounded-md bg-slate-100 flex items-center justify-center text-sm">📦</div>
+                ) : (
+                  <img src={product.image} alt={product.name} className="w-10 h-10 object-contain rounded-md bg-white" />
+                )}
                 <div className="min-w-0">
                   <p className="text-xs font-semibold truncate text-slate-800">{product.name}</p>
                   <p className="text-[11px] text-slate-600 truncate">{product.brand} - {product.category}</p>

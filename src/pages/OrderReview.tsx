@@ -6,6 +6,7 @@ import { Footer } from "@/components/Footer";
 import { products } from "@/data/products";
 import { productService } from "@/services/api";
 import { CheckoutSteps } from "@/components/CheckoutSteps";
+import { shouldHideProductImages } from "@/infrastructure/api/branchConfig";
 
 interface CartItem {
   id: string;
@@ -25,6 +26,7 @@ const OrderReview = () => {
   });
   const [stockByCode, setStockByCode] = useState<Record<string, number>>({});
   const contentTopRef = useRef<HTMLElement | null>(null);
+  const hideImages = shouldHideProductImages();
 
   const persistItems = (next: CartItem[]) => {
     setItems(next);
@@ -154,8 +156,12 @@ const OrderReview = () => {
               <div className="space-y-4">
                 {items.map((item) => (
                   <article key={item.id} className="border border-slate-200 rounded-xl p-3 sm:p-4 flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-4">
-                    <div className="flex items-start gap-3 sm:gap-4 flex-1 min-w-0">
-                    <img src={item.image} alt={item.name} className="w-16 h-16 sm:w-20 sm:h-20 rounded-lg object-cover bg-slate-100 flex-shrink-0" />
+                     <div className="flex items-start gap-3 sm:gap-4 flex-1 min-w-0">
+                     {hideImages ? (
+                       <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-lg bg-slate-100 flex items-center justify-center flex-shrink-0 text-xl">📦</div>
+                     ) : (
+                       <img src={item.image} alt={item.name} className="w-16 h-16 sm:w-20 sm:h-20 rounded-lg object-cover bg-slate-100 flex-shrink-0" />
+                     )}
                     <div className="flex-1 min-w-0">
                       <h3 className="text-sm md:text-base font-semibold text-slate-900 uppercase line-clamp-2">{item.name}</h3>
                       <div className="mt-2 flex flex-wrap items-center gap-2">

@@ -36,6 +36,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
+import { shouldHideProductImages } from "@/infrastructure/api/branchConfig";
 
 interface ProductViewProps {
   product: Product;
@@ -67,11 +68,13 @@ const Breadcrumbs = ({ items }: { items: BreadcrumbItem[] }) => (
 const ImageGallery = memo(({ 
   images, 
   productName,
-  video 
+  video,
+  hideImages
 }: { 
   images: string[]; 
   productName: string;
   video?: string;
+  hideImages?: boolean;
 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
@@ -112,7 +115,14 @@ const ImageGallery = memo(({
             </div>
           )}
 
-          {!isVideo ? (
+          {hideImages ? (
+            <div className="flex h-full w-full items-center justify-center text-slate-400">
+              <div className="text-center">
+                <div className="text-5xl mb-2">📦</div>
+                <div className="text-sm">Sin imagen para esta sucursal</div>
+              </div>
+            </div>
+          ) : !isVideo ? (
             <img
               src={allMedia[currentIndex]}
               alt={productName}
@@ -140,7 +150,7 @@ const ImageGallery = memo(({
             </div>
           </div>
 
-          {images.length > 1 && !isVideo && (
+          {!hideImages && images.length > 1 && !isVideo && (
             <>
               <button
                 onClick={(e) => { e.stopPropagation(); handlePrev(); }}
@@ -172,7 +182,7 @@ const ImageGallery = memo(({
           </div>
         </div>
 
-        {images.length > 1 && (
+        {!hideImages && images.length > 1 && (
           <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
             {images.map((src, idx) => (
               <button
@@ -456,6 +466,7 @@ const ReviewsSection = () => (
 );
 
 const RelatedProducts = ({ currentProduct }: { currentProduct: Product }) => {
+  const hideImages = shouldHideProductImages();
   const related = getProductsByCategory(currentProduct.category)
     .filter(p => p.id !== currentProduct.id)
     .slice(0, 4);
@@ -472,11 +483,15 @@ const RelatedProducts = ({ currentProduct }: { currentProduct: Product }) => {
             className="group bg-white border border-gray-100 rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300 hover:border-primary/20"
           >
             <div className="aspect-square bg-gray-50 overflow-hidden">
-              <img
-                src={product.images?.[0] || product.image}
-                alt={product.name}
-                className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-300"
-              />
+              {hideImages ? (
+                <div className="flex h-full w-full items-center justify-center text-slate-400 text-3xl">📦</div>
+              ) : (
+                <img
+                  src={product.images?.[0] || product.image}
+                  alt={product.name}
+                  className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-300"
+                />
+              )}
             </div>
             <div className="p-3">
               <p className="text-xs text-gray-500 mb-1">{product.brand}</p>
@@ -568,12 +583,14 @@ export const ProductView = ({ product, onAddToCart, onClose }: ProductViewProps)
   const [quantity, setQuantity] = useState(1);
   const [isFavorite, setIsFavorite] = useState(false);
   const [addedToCart, setAddedToCart] = useState(false);
+  const hideImages = shouldHideProductImages();
 
   const displayPrice = product.puntoPasPrice || product.pvpPrice || product.price;
   const hasDiscount = product.pvpPrice && product.puntoPasPrice && 
     product.pvpPrice > product.puntoPasPrice && product.puntoPasPrice > 0;
 
   const images = useMemo(() => {
+    if (hideImages) return [];
     const rawImages = product.images && product.images.length > 0 ? product.images : [product.image];
     const unique = new Map<string, string>();
 
@@ -596,7 +613,7 @@ export const ProductView = ({ product, onAddToCart, onClose }: ProductViewProps)
     });
 
     return Array.from(unique.values()).slice(0, 8);
-  }, [product.images, product.image]);
+  }, [product.images, product.image, hideImages]);
 
   const handleAddToCart = useCallback(() => {
     if (product.stock <= 0 || addedToCart) return;
@@ -621,7 +638,7 @@ export const ProductView = ({ product, onAddToCart, onClose }: ProductViewProps)
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
           <div className="space-y-4">
-            <ImageGallery images={images} productName={product.name} video={product.video} />
+            <ImageGallery images={images} productName={product.name} video={product.video} hideImages={hideImages} />
           </div>
 
           <div className="space-y-6">

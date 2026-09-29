@@ -2,6 +2,7 @@ import { ApiClassificationItem, ApiInventoryItem, ApiProductItem, productService
 import { ClassificationItem, Level2Category, Product } from '@/domain/product';
 import { buildClassificationMap } from '@/infrastructure/mappers/classificationMapper';
 import { mapApiProductsToDomain } from '@/infrastructure/mappers/productMapper';
+import { getSelectedBranchKey } from '@/infrastructure/api/config';
 
 export type { Product, Level2Category, ClassificationItem } from '@/domain/product';
 
@@ -191,6 +192,7 @@ export const searchProducts = (query: string): Product[] => {
 
 let apiProducts: Product[] | null = null;
 let apiProductsLastSyncAt = 0;
+let apiProductsBranchKey: string | null = null;
 let productDescriptionsByCode: Record<string, string> = {};
 const inventarioMap: Record<string, number> = {};
 let updateInventoryCallback: ((products: Product[]) => void) | null = null;
@@ -239,6 +241,21 @@ export const setInventoryUpdateCallback = (callback: (products: Product[]) => vo
   updateInventoryCallback = callback;
 };
 
+export const resetProductsCache = () => {
+  apiProducts = null;
+  apiProductsLastSyncAt = 0;
+  apiProductsBranchKey = null;
+  classificationsList = [];
+  level2Categories = [];
+  level3ByParent.clear();
+  classificationsHierarchy.clear();
+  level2ByName.clear();
+  categoriesList = [{ id: "all", name: "Todo", icon: "🏠" }];
+  Object.keys(inventarioMap).forEach((key) => {
+    delete inventarioMap[key];
+  });
+};
+
 const updateProductsStock = () => {
   if (apiProducts && apiProducts.length > 0) {
     apiProducts = apiProducts.map(product => ({
@@ -281,9 +298,11 @@ export const loadProductsFromAPI = async ({
   forceRefresh = false,
   maxAgeMs = 60000,
 }: { forceRefresh?: boolean; maxAgeMs?: number } = {}): Promise<Product[]> => {
+  const currentBranchKey = getSelectedBranchKey();
   const hasFreshCache =
     apiProducts &&
     apiProducts.length > 0 &&
+    apiProductsBranchKey === currentBranchKey &&
     Date.now() - apiProductsLastSyncAt <= maxAgeMs;
 
   if (!forceRefresh && hasFreshCache) {
@@ -398,6 +417,7 @@ export const loadProductsFromAPI = async ({
       return { ...product, stock: forcedStock };
     });
     apiProductsLastSyncAt = Date.now();
+    apiProductsBranchKey = currentBranchKey;
 
     return apiProducts;
   } catch (_error: unknown) {

@@ -9,6 +9,7 @@ import { Footer } from "@/components/Footer";
 import { WhatsAppButton } from "@/components/WhatsAppButton";
 import { paymentBadgeCandidates, paymentBadges } from "@/utils/paymentBadges";
 import { handleAssetFallback } from "@/utils/assetFallback";
+import { shouldHideProductImages } from "@/infrastructure/api/branchConfig";
 
 const normalizeCategory = (value: string) =>
   (value || "")
@@ -55,6 +56,7 @@ const ProductPage = () => {
   const [cartCount, setCartCount] = useState(0);
   const [isImageZoomed, setIsImageZoomed] = useState(false);
   const [zoomPosition, setZoomPosition] = useState({ x: 50, y: 50 });
+  const hideImages = shouldHideProductImages();
 
   useEffect(() => {
     const run = async () => {
@@ -212,6 +214,7 @@ const ProductPage = () => {
   }, [products, product]);
 
   const productImages = useMemo(() => {
+    if (hideImages) return [];
     if (!product) return [];
     const rawImages = (product.images && product.images.length > 0 ? product.images : [product.image]).filter(
       (img) => !!img && img.trim().length > 0,
@@ -233,7 +236,7 @@ const ProductPage = () => {
     });
 
     return Array.from(unique.values()).slice(0, 8);
-  }, [product]);
+  }, [product, hideImages]);
 
   if (loading) {
     return <div className="min-h-screen flex items-center justify-center text-slate-600">Cargando producto...</div>;
@@ -282,8 +285,9 @@ const ProductPage = () => {
       <div className="mx-auto max-w-[1600px] px-0 py-0">
         <div className="bg-white p-2 md:p-4 xl:px-5">
           <div className="grid grid-cols-1 gap-5 xl:grid-cols-[90px_1.5fr_1fr_360px]">
-            <div className="order-2 xl:order-1 flex xl:flex-col gap-2 overflow-x-auto xl:overflow-visible">
-              {visibleImages.map((img, idx) => (
+            {!hideImages && (
+              <div className="order-2 xl:order-1 flex xl:flex-col gap-2 overflow-x-auto xl:overflow-visible">
+                {visibleImages.map((img, idx) => (
                 <button
                   key={`${img}-${idx}`}
                   onClick={() => setSelectedImageIndex(idx)}
@@ -302,8 +306,9 @@ const ProductPage = () => {
                     }}
                   />
                 </button>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
 
             <div
               className="order-1 xl:order-2 relative overflow-hidden bg-slate-50 p-4 cursor-zoom-in select-none"
@@ -323,22 +328,31 @@ const ProductPage = () => {
               onTouchEnd={() => setIsImageZoomed(false)}
               style={{ touchAction: "pan-y pinch-zoom" }}
             >
-              <img
-                src={selectedImage}
-                alt={product.name}
-                className="mx-auto h-[320px] w-full object-contain transition-transform duration-300 ease-out will-change-transform md:h-[560px]"
-                style={{
-                  transform: isImageZoomed ? "scale(1.08)" : "scale(1)",
-                  transformOrigin: `${zoomPosition.x}% ${zoomPosition.y}%`,
-                }}
-                onError={() => {
-                  const currentRawIndex = productImages.findIndex((img) => img === selectedImage);
-                  if (currentRawIndex >= 0 && !brokenImageIndexes.includes(currentRawIndex)) {
-                    setBrokenImageIndexes((prev) => [...prev, currentRawIndex]);
-                    setSelectedImageIndex(0);
-                  }
-                }}
-              />
+              {hideImages ? (
+                <div className="mx-auto flex h-[320px] w-full items-center justify-center text-slate-400 md:h-[560px]">
+                  <div className="text-center">
+                    <div className="text-6xl mb-2">📦</div>
+                    <div className="text-sm">Sin imagen para esta sucursal</div>
+                  </div>
+                </div>
+              ) : (
+                <img
+                  src={selectedImage}
+                  alt={product.name}
+                  className="mx-auto h-[320px] w-full object-contain transition-transform duration-300 ease-out will-change-transform md:h-[560px]"
+                  style={{
+                    transform: isImageZoomed ? "scale(1.08)" : "scale(1)",
+                    transformOrigin: `${zoomPosition.x}% ${zoomPosition.y}%`,
+                  }}
+                  onError={() => {
+                    const currentRawIndex = productImages.findIndex((img) => img === selectedImage);
+                    if (currentRawIndex >= 0 && !brokenImageIndexes.includes(currentRawIndex)) {
+                      setBrokenImageIndexes((prev) => [...prev, currentRawIndex]);
+                      setSelectedImageIndex(0);
+                    }
+                  }}
+                />
+              )}
               <div
                 className={`pointer-events-none absolute hidden h-32 w-32 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white bg-white shadow-[0_18px_45px_-20px_rgba(15,23,42,0.75)] ring-1 ring-slate-900/10 transition-opacity duration-300 md:block ${isImageZoomed ? "opacity-100" : "opacity-0"}`}
                 style={{
@@ -506,15 +520,19 @@ const ProductPage = () => {
                     className="rounded-xl border border-slate-200 p-2 text-left transition hover:-translate-y-0.5 hover:border-[#FA003F]/60 hover:shadow-md"
                   >
                     <div className="mb-2 rounded-lg bg-slate-50 p-2">
-                      <img
-                        src={item.image}
-                        alt={item.name}
-                        className="h-32 w-full object-contain"
-                        onError={(e) => {
-                          const img = e.currentTarget as HTMLImageElement;
-                          img.src = "/placeholder.svg";
-                        }}
-                      />
+                      {hideImages ? (
+                        <div className="flex h-32 w-full items-center justify-center text-slate-400 text-3xl">📦</div>
+                      ) : (
+                        <img
+                          src={item.image}
+                          alt={item.name}
+                          className="h-32 w-full object-contain"
+                          onError={(e) => {
+                            const img = e.currentTarget as HTMLImageElement;
+                            img.src = "/placeholder.svg";
+                          }}
+                        />
+                      )}
                     </div>
                     <p className="line-clamp-2 text-sm font-semibold text-slate-800">{item.name}</p>
                     <p className="mt-1 text-xs text-slate-500">Cod. {item.code}</p>

@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { ShoppingBag } from "lucide-react";
 import { Product } from "@/data/products";
 import { products } from "@/data/products";
+import { shouldHideProductImages } from "@/infrastructure/api/branchConfig";
 import {
   Sheet,
   SheetContent,
@@ -43,6 +44,7 @@ export const CartDrawer = ({
   onClearCart,
   onCheckout,
 }: CartDrawerProps) => {
+  const hideImages = shouldHideProductImages();
   const formatPrice = (price: number) => {
     return price.toLocaleString("es-EC", {
       style: "currency",
@@ -91,11 +93,15 @@ export const CartDrawer = ({
                   className="relative bg-white rounded-2xl p-3 shadow-lg border border-gray-100 hover:shadow-xl transition-shadow"
                 >
                   <div className="flex gap-3">
-                    <img
-                      src={item.image}
-                      alt={item.name}
-                      className="w-20 h-20 rounded-xl object-cover shadow-sm"
-                    />
+                    {hideImages ? (
+                      <div className="w-20 h-20 rounded-xl bg-gray-100 flex items-center justify-center text-2xl shadow-sm">📦</div>
+                    ) : (
+                      <img
+                        src={item.image}
+                        alt={item.name}
+                        className="w-20 h-20 rounded-xl object-cover shadow-sm"
+                      />
+                    )}
                     <div className="flex-1 min-w-0">
                       <h4 className="font-light text-sm text-gray-800 line-clamp-2 mb-1">
                         {item.name}

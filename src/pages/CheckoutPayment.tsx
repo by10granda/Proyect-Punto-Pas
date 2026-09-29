@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import logoPuntoPas from "@/assets/logo-punto-pas.png";
 import { TipoIdentificacionCliente } from "@/services/api";
 import { CheckoutSteps } from "@/components/CheckoutSteps";
+import { shouldHideProductImages } from "@/infrastructure/api/branchConfig";
 
 interface CheckoutCustomerData {
   nombre: string;
@@ -29,6 +30,7 @@ export const CheckoutPayment = () => {
   const navigate = useNavigate();
   const [metodoPago, setMetodoPago] = useState<"transferencia" | "tarjeta">("transferencia");
   const [whatsappSent, setWhatsappSent] = useState(false);
+  const hideImages = shouldHideProductImages();
 
   const cartItems = useMemo(() => {
     const cartData = localStorage.getItem("puntopas_cart");
@@ -234,8 +236,8 @@ export const CheckoutPayment = () => {
                   <div className="space-y-4 max-h-64 overflow-y-auto mb-6">
                     {cartItems.map((item: { id: string; name: string; image: string; quantity: number; price: number }) => (
                       <div key={item.id} className="flex gap-3">
-                        <div className="w-16 h-16 rounded-lg overflow-hidden bg-slate-100 flex-shrink-0">
-                          <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                        <div className="w-16 h-16 rounded-lg overflow-hidden bg-slate-100 flex-shrink-0 flex items-center justify-center">
+                          {hideImages ? <span className="text-xl">📦</span> : <img src={item.image} alt={item.name} className="w-full h-full object-cover" />}
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="font-medium text-slate-900 text-sm truncate">{item.name}</p>

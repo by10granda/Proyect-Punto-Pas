@@ -3,6 +3,7 @@ import { memo } from "react";
 import { useImageCandidateFallback } from "@/hooks/useImageCandidateFallback";
 import { AutoFitImage } from "./AutoFitImage";
 import { getHoverImageCandidates, getPresentationImageCandidates } from "@/utils/productPresentationImage";
+import { shouldHideProductImages } from "@/infrastructure/api/branchConfig";
 
 interface ProductCardProps {
   product: Product;
@@ -11,6 +12,7 @@ interface ProductCardProps {
 }
 
 export const ProductCard = memo(({ product, onAddToCart, compact = false }: ProductCardProps) => {
+  const hideImages = shouldHideProductImages();
   const hasStock = product.stock > 0;
   const allImageCandidates = product.images && product.images.length > 0 ? product.images : [product.image];
   const imageCandidates = getPresentationImageCandidates(allImageCandidates);
@@ -57,7 +59,12 @@ export const ProductCard = memo(({ product, onAddToCart, compact = false }: Prod
         )}
 
         <div className={`relative w-full h-full flex items-center justify-center ${compact ? "p-2" : "p-3 sm:p-4"}`}>
-          {imageError ? (
+          {hideImages ? (
+            <div className="flex flex-col items-center justify-center text-gray-400">
+              <span className="text-4xl mb-2">📦</span>
+              <span className="text-sm">Sin imagen</span>
+            </div>
+          ) : imageError ? (
             <div className="flex flex-col items-center justify-center text-gray-400">
               <span className="text-4xl mb-2">📦</span>
               <span className="text-sm">Sin imagen</span>

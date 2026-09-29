@@ -28,6 +28,18 @@
   ],
   "rewrites": [
     {
+      "source": "/api/almacen-pas/(.*)",
+      "destination": "https://api.distribuidor-puntopas.com/api/$1"
+    },
+    {
+      "source": "/api/variedades-pas/(.*)",
+      "destination": "https://api-sucursal2.distribuidor-puntopas.com/api/$1"
+    },
+    {
+      "source": "/api/sucursal-3/(.*)",
+      "destination": "https://api-sucursal3.distribuidor-puntopas.com/api/$1"
+    },
+    {
       "source": "/((?!api/).*)",
       "destination": "/index.html"
     }

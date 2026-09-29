@@ -9,8 +9,9 @@ import {
   buildCategoryAssetCandidates,
   CATEGORY_IMAGES_BASE_URL,
 } from "@/data/categoryAssets";
-const headerLogo = "/LOGO_DISTRIBUIDOR-PUNTOPAS.png";
+import { BranchKey, BranchOption, getBranchConfigByKey, getBranchOptions as getDefaultBranchOptions, getSelectedBranchKey as getDefaultSelectedBranchKey, setSelectedBranchKey as persistSelectedBranchKey } from "@/infrastructure/api/branchConfig";
 import { Level2Category, Product } from "@/data/products";
+const headerLogo = "/LOGO_DISTRIBUIDOR-PUNTOPAS.png";
 
 interface HeaderProps {
   cartCount: number;
@@ -28,9 +29,17 @@ interface HeaderProps {
   popularSearches?: string[];
   nivel2Categories?: Level2Category[];
   nivel3ByParent?: Map<number, string[]>; // Nivel 3 types grouped by parent ID
+  branchOptions?: BranchOption[];
+  selectedBranchKey?: BranchKey;
+  selectedBranchLabel?: string;
+  onBranchSelect?: (branchKey: BranchKey) => void;
 }
 
-export const Header = ({ cartCount, searchQuery: propSearchQuery, onSearch, onCartClick, onGoToHome, onClearSearch, products = [], onProductClick, onTypeSelect, filters = defaultAdvancedProductFilters, onFiltersChange, productsCount = 0, popularSearches = [], nivel2Categories = [], nivel3ByParent }: HeaderProps) => {
+export const Header = ({ cartCount, searchQuery: propSearchQuery, onSearch, onCartClick, onGoToHome, onClearSearch, products = [], onProductClick, onTypeSelect, filters = defaultAdvancedProductFilters, onFiltersChange, productsCount = 0, popularSearches = [], nivel2Categories = [], nivel3ByParent, branchOptions, selectedBranchKey, selectedBranchLabel, onBranchSelect }: HeaderProps) => {
+  const resolvedBranchOptions = branchOptions?.length ? branchOptions : getDefaultBranchOptions();
+  const resolvedBranchKey = selectedBranchKey || getDefaultSelectedBranchKey();
+  const activeBranch = getBranchConfigByKey(resolvedBranchKey);
+  const resolvedBranchLabel = selectedBranchLabel || `${activeBranch.label} - ${activeBranch.location}`;
   const BRAND_LOGO_BASE_URL = (import.meta.env.VITE_BRANDS_BASE_URL as string | undefined) || "https://assets.distribuidor-puntopas.com/MARCAS";
   const categoryImagesEnvBaseUrl = (import.meta.env.VITE_CATEGORY_IMAGES_BASE_URL as string | undefined) || CATEGORY_IMAGES_BASE_URL;
   const russoRadioImageCandidates = [
@@ -54,6 +63,7 @@ export const Header = ({ cartCount, searchQuery: propSearchQuery, onSearch, onCa
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
   const [showCategoriesPanel, setShowCategoriesPanel] = useState(false);
   const [showFiltersPanel, setShowFiltersPanel] = useState(false);
+  const [showBranchesPanel, setShowBranchesPanel] = useState(false);
   const [hoveredType, setHoveredType] = useState<string | null>(null);
   const [mobileCategoriesView, setMobileCategoriesView] = useState<'categories' | 'types'>('categories');
   const { isPlaying, toggleRadio, currentSong, isLoading, error, volume, setVolume } = useRadio();
@@ -67,6 +77,7 @@ export const Header = ({ cartCount, searchQuery: propSearchQuery, onSearch, onCa
   const showMiniPlayerRef = useRef(showMiniPlayer);
   const suggestionsRef = useRef<HTMLDivElement>(null);
   const categoriesPanelRef = useRef<HTMLDivElement>(null);
+  const branchesPanelRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   const miniPlayerRef = useRef<HTMLDivElement>(null);
 
@@ -189,6 +200,22 @@ export const Header = ({ cartCount, searchQuery: propSearchQuery, onSearch, onCa
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [showCategoriesPanel]);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (branchesPanelRef.current && !branchesPanelRef.current.contains(event.target as Node)) {
+        setShowBranchesPanel(false);
+      }
+    };
+
+    if (showBranchesPanel) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showBranchesPanel]);
 
   const updateDraftFilter = (patch: Partial<AdvancedProductFilters>) => {
     const next = { ...draftFilters, ...patch };
@@ -726,9 +753,67 @@ export const Header = ({ cartCount, searchQuery: propSearchQuery, onSearch, onCa
                  </div>
                </div>
              )}
-          </div>
+           </div>
+           )}
+
+          {!hideCommerceControls && (
+            <div className="relative" ref={branchesPanelRef}>
+              <button
+                onClick={() => setShowBranchesPanel((prev) => !prev)}
+                className="flex items-center gap-1.5 md:gap-2 px-2.5 md:px-4 py-2 md:py-2.5 bg-white/10 hover:bg-white/20 text-white rounded-full transition-all font-medium text-xs md:text-sm"
+              >
+                <span className="hidden sm:inline">Sucursales</span>
+                <span className="sm:hidden">Suc.</span>
+                <ChevronRight className={`w-4 h-4 transition-transform ${showBranchesPanel ? 'rotate-90' : ''}`} />
+              </button>
+
+              {showBranchesPanel && (
+                <div className="absolute left-1/2 md:left-0 -translate-x-1/2 md:translate-x-0 top-full mt-3 w-[92vw] md:w-72 bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden z-50">
+                  <div className="px-4 py-3 bg-slate-50 border-b border-slate-100">
+                    <p className="text-[11px] font-semibold tracking-[0.18em] text-slate-500 uppercase">Elegir sucursal</p>
+                    <p className="text-sm text-slate-600 mt-1">{resolvedBranchLabel || 'Sucursal activa'}</p>
+                  </div>
+
+                  <div className="p-2">
+                    {resolvedBranchOptions.map((branch) => {
+                      const isActive = branch.key === resolvedBranchKey;
+
+                      return (
+                        <button
+                          key={branch.key}
+                          onClick={() => {
+                            if (onBranchSelect) {
+                              onBranchSelect(branch.key);
+                            } else {
+                              persistSelectedBranchKey(branch.key);
+                              navigate('/');
+                              scrollToTop();
+                            }
+                            setShowBranchesPanel(false);
+                          }}
+                          className={`w-full text-left px-3 py-3 rounded-xl transition-colors flex items-start gap-3 ${
+                            isActive ? 'bg-red-50 border border-red-100' : 'hover:bg-slate-50 border border-transparent'
+                          }`}
+                        >
+                          <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${isActive ? 'bg-red-500 text-white' : 'bg-slate-100 text-slate-600'}`}>
+                            <MapPin className="w-4 h-4" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center justify-between gap-2">
+                              <p className="font-semibold text-sm text-slate-900 truncate">{branch.label}</p>
+                              {isActive && <span className="text-[10px] font-bold uppercase tracking-wide text-red-600">Activa</span>}
+                            </div>
+                            <p className="text-xs text-slate-500 mt-0.5">{branch.location}</p>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </div>
           )}
-          
+           
           {/* Search bar */}
           {!hideCommerceControls && (
            <form onSubmit={handleSearch} className="order-3 md:order-none basis-full md:basis-auto flex-1 md:max-w-md" ref={searchRef}>

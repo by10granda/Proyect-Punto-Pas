@@ -1,5 +1,6 @@
 import { Product } from '@/domain/product';
 import { ApiProductItem } from '@/infrastructure/api/types';
+import { getSelectedBranchKey } from '@/infrastructure/api/branchConfig';
 
 interface ProductMapperOptions {
   imageVersion: string;
@@ -8,8 +9,9 @@ interface ProductMapperOptions {
   getFriendlyCategory: (category: string) => string;
 }
 
-const PRODUCTS_BASE_URL = (import.meta.env.VITE_PRODUCTS_BASE_URL as string | undefined) || '';
-const PRODUCTS_BACKUP_BASE_URL = (import.meta.env.VITE_PRODUCTS_BACKUP_BASE_URL as string | undefined) || '';
+const ALMACEN_PAS_PRODUCTS_TUNNEL_URL =
+  (import.meta.env.VITE_ALMACEN_PAS_PRODUCTS_TUNNEL_URL as string | undefined) ||
+  'https://assets.distribuidor-puntopas.com/PRODUCTOS_ESMERALDAS2';
 
 const isPlaceholderBrand = (value: string) => {
   const cleaned = value.replace(/\s+/g, '');
@@ -68,15 +70,9 @@ const getProductImages = (codigo: string, imageVersion: string): string[] => {
   const paddedCode = codigo.padStart(8, '0').substring(0, 8);
   const suffixes = ['_E', ...Array.from({ length: 12 }, (_, index) => `_E${index + 2}`)];
   const extensions = ['.png', '.PNG'];
-  const primaryImages = buildImageCandidates(PRODUCTS_BASE_URL, paddedCode, suffixes, extensions);
-  const defaultTunnelImages = buildImageCandidates('https://assets.distribuidor-puntopas.com/PRODUCTOS_ESMERALDAS2', paddedCode, suffixes, extensions);
-  const backupImages = buildImageCandidates(PRODUCTS_BACKUP_BASE_URL, paddedCode, suffixes, ['.png']);
-
-  const imageCandidates = [
-    ...backupImages,
-    ...primaryImages,
-    ...defaultTunnelImages,
-  ];
+  const imageCandidates = getSelectedBranchKey() === 'almacen-pas'
+    ? buildImageCandidates(ALMACEN_PAS_PRODUCTS_TUNNEL_URL, paddedCode, suffixes, extensions)
+    : [];
 
   return Array.from(new Set(imageCandidates)).map((image) => withVersionQuery(image, imageVersion));
 };
@@ -108,11 +104,7 @@ export const mapApiProductsToDomain = (
     } else if (codigoInterno) {
       const paddedCode = codigoInterno.padStart(8, '0').substring(0, 8);
       productImages = getProductImages(paddedCode, imageVersion);
-      if (PRODUCTS_BASE_URL) {
-        productImage = productImages[0];
-      } else {
-        productImage = productImages[0];
-      }
+      productImage = productImages[0] || '';
     } else {
       productImage = `https://placehold.co/400x400?text=${encodeURIComponent(item.descripcionItem || codigoInterno)}`;
       productImages = [productImage];

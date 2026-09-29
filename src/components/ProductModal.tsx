@@ -3,6 +3,7 @@ import { X, Minus, Plus, ShoppingCart, Check, ChevronLeft, ChevronRight } from "
 import { Product } from "@/data/products";
 import { paymentBadgeCandidates, paymentBadges } from "@/utils/paymentBadges";
 import { handleAssetFallback } from "@/utils/assetFallback";
+import { shouldHideProductImages } from "@/infrastructure/api/branchConfig";
 
 interface ProductModalProps {
   product: Product | null;
@@ -14,6 +15,7 @@ interface ProductModalProps {
 }
 
 export const ProductModal = ({ product, isOpen, onClose, onAddToCart, relatedProducts = [], onProductSelect }: ProductModalProps) => {
+  const hideImages = shouldHideProductImages();
   const [quantity, setQuantity] = useState(1);
   const [addedToCart, setAddedToCart] = useState(false);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
@@ -77,20 +79,31 @@ export const ProductModal = ({ product, isOpen, onClose, onAddToCart, relatedPro
           </div>
 
           <div className="grid grid-cols-1 gap-5 p-4 md:p-6 xl:grid-cols-[90px_1.5fr_1fr_360px]">
-            <div className="order-2 xl:order-1 flex xl:flex-col gap-2 overflow-x-auto xl:overflow-visible">
-              {productImages.map((img, idx) => (
-                <button
-                  key={`${img}-${idx}`}
-                  onClick={() => setSelectedImageIndex(idx)}
-                  className={`h-16 w-16 shrink-0 overflow-hidden rounded-lg border-2 ${selectedImageIndex === idx ? "border-[#FA003F]" : "border-slate-200"}`}
-                >
-                  <img src={img} alt={`${product.name} ${idx + 1}`} className="h-full w-full object-cover" />
-                </button>
-              ))}
-            </div>
+            {!hideImages && (
+              <div className="order-2 xl:order-1 flex xl:flex-col gap-2 overflow-x-auto xl:overflow-visible">
+                {productImages.map((img, idx) => (
+                  <button
+                    key={`${img}-${idx}`}
+                    onClick={() => setSelectedImageIndex(idx)}
+                    className={`h-16 w-16 shrink-0 overflow-hidden rounded-lg border-2 ${selectedImageIndex === idx ? "border-[#FA003F]" : "border-slate-200"}`}
+                  >
+                    <img src={img} alt={`${product.name} ${idx + 1}`} className="h-full w-full object-cover" />
+                  </button>
+                ))}
+              </div>
+            )}
 
             <div className="order-1 xl:order-2 rounded-xl border bg-slate-50 p-4">
-              <img src={productImages[selectedImageIndex]} alt={product.name} className="mx-auto h-[300px] w-full object-contain md:h-[520px]" />
+              {hideImages ? (
+                <div className="mx-auto flex h-[300px] w-full items-center justify-center text-slate-400 md:h-[520px]">
+                  <div className="text-center">
+                    <div className="text-5xl mb-2">📦</div>
+                    <div className="text-sm">Sin imagen para esta sucursal</div>
+                  </div>
+                </div>
+              ) : (
+                <img src={productImages[selectedImageIndex]} alt={product.name} className="mx-auto h-[300px] w-full object-contain md:h-[520px]" />
+              )}
             </div>
 
             <div className="order-3 space-y-4">
@@ -207,7 +220,11 @@ export const ProductModal = ({ product, isOpen, onClose, onAddToCart, relatedPro
                     className="rounded-xl border border-slate-200 p-2 text-left transition hover:-translate-y-0.5 hover:border-[#FA003F]/60 hover:shadow-md"
                   >
                     <div className="mb-2 rounded-lg bg-slate-50 p-2">
-                      <img src={item.image} alt={item.name} className="h-32 w-full object-contain" />
+                      {hideImages ? (
+                        <div className="flex h-32 w-full items-center justify-center text-slate-400 text-3xl">📦</div>
+                      ) : (
+                        <img src={item.image} alt={item.name} className="h-32 w-full object-contain" />
+                      )}
                     </div>
                     <p className="line-clamp-2 text-sm font-semibold text-slate-800">{item.name}</p>
                     <p className="mt-1 text-xs text-slate-500">Cod. {item.code}</p>

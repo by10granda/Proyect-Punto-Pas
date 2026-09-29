@@ -1,14 +1,17 @@
-import { API_BASE_URL, API_CONFIG } from '@/infrastructure/api/config';
+import { getApiBaseUrl, getApiConfig } from '@/infrastructure/api/config';
+import { getSelectedBranchKey } from '@/infrastructure/api/config';
 import { TimeoutError } from '@/infrastructure/api/client';
 import { ApiError } from '@/infrastructure/api/types';
 
 let cachedToken: string | null = null;
 let tokenExpiry: number | null = null;
+let cachedBranchKey: string | null = null;
 
 const TOKEN_VALIDITY_MS = 55 * 60 * 1000;
 
 const isTokenValid = (): boolean => {
   if (!cachedToken || !tokenExpiry) return false;
+  if (cachedBranchKey !== getSelectedBranchKey()) return false;
   return Date.now() < tokenExpiry;
 };
 
@@ -17,6 +20,7 @@ export const authService = {
     if (forceNew) {
       cachedToken = null;
       tokenExpiry = null;
+      cachedBranchKey = null;
     }
 
     if (isTokenValid()) {
@@ -24,14 +28,15 @@ export const authService = {
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}/usuario/login`, {
+      const apiConfig = getApiConfig();
+      const response = await fetch(`${getApiBaseUrl()}/usuario/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          login: API_CONFIG.username,
-          password: API_CONFIG.password,
+          login: apiConfig.username,
+          password: apiConfig.password,
         }),
       });
 
@@ -47,6 +52,7 @@ export const authService = {
       const token = await response.text();
       cachedToken = token;
       tokenExpiry = Date.now() + TOKEN_VALIDITY_MS;
+      cachedBranchKey = getSelectedBranchKey();
 
       return token;
     } catch (error) {
@@ -59,11 +65,13 @@ export const authService = {
   clearToken() {
     cachedToken = null;
     tokenExpiry = null;
+    cachedBranchKey = null;
   },
 
   forceNewLogin() {
     cachedToken = null;
     tokenExpiry = null;
+    cachedBranchKey = null;
   },
 
   getToken(): string | null {

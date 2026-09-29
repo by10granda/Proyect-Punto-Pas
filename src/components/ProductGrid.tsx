@@ -3,12 +3,14 @@ import { useState, useEffect } from "react";
 import { useImageCandidateFallback } from "@/hooks/useImageCandidateFallback";
 import { AutoFitImage } from "./AutoFitImage";
 import { getHoverImageCandidates, getPresentationImageCandidates } from "@/utils/productPresentationImage";
+import { shouldHideProductImages } from "@/infrastructure/api/branchConfig";
 
 const ProductCardGrid = ({ product, onAddToCart }: {
   product: Product;
   onAddToCart: (product: Product, quantity: number) => void;
 }) => {
   const [quantity, setQuantity] = useState(1);
+  const hideImages = shouldHideProductImages();
   const hasStock = product.stock > 0;
   const allImageCandidates = product.images && product.images.length > 0 ? product.images : [product.image];
   const imageCandidates = getPresentationImageCandidates(allImageCandidates);
@@ -58,7 +60,9 @@ const ProductCardGrid = ({ product, onAddToCart }: {
           </div>
         )}
           <div className="relative w-full h-full flex items-center justify-center p-2.5 sm:p-3">
-          {imageError ? (
+          {hideImages ? (
+            <span className="text-4xl">📦</span>
+          ) : imageError ? (
             <span className="text-4xl">📦</span>
           ) : (
             <AutoFitImage src={resolvedImageSrc} alt={product.name} className="h-full w-full" onError={handleImageError} loading="lazy" />

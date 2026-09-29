@@ -34,6 +34,9 @@ import { buildCategoryImageCandidates, handleCategoryImageFallback } from "@/uti
 import publicidadImage from "@/assets/PUBLICIDAD.png";
 import categoriasImage from "@/assets/Categorias.png";
 import { buildAssetCandidates, handleAssetFallback } from "@/utils/assetFallback";
+import { authService } from "@/services/api";
+import { getBranchConfigByKey, getBranchOptions, getSelectedBranchKey, setSelectedBranchKey } from "@/infrastructure/api/config";
+import { resetProductsCache } from "@/data/products";
 
 const CATEGORY_IMAGES_BASE_URL = (import.meta.env.VITE_CATEGORY_IMAGES_BASE_URL as string | undefined) || "";
 const WEEKLY_DEALS_BASE_URL = (import.meta.env.VITE_WEEKLY_DEALS_BASE_URL as string | undefined) || "";
@@ -174,6 +177,7 @@ const Index = () => {
   const [isLoadingProducts, setIsLoadingProducts] = useState(true);
   const [apiError, setApiError] = useState<string | null>(null);
   const [apiStatus, setApiStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [selectedBranchKey, setSelectedBranchKeyState] = useState(() => getSelectedBranchKey());
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedType, setSelectedType] = useState("all");
   const [activeTab, setActiveTab] = useState("home");
@@ -198,6 +202,8 @@ const Index = () => {
   const [productCategories, setProductCategories] = useState(getCategories());
   const [nivel2Categories, setNivel2Categories] = useState<Level2Category[]>([]);
   const [nivel3ByParent, setNivel3ByParent] = useState<Map<number, string[]>>(new Map());
+  const branchOptions = useMemo(() => getBranchOptions(), []);
+  const activeBranch = useMemo(() => getBranchConfigByKey(selectedBranchKey), [selectedBranchKey]);
   
   // Get Nivel 2 categories after API loads
   const refreshCategories = async () => {
@@ -427,6 +433,36 @@ const Index = () => {
       }
     }
   }, [sendProductsUnavailableAlert]);
+
+  const handleBranchSelect = useCallback((branchKey: string) => {
+    if (branchKey === selectedBranchKey) return;
+
+    setSelectedBranchKey(branchKey);
+    setSelectedBranchKeyState(branchKey);
+    resetProductsCache();
+    authService.clearToken();
+
+    setApiStatus('loading');
+    setIsLoadingProducts(true);
+    setAllProducts([]);
+    setProductCategories([{ id: "all", name: "Todo", icon: "🏠" }]);
+    setNivel2Categories([]);
+    setNivel3ByParent(new Map());
+    setSearchQuery("");
+    setSelectedCategory("all");
+    setSelectedType("all");
+    setSelectedBrand("all");
+    setOffersCategory("all");
+    setCarouselCategory("all");
+    setWeeklyDealsCategory("all");
+    setMainFilter({ mode: "none", value: "all" });
+    setActiveTab("home");
+    navigate("/", { replace: true });
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
+
+    void loadAPIProducts({ silent: false });
+  }, [loadAPIProducts, navigate, selectedBranchKey]);
 
   useEffect(() => {
     void loadAPIProducts();
@@ -863,7 +899,7 @@ const Index = () => {
       <p className="sr-only">Distribuidor Punto Pas: ferretería y hogar en Ecuador.</p>
       <TopBar />
       <div className="h-[2px] bg-white/30 -mt-px relative z-40" />
-       <Header 
+         <Header 
           cartCount={cartItemCount} 
           searchQuery={searchQuery}
           onSearch={(q) => {
@@ -882,6 +918,10 @@ const Index = () => {
           productsCount={filteredProducts.length}
           nivel2Categories={nivel2Categories}
           nivel3ByParent={nivel3ByParent}
+          branchOptions={branchOptions}
+          selectedBranchKey={selectedBranchKey}
+          selectedBranchLabel={`${activeBranch.label} - ${activeBranch.location}`}
+          onBranchSelect={handleBranchSelect}
         />
       {activeTab === "home" && !searchQuery && (
         <>
