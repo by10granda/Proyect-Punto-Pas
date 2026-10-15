@@ -38,12 +38,12 @@ const buildUrl = (base, path, query = {}) => {
   return queryString ? `${withPath}?${queryString}` : withPath;
 };
 
-const fetchWithTimeout = async (url, options) => {
+const fetchWithTimeout = async (url, options, transport = fetch) => {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
 
   try {
-    return await fetch(url, { ...options, signal: controller.signal });
+    return await transport(url, { ...options, signal: controller.signal });
   } finally {
     clearTimeout(timeout);
   }
@@ -87,7 +87,7 @@ export const proxyToSiape = async (req, res, path, options = {}) => {
           method,
           headers,
           body,
-        });
+        }, options.transport);
 
         if (!RETRYABLE_STATUS_CODES.includes(upstream.status)) break;
       } catch (error) {

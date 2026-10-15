@@ -1,6 +1,10 @@
 import { afterEach, expect, it, vi } from 'vitest';
 import handler from '../../api/siape.js';
 
+vi.mock('../../api/_lib/siapeTransport.js', () => ({
+  fetchSiape: (url: string, options: RequestInit) => globalThis.fetch(url, options),
+}));
+
 const response = () => ({
   status: vi.fn().mockReturnThis(),
   setHeader: vi.fn(),
