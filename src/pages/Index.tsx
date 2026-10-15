@@ -1149,7 +1149,19 @@ const Index = () => {
           </div>
         )}
         
-          <ProductGrid 
+          {apiStatus === 'error' && allProducts.length === 0 ? (
+            <div role="alert" className="mx-3 my-8 rounded-xl border border-red-200 bg-red-50 p-6 text-center sm:mx-4">
+              <h2 className="text-lg font-semibold text-red-800">No pudimos cargar el catálogo</h2>
+              <p className="mt-2 text-sm text-red-700">La conexión con el servidor de productos no está disponible. No significa que no haya productos.</p>
+              <button
+                type="button"
+                onClick={() => void loadAPIProducts()}
+                className="mt-4 rounded-full bg-red-600 px-5 py-2 text-sm font-semibold text-white hover:bg-red-700"
+              >
+                Reintentar carga
+              </button>
+            </div>
+          ) : <ProductGrid 
             products={displayedProducts}
             onAddToCart={handleAddToCart}
             title={getTitle()}
@@ -1157,7 +1169,7 @@ const Index = () => {
             isLoading={isLoadingProducts}
             itemsPerPage={shouldForceSixRowsInMainGrid ? 36 : 18}
             resetPageKey={`${activeTab}|${mainFilter.mode}|${mainFilter.value}|${selectedCategory}|${selectedType}|${selectedBrand}|${offersCategory}|${searchQuery}`}
-          />
+          />}
           
           {activeTab === "home" && !searchQuery && (
             <>

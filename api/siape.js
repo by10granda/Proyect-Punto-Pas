@@ -1,5 +1,4 @@
 import { proxyToSiape } from "./_lib/siapeProxy.js";
-import { fetchSiape } from "./_lib/siapeTransport.js";
 
 const branchUrls = {
   "almacen-pas": process.env.SIAPE_BRANCH1_BASE_URL || "https://api.distribuidor-puntopas.com/api",
@@ -34,7 +33,6 @@ export default async function handler(req, res) {
       method: req.method,
       query,
       baseUrl: branchUrls[branch],
-      transport: fetchSiape,
     });
   } catch (error) {
     console.error("Error de conexion SIAPE", branch, endpoint, error instanceof Error ? error.name : "Error");
