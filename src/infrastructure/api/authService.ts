@@ -1,6 +1,6 @@
 import { getApiBaseUrl, getApiConfig } from '@/infrastructure/api/config';
 import { getSelectedBranchKey } from '@/infrastructure/api/config';
-import { createFetchWithTimeout, TimeoutError } from '@/infrastructure/api/client';
+import { createApiFetchWithTimeout, TimeoutError } from '@/infrastructure/api/client';
 import { ApiError } from '@/infrastructure/api/types';
 
 let cachedToken: string | null = null;
@@ -10,7 +10,7 @@ let generation = 0;
 const pendingLogins = new Map<string, Promise<string>>();
 
 const TOKEN_VALIDITY_MS = 55 * 60 * 1000;
-const fetchLogin = createFetchWithTimeout(15000);
+const fetchLogin = createApiFetchWithTimeout(15000);
 
 const isTokenValid = (): boolean => {
   if (!cachedToken || !tokenExpiry) return false;
