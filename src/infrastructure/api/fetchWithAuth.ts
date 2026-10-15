@@ -20,8 +20,9 @@ export const fetchWithAuth = async (
   });
 
   if (response.status === 401) {
-    authService.forceNewLogin();
-    const retryToken = await authService.login(true);
+    const retryToken = await (authService.getToken() === token
+      ? authService.login(true)
+      : authService.login());
     const retryResponse = await fetchWithT(`${getApiBaseUrl()}${endpoint}`, {
       ...options,
       headers: {

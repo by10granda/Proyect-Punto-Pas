@@ -21,7 +21,7 @@ it('forwards login JSON to the selected branch without forwarding the website ho
   }, res);
   expect(fetch).toHaveBeenCalledWith('https://api.distribuidor-puntopas.com/api/usuario/login',
     expect.objectContaining({ method: 'POST', body: JSON.stringify({ login: 'test-user', password: 'test-password' }),
-      headers: { 'Content-Type': 'application/json' } }));
+      headers: { 'Content-Type': 'application/json', 'Accept-Encoding': 'identity' } }));
   expect(res.status).toHaveBeenCalledWith(200);
   expect(res.send.mock.calls[0][0].toString()).toBe('test-token');
 });
@@ -32,7 +32,7 @@ it('preserves authorization and product-code query parameters', async () => {
   await handler({ method: 'GET', headers: { authorization: 'Bearer test-token' },
     query: { branch: 'sucursal-3', endpoint: 'item', code: '00000001' } }, response());
   expect(fetch).toHaveBeenCalledWith('https://api-sucursal3.distribuidor-puntopas.com/api/item?code=00000001',
-    expect.objectContaining({ headers: { Authorization: 'Bearer test-token' } }));
+    expect.objectContaining({ headers: { Authorization: 'Bearer test-token', 'Accept-Encoding': 'identity' } }));
 });
 
 it('never falls back to another branch after an upstream failure', async () => {

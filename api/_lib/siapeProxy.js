@@ -60,7 +60,8 @@ const readRawBody = (req) =>
 export const proxyToSiape = async (req, res, path, options = {}) => {
   const { method = req.method || "GET", query = req.query || {} } = options;
 
-  const headers = {};
+  // Avoid compressed upstream responses across the SIAPE/Cloudflare gateway.
+  const headers = { "Accept-Encoding": "identity" };
   if (req.headers.authorization) headers.Authorization = req.headers.authorization;
   if (req.headers["content-type"]) headers["Content-Type"] = req.headers["content-type"];
 
