@@ -27,10 +27,6 @@ const mapInventoryReport = (items: ApiInventoryReportItem[]): ApiInventoryItem[]
 const fetchInventoryEndpoint = async (endpoint: string): Promise<unknown[]> => {
   const response = await fetchWithAuth(endpoint);
 
-  if (response.status === 404) {
-    return [];
-  }
-
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({} as ApiErrorPayload));
     throw new ApiError(
@@ -41,17 +37,16 @@ const fetchInventoryEndpoint = async (endpoint: string): Promise<unknown[]> => {
   }
 
   const data = (await response.json()) as unknown;
-  return Array.isArray(data) ? data : [];
+  if (!Array.isArray(data)) {
+    throw new ApiError('Formato de inventario inesperado', response.status);
+  }
+  return data;
 };
 
 export const productService = {
   async getProducts(): Promise<ApiProductItem[]> {
     try {
       const response = await fetchWithAuth('/item/search3');
-
-      if (response.status === 404) {
-        return [];
-      }
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({} as ApiErrorPayload));
@@ -63,7 +58,12 @@ export const productService = {
       }
 
       const data = (await response.json()) as unknown;
-      return Array.isArray(data) ? data : [];
+      if (!Array.isArray(data) || data.some((item) =>
+        !item || typeof item.codigo !== 'string' || typeof item.descripcionItem !== 'string'
+      )) {
+        throw new ApiError('Formato de productos inesperado', response.status);
+      }
+      return data;
     } catch (error) {
       if (error instanceof ApiError) throw error;
       throw new ApiError(`Error al obtener productos: ${(error as Error).message}`, 0);
@@ -72,12 +72,14 @@ export const productService = {
 
   async getInventario(): Promise<ApiInventoryItem[]> {
     try {
-      const reportData = await fetchInventoryEndpoint('/item/reporteinventario');
-      if (reportData.length > 0) {
-        return mapInventoryReport(reportData as ApiInventoryReportItem[]);
+      try {
+        return await fetchInventoryEndpoint('/item/inventario') as ApiInventoryItem[];
+      } catch (error) {
+        // An empty inventory is authoritative; only an unavailable endpoint uses the report.
+        if (!(error instanceof ApiError) || error.statusCode !== 404) throw error;
       }
-
-      return await fetchInventoryEndpoint('/item/inventario') as ApiInventoryItem[];
+      const reportData = await fetchInventoryEndpoint('/item/reporteinventario');
+      return mapInventoryReport(reportData as ApiInventoryReportItem[]);
     } catch (error) {
       if (error instanceof ApiError) throw error;
       throw new ApiError(`Error al obtener inventario: ${(error as Error).message}`, 0);

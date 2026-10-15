@@ -3,6 +3,7 @@ import { ClassificationItem, Level2Category, Product } from '@/domain/product';
 import { buildClassificationMap } from '@/infrastructure/mappers/classificationMapper';
 import { mapApiProductsToDomain } from '@/infrastructure/mappers/productMapper';
 import { getSelectedBranchKey } from '@/infrastructure/api/config';
+import { ApiError } from '@/infrastructure/api/types';
 
 export type { Product, Level2Category, ClassificationItem } from '@/domain/product';
 
@@ -220,8 +221,10 @@ const parseSheetCsv = (csv: string): Record<string, string> => {
 };
 
 const loadProductDescriptionsFromSheet = async (): Promise<Record<string, string>> => {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 5000);
   try {
-    const response = await fetch(PRODUCT_DESCRIPTIONS_SHEET_CSV_URL);
+    const response = await fetch(PRODUCT_DESCRIPTIONS_SHEET_CSV_URL, { signal: controller.signal });
     if (!response.ok) return productDescriptionsByCode;
 
     const csv = await response.text();
@@ -234,6 +237,8 @@ const loadProductDescriptionsFromSheet = async (): Promise<Record<string, string
   } catch (error) {
     console.error('Error loading product descriptions from sheet:', error);
     return productDescriptionsByCode;
+  } finally {
+    clearTimeout(timeoutId);
   }
 };
 
@@ -312,17 +317,18 @@ export const loadProductsFromAPI = async ({
   try {
     const data = await productService.getProducts();
     
-    if (!data || !Array.isArray(data) || data.length === 0) {
-      return [];
+    if (!Array.isArray(data)) {
+      throw new ApiError('Formato de productos inesperado', 200);
     }
 
     const [inventario, clasificaciones, descriptionsByCode] = await Promise.all([
-      productService.getInventario().catch(() => []),
+      productService.getInventario(),
       productService.getClasificacionItem().catch(() => []),
       loadProductDescriptionsFromSheet().catch(() => ({}))
     ]);
 
-    if (inventario && Array.isArray(inventario) && inventario.length > 0) {
+    Object.keys(inventarioMap).forEach((key) => delete inventarioMap[key]);
+    if (inventario && Array.isArray(inventario)) {
       inventario.forEach((item: ApiInventoryItem) => {
         const key = normalizeProductCode(item.codigo);
         const disponible = Number(item.disponible || 0);
@@ -420,8 +426,9 @@ export const loadProductsFromAPI = async ({
     apiProductsBranchKey = currentBranchKey;
 
     return apiProducts;
-  } catch (_error: unknown) {
-    return apiProducts || [];
+  } catch (error: unknown) {
+    if (apiProducts !== null && apiProductsBranchKey === currentBranchKey) return apiProducts;
+    throw error;
   }
 };
 

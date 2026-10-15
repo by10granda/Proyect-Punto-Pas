@@ -49,14 +49,14 @@ const branchConfigs: Record<BranchKey, BranchConfig> = {
 };
 
 export const getBranchOptions = (): BranchOption[] =>
-  Object.values(branchConfigs).map(({ key, label, location }) => ({ key, label, location }));
+  [branchConfigs["almacen-pas"]].map(({ key, label, location }) => ({ key, label, location }));
 
 export const getSelectedBranchKey = (): BranchKey => {
   if (typeof window === "undefined") return "almacen-pas";
 
   const stored = window.localStorage.getItem(BRANCH_STORAGE_KEY);
-  if (stored === "almacen-pas" || stored === "variedades-pas" || stored === "sucursal-3") {
-    return stored;
+  if (stored !== null && stored !== "almacen-pas") {
+    window.localStorage.setItem(BRANCH_STORAGE_KEY, "almacen-pas");
   }
 
   return "almacen-pas";
@@ -64,7 +64,7 @@ export const getSelectedBranchKey = (): BranchKey => {
 
 export const setSelectedBranchKey = (key: BranchKey) => {
   if (typeof window === "undefined") return;
-  window.localStorage.setItem(BRANCH_STORAGE_KEY, key);
+  window.localStorage.setItem(BRANCH_STORAGE_KEY, "almacen-pas");
 };
 
 export const getSelectedBranchConfig = (): BranchConfig => branchConfigs[getSelectedBranchKey()];

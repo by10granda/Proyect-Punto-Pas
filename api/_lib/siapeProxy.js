@@ -1,16 +1,24 @@
-const DEFAULT_SIAPE_BASE_URL = "https://api.distribuidor-puntopas.com/api";
+const DEFAULT_SIAPE_BASE_URL = process.env.SIAPE_BRANCH1_BASE_URL || "https://api.distribuidor-puntopas.com/api";
+const SECONDARY_SIAPE_BASE_URL = process.env.SIAPE_BRANCH2_BASE_URL || "https://api-sucursal2.distribuidor-puntopas.com/api";
 const LEGACY_SIAPE_BASE_URL = "http://26.65.247.204:91/api";
 const REQUEST_TIMEOUT_MS = 4000;
 const RETRYABLE_STATUS_CODES = [502, 503, 504];
 const MAX_ATTEMPTS_PER_BASE_URL = 3;
 
-const getBaseUrls = () => {
+const getBranchKey = () => String(process.env.SIAPE_BRANCH_KEY || "almacen-pas").toLowerCase();
+
+const getBaseUrls = (req) => {
+  const branchKey = getBranchKey(req);
   const configuredBaseUrls = (process.env.SIAPE_BASE_URL || "")
     .split(",")
     .map((url) => url.trim())
     .filter(Boolean);
 
-  return Array.from(new Set([DEFAULT_SIAPE_BASE_URL, ...configuredBaseUrls, LEGACY_SIAPE_BASE_URL]))
+  const branchPreferredUrls = branchKey === "variedades-pas"
+    ? [SECONDARY_SIAPE_BASE_URL, DEFAULT_SIAPE_BASE_URL]
+    : [DEFAULT_SIAPE_BASE_URL, SECONDARY_SIAPE_BASE_URL];
+
+  return Array.from(new Set([...branchPreferredUrls, ...configuredBaseUrls, LEGACY_SIAPE_BASE_URL]))
     .map((url) => (url.endsWith("/") ? url.slice(0, -1) : url));
 };
 
@@ -67,7 +75,7 @@ export const proxyToSiape = async (req, res, path, options = {}) => {
     }
   }
 
-  const baseUrls = getBaseUrls();
+  const baseUrls = options.baseUrl ? [options.baseUrl.replace(/\/$/, "")] : getBaseUrls(req);
   let upstream;
   let lastError;
 

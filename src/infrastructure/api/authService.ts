@@ -1,6 +1,6 @@
 import { getApiBaseUrl, getApiConfig } from '@/infrastructure/api/config';
 import { getSelectedBranchKey } from '@/infrastructure/api/config';
-import { TimeoutError } from '@/infrastructure/api/client';
+import { createFetchWithTimeout, TimeoutError } from '@/infrastructure/api/client';
 import { ApiError } from '@/infrastructure/api/types';
 
 let cachedToken: string | null = null;
@@ -8,6 +8,7 @@ let tokenExpiry: number | null = null;
 let cachedBranchKey: string | null = null;
 
 const TOKEN_VALIDITY_MS = 55 * 60 * 1000;
+const fetchLogin = createFetchWithTimeout(15000);
 
 const isTokenValid = (): boolean => {
   if (!cachedToken || !tokenExpiry) return false;
@@ -29,7 +30,7 @@ export const authService = {
 
     try {
       const apiConfig = getApiConfig();
-      const response = await fetch(`${getApiBaseUrl()}/usuario/login`, {
+      const response = await fetchLogin(`${getApiBaseUrl()}/usuario/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -49,7 +50,10 @@ export const authService = {
         );
       }
 
-      const token = await response.text();
+      const token = (await response.text()).trim();
+      if (!token || /[<>\s]/.test(token) || /html/i.test(response.headers.get('content-type') || '')) {
+        throw new ApiError('Respuesta de autenticacion invalida', response.status);
+      }
       cachedToken = token;
       tokenExpiry = Date.now() + TOKEN_VALIDITY_MS;
       cachedBranchKey = getSelectedBranchKey();
