@@ -71,8 +71,8 @@ export const getSelectedBranchConfig = (): BranchConfig => branchConfigs[getSele
 
 export const getBranchConfigByKey = (key: BranchKey): BranchConfig => branchConfigs[key];
 
-// SIAPE supports browser CORS; avoid the failing Vercel-to-tunnel connection.
-export const getApiBaseUrl = (): string => getSelectedBranchConfig().apiBaseUrl.replace(/\/$/, "");
+// Keep browser requests on the website origin; the server handles the SIAPE tunnel.
+export const getApiBaseUrl = (): string => `/api/${getSelectedBranchKey()}`;
 
 export const shouldHideProductImages = (): boolean => getSelectedBranchKey() === "variedades-pas";
 
