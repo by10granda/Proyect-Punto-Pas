@@ -12,7 +12,7 @@ it('only exposes Almacen Pas in the catalog branch selector', () => {
 it.each(['variedades-pas', 'sucursal-3', 'unknown'])('replaces a previous selection of %s', (key) => {
   localStorage.setItem('puntopas_selected_branch', key);
   expect(getSelectedBranchKey()).toBe('almacen-pas');
-  expect(getApiBaseUrl()).toBe('/api/almacen-pas');
+  expect(getApiBaseUrl()).toBe('https://api.distribuidor-puntopas.com/api');
   expect(localStorage.getItem('puntopas_selected_branch')).toBe('almacen-pas');
 });
 
